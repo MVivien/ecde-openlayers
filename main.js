@@ -191,12 +191,17 @@ function hoverPopup(evt) {
   if (map.hasFeatureAtPixel(pixel)) {
     map.forEachFeatureAtPixel(pixel, function (feature) {
       if (feature.get("name")) {
-        hoverContent.innerHTML +=
-          feature.get("name") +
-          ": " +
-          feature.get("values")[0].toFixed(2) +
-          "°C <br>";
-        hoverOverlay.setPosition(coordinate);
+        if (feature.get("values")) {
+          hoverContent.innerHTML +=
+            feature.get("name") +
+            ": " +
+            feature.get("values")[0].toFixed(2) +
+            "°C <br>";
+          hoverOverlay.setPosition(coordinate);
+        } else {
+          hoverContent.innerHTML += feature.get("name") + ": No value <br>";
+          hoverOverlay.setPosition(coordinate);
+        }
       }
     });
   } else {
