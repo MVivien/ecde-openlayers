@@ -16,7 +16,10 @@ import {toLonLat} from 'ol/proj.js';
 import {toStringHDMS} from 'ol/coordinate.js';
 import OSM from 'ol/source/OSM';
 import LayerSwitcher from 'ol-layerswitcher';
+import Select from 'ol/interaction/Select.js';
 import { BaseLayerOptions, GroupLayerOptions } from 'ol-layerswitcher';
+import {altKeyOnly, click, pointerMove} from 'ol/events/condition.js';
+
 
 // Elemets used to define the colormap
 const min = 0; // the smallest area
@@ -41,8 +44,7 @@ const overlay = new Overlay({
   },
 });
 
-
-
+//! [color]
 function clamp(value, low, high) {
   return Math.max(low, Math.min(value, high));
 }
@@ -54,7 +56,6 @@ function get_value(feature){
       };
 }
 function getColor(feature) {
-  //! debugger;
   const value = get_value(feature);
   const f = Math.pow(clamp((value - min) / (max - min), 0, 1), 1 / 2);
   const index = Math.round(f * (steps - 1));
@@ -72,6 +73,33 @@ function featureStyle(feature) {
     });
   }
 //! [color]
+
+//! [feature selection]
+let select = null; // ref to currently selected interaction
+
+const selected = new Style({
+  fill: new Fill({
+    color: '#eeeeee',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(255, 255, 255, 0.7)',
+    width: 3,
+  }),
+});
+
+function selectStyle(feature) {
+  const selectedStyle = featureStyle(feature) // get dynamic style
+  const color = selectedStyle.fill_.color_ || '#eeeeee';
+  selected.getFill().setColor(color);
+  return selected;
+}
+
+// select interaction working on "click"
+const selectClick = new Select({
+  condition: click,
+  style: selectStyle,
+});
+//! [feature selection]
 
 // Vector layers source definition
 const nuts_0_source = new VectorSource({
@@ -157,5 +185,6 @@ function onMouseMove(browserEvent) {
 
 }
 map.on('pointermove', onMouseMove);
+map.addInteraction(selectClick);
 
 
