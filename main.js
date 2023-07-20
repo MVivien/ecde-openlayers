@@ -31,12 +31,12 @@ const ramp = colormap({
 });
 
 // Elements that make up the popup.
-const container = document.getElementById('popup');
-const content = document.getElementById('popup-content');
+const hoverContainer = document.getElementById('hover-popup');
+const hoverContent = document.getElementById('hover-popup-content');
 
 // Create an overlay to anchor the popup to the map.
 const overlay = new Overlay({
-  element: container,
+  element: hoverContainer,
   autoPan: {
     animation: {
       duration: 250,
@@ -170,11 +170,11 @@ function onMouseMove(browserEvent) {
     var coordinate = browserEvent.coordinate;
     var pixel = map.getPixelFromCoordinate(coordinate);
 
-    content.innerHTML = '';
+    hoverContent.innerHTML = '';
     if (map.hasFeatureAtPixel(pixel)){
     map.forEachFeatureAtPixel(pixel, function(feature) {
       if (feature.get('name')){
-        content.innerHTML += feature.get('name') + ': ' + feature.get('values')[0].toFixed(2) +'°C <br>';
+        hoverContent.innerHTML += feature.get('name') + ': ' + feature.get('values')[0].toFixed(2) +'°C <br>';
         overlay.setPosition(coordinate);
       }
     });
