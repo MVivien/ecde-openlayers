@@ -16,6 +16,14 @@ Now you're ready to start the workshop development server.  This serves up the [
 
 This will start a development server where you can read the workshop documentation and work through the exercises.  You should be able to confirm that things are working by seeing an alert pop up at http://localhost:5173/.  You can read through the workshop documentation at http://localhost:5173/doc/.
 
+As an alternative you can run:
+
+    npm run build
+
+This will create a `dist` folder containing the necessary material to be served on a a server or locally by running:
+
+    python -m http.server
+
 ## Overview
 
 This workshop is presented as a set of modules.  In each module you will perform tasks designed to achieve a specific goal for that module.  Each module builds upon lessons learned in previous modules and is designed to iteratively build up your knowledge base.
