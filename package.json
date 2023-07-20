@@ -1,0 +1,27 @@
+{
+  "name": "select-hover-features",
+  "description": "OpenLayers workshop",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "colormap": "^2.3.2",
+    "ol": "6.15.1",
+    "ol-layerswitcher": "^4.1.1"
+  },
+  "eslintConfig": {
+    "extends": "openlayers"
+  },
+  "scripts": {
+    "lint": "eslint main.js examples",
+    "test": "npm run lint",
+    "start": "vite serve",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "eslint": "^8.22.0",
+    "eslint-config-openlayers": "^16.2.3",
+    "parcel": "^2.0.0",
+    "vite": "^3.0.9",
+    "vite-plugin-static-copy": "^0.7.0"
+  }
+}
