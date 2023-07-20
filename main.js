@@ -213,6 +213,8 @@ function hoverPopup(evt) {
 function clickPopup(evt) {
   const coordinate = evt.coordinate;
   const hdms = toStringHDMS(toLonLat(coordinate));
+  const lon = hdms.split(" ").slice(4, 9).toString().replaceAll(",", " ");
+  const lat = hdms.split(" ").slice(0, 4).toString().replaceAll(",", " ");
   const pixel = map.getPixelFromCoordinate(coordinate);
 
   clickContent.innerHTML = "You clicked here:<br>";
@@ -223,7 +225,7 @@ function clickPopup(evt) {
       }
     });
   }
-  clickContent.innerHTML += "<code>" + hdms + "</code>";
+  clickContent.innerHTML += "<code>" + lat + "<br>" + lon + "</code>";
   hoverOverlay.setPosition(undefined);
   clickOverlay.setPosition(coordinate);
   hoverOverlay.setPosition(undefined);
