@@ -188,7 +188,7 @@ const layerSwitcher = new LayerSwitcher({
 map.addControl(layerSwitcher);
 
 // Hover popup interaction
-function onMouseMove(evt) {
+function hoverPopup(evt) {
     const coordinate = evt.coordinate;
     const pixel = map.getPixelFromCoordinate(coordinate);
 
@@ -206,7 +206,7 @@ function onMouseMove(evt) {
 };
 
 // Click popup interaction
-function onClick(evt) {
+function clickPopup(evt) {
   const coordinate = evt.coordinate;
   const hdms = toStringHDMS(toLonLat(coordinate));
   const pixel = map.getPixelFromCoordinate(coordinate);
@@ -225,8 +225,8 @@ function onClick(evt) {
   hoverOverlay.setPosition(undefined);
   };
 
-map.on('pointermove', onMouseMove);
-map.on('singleclick', onClick);
+map.on('pointermove', hoverPopup);
+map.on('singleclick', clickPopup);
 map.addInteraction(selectClick);
 
 
