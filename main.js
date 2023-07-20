@@ -1,7 +1,7 @@
 import 'ol/ol.css';
 import 'ol-layerswitcher/dist/ol-layerswitcher.css';
 
-//! [imports]
+// imports
 import GeoJSON from 'ol/format/GeoJSON';
 import Map from 'ol/Map';
 import VectorLayer from 'ol/layer/Vector';
@@ -17,9 +17,8 @@ import {toStringHDMS} from 'ol/coordinate.js';
 import OSM from 'ol/source/OSM';
 import LayerSwitcher from 'ol-layerswitcher';
 import { BaseLayerOptions, GroupLayerOptions } from 'ol-layerswitcher';
-//! [imports]
 
-//! [color]
+// Elemets used to define the colormap
 const min = 0; // the smallest area
 const max = 20; // the biggest area
 const steps = 50;
@@ -28,15 +27,11 @@ const ramp = colormap({
   nshades: steps,
 });
 
-/**
- * Elements that make up the popup.
- */
+// Elements that make up the popup.
 const container = document.getElementById('popup');
 const content = document.getElementById('popup-content');
 
-/**
- * Create an overlay to anchor the popup to the map.
- */
+// Create an overlay to anchor the popup to the map.
 const overlay = new Overlay({
   element: container,
   autoPan: {
@@ -46,15 +41,7 @@ const overlay = new Overlay({
   },
 });
 
-/**
- * Add a click handler to hide the popup.
- * @return {boolean} Don't follow the href.
- */
-/*closer.onclick = function () {
-  overlay.setPosition(undefined);
-  closer.blur();
-  return false;
-};*/
+
 
 function clamp(value, low, high) {
   return Math.max(low, Math.min(value, high));
@@ -86,6 +73,7 @@ function featureStyle(feature) {
   }
 //! [color]
 
+// Vector layers source definition
 const nuts_0_source = new VectorSource({
   format: new GeoJSON(),
   url: './data/nuts_0.json',
@@ -98,8 +86,8 @@ const nuts_2_source = new VectorSource({
   format: new GeoJSON(),
   url: './data/nuts_2.json',
   });
-//! [style]
 
+// Vector layers definition
 const nuts_0 = new VectorLayer({
   source: nuts_0_source,
   title: "NUTS 0",
@@ -119,10 +107,12 @@ const nuts_2 = new VectorLayer({
   style: featureStyle,
 });
 
+// Tile layer
 const tile_layer = new TileLayer({
   source: new OSM(),
 });
 
+// Create map
 const map = new Map({
   target: 'map-container',
   layers: [
@@ -138,6 +128,7 @@ const map = new Map({
   }),
 });
 
+// Add layer switcher
 const layerSwitcher = new LayerSwitcher({
   reverse: true,
   activationMode: 'click',
@@ -145,34 +136,8 @@ const layerSwitcher = new LayerSwitcher({
   groupSelectStyle: 'group'
 });
 map.addControl(layerSwitcher);
-/*map.on('singleclick', function (evt) {
-  const coordinate = evt.coordinate;
-  const hdms = toStringHDMS(toLonLat(coordinate));
 
-  content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code>';
-  overlay.setPosition(coordinate);
-});*/
-
-document.querySelectorAll('input[name="layer_choice"]').forEach((elem)=> {
-  var item = elem.value;
-  var bool = elem.checked;
-  map.getAllLayers()[item].setVisible(bool);
-});
-
-/*if (document.querySelector('input[name="layer_choice"]')) {
-  document.querySelectorAll('input[name="layer_choice"]').forEach((elem) => {
-    elem.addEventListener("change", function(event) {
-      var item = event.target.value;
-      var bool = event.target.checked;
-      map.getAllLayers().forEach(function(layer) {
-        layer.setVisible(false)
-        });
-      map.getAllLayers()[0].setVisible(bool);
-      map.getAllLayers()[item].setVisible(bool);
-    });
-  });
-}*/
-
+// Hover popup interaction
 function onMouseMove(browserEvent) {
     var coordinate = browserEvent.coordinate;
     var pixel = map.getPixelFromCoordinate(coordinate);
