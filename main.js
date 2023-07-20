@@ -30,12 +30,17 @@ const ramp = colormap({
   nshades: steps,
 });
 
-// Elements that make up the popup.
+// Elements that make up the hover popup.
 const hoverContainer = document.getElementById('hover-popup');
 const hoverContent = document.getElementById('hover-popup-content');
 
-// Create an overlay to anchor the popup to the map.
-const overlay = new Overlay({
+// Elements that make up the click popup.
+const clickContainer = document.getElementById('click-popup');
+const clickContent = document.getElementById('click-popup-content');
+const clickCloser = document.getElementById('click-popup-closer');
+
+// Create an overlay to anchor the hover popup to the map.
+const hoverOverlay = new Overlay({
   element: hoverContainer,
   autoPan: {
     animation: {
@@ -43,6 +48,23 @@ const overlay = new Overlay({
     },
   },
 });
+
+// Create an overlay to anchor the click popup to the map.
+const clickOverlay = new Overlay({
+  element: clickContainer,
+  autoPan: {
+    animation: {
+      duration: 250,
+    },
+  },
+});
+
+// Add a click handler to hide the popup.
+clickCloser.onclick = function () {
+  clickOverlay.setPosition(undefined);
+  clickCloser.blur();
+  return false;
+};
 
 //! [color]
 function clamp(value, low, high) {
@@ -149,7 +171,7 @@ const map = new Map({
     nuts_1,
     nuts_0,
   ],
-  overlays: [overlay],
+  overlays: [clickOverlay, hoverOverlay],
   view: new View({
     center: fromLonLat([10, 55]),
     zoom: 4,
@@ -166,25 +188,46 @@ const layerSwitcher = new LayerSwitcher({
 map.addControl(layerSwitcher);
 
 // Hover popup interaction
-function onMouseMove(browserEvent) {
-    var coordinate = browserEvent.coordinate;
-    var pixel = map.getPixelFromCoordinate(coordinate);
+function onMouseMove(evt) {
+    const coordinate = evt.coordinate;
+    const pixel = map.getPixelFromCoordinate(coordinate);
 
     hoverContent.innerHTML = '';
     if (map.hasFeatureAtPixel(pixel)){
     map.forEachFeatureAtPixel(pixel, function(feature) {
       if (feature.get('name')){
         hoverContent.innerHTML += feature.get('name') + ': ' + feature.get('values')[0].toFixed(2) +'°C <br>';
-        overlay.setPosition(coordinate);
+        hoverOverlay.setPosition(coordinate);
       }
     });
     } else {
-        overlay.setPosition(undefined);
+        hoverOverlay.setPosition(undefined);
     }
-    //overlay.setPosition(undefined);
+};
 
-}
+// Click popup interaction
+function onClick(evt) {
+  const coordinate = evt.coordinate;
+  const hdms = toStringHDMS(toLonLat(coordinate));
+  const pixel = map.getPixelFromCoordinate(coordinate);
+
+  clickContent.innerHTML = 'You clicked here:<br>'
+  if (map.hasFeatureAtPixel(pixel)){
+    map.forEachFeatureAtPixel(pixel, function(feature) {
+      if (feature.get('name')){
+        clickContent.innerHTML += feature.get('name') + '<br>';
+      }
+    });
+  }
+  clickContent.innerHTML += '<code>' + hdms + '</code>';
+  hoverOverlay.setPosition(undefined);
+  clickOverlay.setPosition(coordinate);
+  hoverOverlay.setPosition(undefined);
+  };
+
 map.on('pointermove', onMouseMove);
+map.on('singleclick', onClick);
 map.addInteraction(selectClick);
+
 
 
