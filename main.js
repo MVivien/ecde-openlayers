@@ -16,6 +16,7 @@ import { toLonLat } from "ol/proj.js";
 import { toStringHDMS } from "ol/coordinate.js";
 import OSM from "ol/source/OSM";
 import LayerSwitcher from "ol-layerswitcher";
+import Geocoder from "ol-geocoder";
 import Select from "ol/interaction/Select.js";
 import { BaseLayerOptions, GroupLayerOptions } from "ol-layerswitcher";
 import { altKeyOnly, click, pointerMove } from "ol/events/condition.js";
@@ -170,6 +171,8 @@ const map = new Map({
   view: new View({
     center: fromLonLat([10, 55]),
     zoom: 4,
+    maxZoom: 6,
+    minZoom: 3,
   }),
 });
 
@@ -181,6 +184,39 @@ const layerSwitcher = new LayerSwitcher({
   groupSelectStyle: "group",
 });
 map.addControl(layerSwitcher);
+
+var geocoder = new Geocoder("nominatim", {
+  provider: "osm",
+  lang: "en",
+  placeholder: "Search for ...",
+  limit: 5,
+  debug: false,
+  autoComplete: true,
+  keepOpen: true,
+});
+map.addControl(geocoder);
+
+// Function removing the pin Geocoder is using by default
+function remove_search_pin() {
+  var remove_layer_name = "geocoder-layer";
+  var layers_to_remove = [];
+  map.getLayers().forEach(function (layer) {
+    var layer_name = layer.getProperties().name;
+    if (layer_name && layer_name.match(remove_layer_name)) {
+      layers_to_remove.push(layer);
+    }
+  });
+
+  for (var i = 0; i < layers_to_remove.length; i++) {
+    map.removeLayer(layers_to_remove[i]);
+  }
+}
+
+// Listen when an address is chosen
+geocoder.on("addresschosen", function (evt) {
+  remove_search_pin();
+  clickPopup(evt);
+});
 
 // Hover popup interaction
 function hoverPopup(evt) {
@@ -228,7 +264,6 @@ function clickPopup(evt) {
   clickContent.innerHTML += "<code>" + lat + "<br>" + lon + "</code>";
   hoverOverlay.setPosition(undefined);
   clickOverlay.setPosition(coordinate);
-  hoverOverlay.setPosition(undefined);
 }
 
 map.on("pointermove", hoverPopup);
