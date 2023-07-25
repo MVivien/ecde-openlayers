@@ -5,13 +5,15 @@ import "ol-layerswitcher/dist/ol-layerswitcher.css";
 import GeoJSON from "ol/format/GeoJSON";
 import Map from "ol/Map";
 import VectorLayer from "ol/layer/Vector";
+import Group from "ol/layer/Group";
 import VectorSource from "ol/source/Vector";
 import View from "ol/View";
 import { Fill, Stroke, Style } from "ol/style";
 import Overlay from "ol/Overlay.js";
 import { fromLonLat } from "ol/proj";
 import colormap from "colormap";
-import TileLayer from "ol/layer/Tile.js";
+import {Image as ImageLayer, Tile as TileLayer} from 'ol/layer';
+import TileWMS from 'ol/source/TileWMS.js';
 import { toLonLat } from "ol/proj.js";
 import { toStringHDMS } from "ol/coordinate.js";
 import OSM from "ol/source/OSM";
@@ -163,10 +165,48 @@ const tile_layer = new TileLayer({
   source: new OSM(),
 });
 
+const blackCarbon = new TileLayer({
+    source: new TileWMS({
+      url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
+      params: {'LAYERS': 'composition_bbaod550'},
+    }),
+    title: "Black carbon aerosol optical depth at 550 nm"
+  })
+
+const so2Surface = new TileLayer({
+    source: new TileWMS({
+      url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
+      params: {'LAYERS': 'composition_so2_surface'},
+    }),
+    title: "Sulphur dioxide at surface",
+    visible: false
+  })
+
+const aod550 = new TileLayer({
+    source: new TileWMS({
+      url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
+      params: {'LAYERS': 'composition_aod550'},
+    }),
+    title: "Total aerosol optical depth at 550 nm",
+    visible: false
+  })
+
+const eccharts = new Group({
+  title: 'eccharts',
+  fold: 'open',
+  layers: [blackCarbon, so2Surface, aod550]
+  })
+
+const nutsRegions = new Group({
+  title: 'NUTS Regions',
+  fold: 'open',
+  layers: [nuts_2, nuts_1, nuts_0]
+  })
+
 // Create map
 const map = new Map({
   target: "map-container",
-  layers: [tile_layer, nuts_2, nuts_1, nuts_0],
+  layers: [tile_layer, nutsRegions, eccharts],
   overlays: [clickOverlay, hoverOverlay],
   view: new View({
     center: fromLonLat([10, 55]),
