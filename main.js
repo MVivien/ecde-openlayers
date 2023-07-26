@@ -165,6 +165,7 @@ const tile_layer = new TileLayer({
   source: new OSM(),
 });
 
+// Defining a WMS layer
 const blackCarbon = new TileLayer({
     source: new TileWMS({
       url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
@@ -173,6 +174,7 @@ const blackCarbon = new TileLayer({
     title: "Black carbon aerosol optical depth at 550 nm"
   })
 
+// Defining a WMS layer
 const so2Surface = new TileLayer({
     source: new TileWMS({
       url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
@@ -182,6 +184,7 @@ const so2Surface = new TileLayer({
     visible: false
   })
 
+// Defining a WMS layer
 const aod550 = new TileLayer({
     source: new TileWMS({
       url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
@@ -191,12 +194,14 @@ const aod550 = new TileLayer({
     visible: false
   })
 
+// Creating a Group for WMS layers
 const eccharts = new Group({
   title: 'eccharts',
   fold: 'open',
   layers: [blackCarbon, so2Surface, aod550]
   })
 
+// Creating a Group for feature layers
 const nutsRegions = new Group({
   title: 'NUTS Regions',
   fold: 'open',
