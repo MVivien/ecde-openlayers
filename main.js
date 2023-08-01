@@ -311,6 +311,41 @@ function clickPopup(evt) {
   clickOverlay.setPosition(coordinate);
 }
 
+function clickGetFeatureInfo(evt) {
+  const coordinate = evt.coordinate;
+
+  // Perform GetFeatureInfo request
+  const viewResolution = map.getView().getResolution();
+  const url = blackCarbon.getSource().getFeatureInfoUrl(
+    coordinate,
+    viewResolution,
+    map.getView().getProjection(),
+    { 'INFO_FORMAT': 'application/json' } // Set the desired response format (JSON in this case)
+  );
+
+  // Make the GetFeatureInfo request using your preferred method (e.g., fetch or AJAX)
+  // Here, I'll use fetch API for demonstration purposes
+  fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle the data returned from the server
+      console.log(data); // The data contains the information about the features at the clicked location
+      // Extract the value you need from the data and use it accordingly
+      const value = data.Probes[0].Value.Data;
+
+      if (value){
+        clickContent.innerHTML = "Black carbon aerosol optical depth at 550 nm:<br>" + value;
+      }
+    })
+    .catch((error) => {
+      console.error('Error during GetFeatureInfo request:', error);
+    });
+
+  hoverOverlay.setPosition(undefined);
+  clickOverlay.setPosition(coordinate);
+};
+
 map.on("pointermove", hoverPopup);
-map.on("singleclick", clickPopup);
+map.on("singleclick", clickGetFeatureInfo);
+// map.on("singleclick", clickPopup);
 map.addInteraction(selectClick);
