@@ -8,9 +8,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 
 const NUTS = [
-  { name: 'NUTS 0', url: '/data/nuts_0.json' },
-  { name: 'NUTS 1', url: '/data/nuts_1.json' },
-  { name: 'NUTS 2', url: '/data/nuts_2.json' },
+  { name: 'NUTS 0', url: '/nuts_0.json' },
+  { name: 'NUTS 1', url: '/nuts_1.json' },
+  { name: 'NUTS 2', url: '/nuts_2.json' },
 ];
 
 function NutsSelector({ mapContainerId }) {
