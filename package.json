@@ -7,10 +7,9 @@
     "colormap": "^2.3.2",
     "ol": "6.15.1",
     "ol-geocoder": "^4.1.2",
-    "ol-layerswitcher": "^4.1.1"
-  },
-  "eslintConfig": {
-    "extends": "openlayers"
+    "ol-layerswitcher": "^4.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "scripts": {
     "lint": "eslint main.js examples",
@@ -19,11 +18,15 @@
     "build": "vite build"
   },
   "devDependencies": {
-    "eslint": "^8.22.0",
+    "@vitejs/plugin-react": "^4.0.4",
+    "eslint": "^8.46.0",
     "eslint-config-openlayers": "^16.2.3",
+    "eslint-plugin-react": "^7.33.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
     "parcel": "^2.0.0",
     "prettier": "^3.0.0",
-    "vite": "^3.0.9",
-    "vite-plugin-static-copy": "^0.7.0"
+    "vite": "^4.4.8",
+    "vite-plugin-static-copy": "^0.17.0"
   }
 }

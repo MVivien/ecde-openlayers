@@ -12,8 +12,8 @@ import { Fill, Stroke, Style } from "ol/style";
 import Overlay from "ol/Overlay.js";
 import { fromLonLat } from "ol/proj";
 import colormap from "colormap";
-import {Image as ImageLayer, Tile as TileLayer} from 'ol/layer';
-import TileWMS from 'ol/source/TileWMS.js';
+import { Image as ImageLayer, Tile as TileLayer } from "ol/layer";
+import TileWMS from "ol/source/TileWMS.js";
 import { toLonLat } from "ol/proj.js";
 import { toStringHDMS } from "ol/coordinate.js";
 import OSM from "ol/source/OSM";
@@ -167,46 +167,46 @@ const tile_layer = new TileLayer({
 
 // Defining a WMS layer
 const blackCarbon = new TileLayer({
-    source: new TileWMS({
-      url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
-      params: {'LAYERS': 'composition_bbaod550'},
-    }),
-    title: "Black carbon aerosol optical depth at 550 nm"
-  })
+  source: new TileWMS({
+    url: "http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0",
+    params: { LAYERS: "composition_bbaod550" },
+  }),
+  title: "Black carbon aerosol optical depth at 550 nm",
+});
 
 // Defining a WMS layer
 const so2Surface = new TileLayer({
-    source: new TileWMS({
-      url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
-      params: {'LAYERS': 'composition_so2_surface'},
-    }),
-    title: "Sulphur dioxide at surface",
-    visible: false
-  })
+  source: new TileWMS({
+    url: "http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0",
+    params: { LAYERS: "composition_so2_surface" },
+  }),
+  title: "Sulphur dioxide at surface",
+  visible: false,
+});
 
 // Defining a WMS layer
 const aod550 = new TileLayer({
-    source: new TileWMS({
-      url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
-      params: {'LAYERS': 'composition_aod550'},
-    }),
-    title: "Total aerosol optical depth at 550 nm",
-    visible: false
-  })
+  source: new TileWMS({
+    url: "http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0",
+    params: { LAYERS: "composition_aod550" },
+  }),
+  title: "Total aerosol optical depth at 550 nm",
+  visible: false,
+});
 
 // Creating a Group for WMS layers
 const eccharts = new Group({
-  title: 'eccharts',
-  fold: 'open',
-  layers: [blackCarbon, so2Surface, aod550]
-  })
+  title: "eccharts",
+  fold: "open",
+  layers: [blackCarbon, so2Surface, aod550],
+});
 
 // Creating a Group for feature layers
 const nutsRegions = new Group({
-  title: 'NUTS Regions',
-  fold: 'open',
-  layers: [nuts_2, nuts_1, nuts_0]
-  })
+  title: "NUTS Regions",
+  fold: "open",
+  layers: [nuts_2, nuts_1, nuts_0],
+});
 
 // Create map
 const map = new Map({
@@ -274,10 +274,7 @@ function hoverPopup(evt) {
       if (feature.get("name")) {
         if (feature.get("values")) {
           hoverContent.innerHTML +=
-            feature.get("name") +
-            ": " +
-            feature.get("values")[0].toFixed(2) +
-            "°C <br>";
+            feature.get("name") + ": " + feature.get("values")[0].toFixed(2) + "°C <br>";
           hoverOverlay.setPosition(coordinate);
         } else {
           hoverContent.innerHTML += feature.get("name") + ": No value <br>";
