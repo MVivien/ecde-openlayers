@@ -7,6 +7,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Container from '@mui/material/Container';
 
 import NutsSelector from './NutsSelector.jsx';
+import EcChartsSelector from './EcChartsSelector.jsx';
 
 const Map = lazy(() => import('./Map.jsx'));
 
@@ -27,6 +28,7 @@ function App() {
           <Grid sm={3}>
             <Item>
               <NutsSelector mapContainerId="map-container" />
+              <EcChartsSelector mapContainerId="map-container" />
             </Item>
           </Grid>
           <Grid sm={9}>

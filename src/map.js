@@ -1,7 +1,6 @@
 import GeoJSON from 'ol/format/GeoJSON';
 import Geocoder from 'ol-geocoder';
 import Group from 'ol/layer/Group';
-import LayerSwitcher from 'ol-layerswitcher';
 import Map from 'ol/Map';
 import OSM from 'ol/source/OSM';
 import Overlay from 'ol/Overlay.js';
@@ -18,6 +17,8 @@ import { click } from 'ol/events/condition.js';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { toStringHDMS } from 'ol/coordinate';
 
+import { EVENT_GROUP_SET_LAYERS } from './constants';
+
 // Elemets used to define the colormap
 const min = 0; // the smallest area
 const max = 20; // the biggest area
@@ -27,9 +28,68 @@ const ramp = colormap({
   nshades: steps,
 });
 
-//! [color]
 function clamp(value, low, high) {
   return Math.max(low, Math.min(value, high));
+}
+
+function get_value(feature) {
+  if (feature.getProperties().values) {
+    return feature.getProperties().values[0];
+  } else {
+    return null;
+  }
+}
+function getColor(feature) {
+  const value = get_value(feature);
+  const f = Math.pow(clamp((value - min) / (max - min), 0, 1), 1 / 2);
+  const index = Math.round(f * (steps - 1));
+  return ramp[index];
+}
+
+const selected = new Style({
+  fill: new Fill({
+    color: '#eeeeee',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(255, 255, 255, 0.7)',
+    width: 3,
+  }),
+});
+
+const possibleLayersCls = {
+  vector: { cls: VectorLayer, defaultParams: {} },
+  tile: { cls: TileLayer, defaultParams: {} },
+};
+
+const possibleSourcesCls = {
+  vector: {
+    cls: VectorSource,
+    defaultParams: {
+      format: new GeoJSON(),
+    },
+  },
+  tile: {
+    cls: TileWMS,
+    defaultParams: {},
+  },
+};
+
+function featureStyle(feature) {
+  return new Style({
+    fill: new Fill({
+      color: getColor(feature),
+    }),
+    stroke: new Stroke({
+      color: 'rgba(255,255,255,0.8)',
+    }),
+  });
+}
+
+function selectStyle(feature) {
+  const selectedStyle = featureStyle(feature); // get dynamic style
+  const color = selectedStyle.fill_.color_ || '#eeeeee';
+  selected.getFill().setColor(color);
+  return selected;
 }
 
 function initMap(
@@ -65,49 +125,6 @@ function initMap(
     return false;
   };
 
-  function get_value(feature) {
-    if (feature.getProperties().values) {
-      return feature.getProperties().values[0];
-    } else {
-      return null;
-    }
-  }
-  function getColor(feature) {
-    const value = get_value(feature);
-    const f = Math.pow(clamp((value - min) / (max - min), 0, 1), 1 / 2);
-    const index = Math.round(f * (steps - 1));
-    return ramp[index];
-  }
-
-  function featureStyle(feature) {
-    return new Style({
-      fill: new Fill({
-        color: getColor(feature),
-      }),
-      stroke: new Stroke({
-        color: 'rgba(255,255,255,0.8)',
-      }),
-    });
-  }
-  //! [color]
-
-  const selected = new Style({
-    fill: new Fill({
-      color: '#eeeeee',
-    }),
-    stroke: new Stroke({
-      color: 'rgba(255, 255, 255, 0.7)',
-      width: 3,
-    }),
-  });
-
-  function selectStyle(feature) {
-    const selectedStyle = featureStyle(feature); // get dynamic style
-    const color = selectedStyle.fill_.color_ || '#eeeeee';
-    selected.getFill().setColor(color);
-    return selected;
-  }
-
   // select interaction working on "click"
   const selectClick = new Select({
     condition: click,
@@ -115,23 +132,42 @@ function initMap(
   });
   //! [feature selection]
 
-  const nutsLayers = {};
+  const groups = {};
 
-  const addNut = (name, url) => {
-    const source = new VectorSource({
-      format: new GeoJSON(),
-      url: url,
+  const setLayersInGroup = (group, layers = []) => {
+    if (!groups[group]) {
+      groups[group] = new Group({
+        layers: [],
+      });
+      map.addLayer(groups[group]);
+    }
+
+    const olLayers = layers.map((layer) => {
+      const { name, type, sourceType, params = {}, sourceParams = {} } = layer;
+
+      const { cls: SourceCls, defaultParams: defaultSourceParams } = possibleSourcesCls[sourceType];
+      const { cls: LayerCls, defaultParams: defaultLayerParams } = possibleLayersCls[type];
+
+      const source = new SourceCls({
+        ...defaultSourceParams,
+        ...sourceParams,
+      });
+
+      const olLayer = new LayerCls({
+        source: source,
+        title: name,
+        type: 'base',
+        style: featureStyle,
+        ...defaultLayerParams,
+        ...params,
+      });
+
+      return olLayer;
     });
 
-    const nut = new VectorLayer({
-      source: source,
-      title: name,
-      type: 'base',
-      style: featureStyle,
-    });
-
-    nutsLayers[name] = nut;
-    return nut;
+    groups[group].setLayers(new Collection(olLayers));
+    groups[group].changed();
+    return groups[group].getLayers().getArray();
   };
 
   // Tile layer
@@ -139,51 +175,10 @@ function initMap(
     source: new OSM(),
   });
 
-  // Defining a WMS layer
-  const blackCarbon = new TileLayer({
-    source: new TileWMS({
-      url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
-      params: { LAYERS: 'composition_bbaod550' },
-    }),
-    title: 'Black carbon aerosol optical depth at 550 nm',
-  });
-
-  // Defining a WMS layer
-  const so2Surface = new TileLayer({
-    source: new TileWMS({
-      url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
-      params: { LAYERS: 'composition_so2_surface' },
-    }),
-    title: 'Sulphur dioxide at surface',
-    visible: false,
-  });
-
-  // Defining a WMS layer
-  const aod550 = new TileLayer({
-    source: new TileWMS({
-      url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
-      params: { LAYERS: 'composition_aod550' },
-    }),
-    title: 'Total aerosol optical depth at 550 nm',
-    visible: false,
-  });
-
-  // Creating a Group for WMS layers
-  const eccharts = new Group({
-    title: 'eccharts',
-    fold: 'open',
-    layers: [blackCarbon, so2Surface, aod550],
-  });
-
-  // Creating a Group for feature layers
-  const nutsRegions = new Group({
-    layers: Object.values(nutsLayers),
-  });
-
   // Create map
   const map = new Map({
     target: mapCointainer,
-    layers: [tile_layer, nutsRegions, eccharts],
+    layers: [tile_layer],
     overlays: [clickOverlay, hoverOverlay],
     view: new View({
       center: fromLonLat([10, 55]),
@@ -192,15 +187,6 @@ function initMap(
       minZoom: 3,
     }),
   });
-
-  // Add layer switcher
-  const layerSwitcher = new LayerSwitcher({
-    reverse: true,
-    activationMode: 'click',
-    startActive: true,
-    groupSelectStyle: 'group',
-  });
-  map.addControl(layerSwitcher);
 
   const geocoder = new Geocoder('nominatim', {
     provider: 'osm',
@@ -286,12 +272,11 @@ function initMap(
 
   /* Events management */
 
-  mapCointainer.addEventListener('ol:add-nuts', function (event) {
-    console.debug('ol:add-nuts event received');
-    const { name, url } = event.detail;
-    const nut = addNut(name, url);
-    nutsRegions.setLayers(new Collection([nut]));
-    nutsRegions.changed();
+  mapCointainer.addEventListener(EVENT_GROUP_SET_LAYERS, function (event) {
+    const { group, layers } = event.detail;
+    console.debug(`${EVENT_GROUP_SET_LAYERS} event received: ${group}`);
+    setLayersInGroup(group, layers);
+    console.debug('ol:add-nuts event completed');
   });
 
   console.debug('initMap completed');

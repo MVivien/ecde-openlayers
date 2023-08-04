@@ -4,8 +4,11 @@ import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
+import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
+
+import { EVENT_GROUP_SET_LAYERS } from './constants';
 
 const NUTS = [
   { name: 'NUTS 0', url: '/nuts_0.json' },
@@ -22,27 +25,36 @@ function NutsSelector({ mapContainerId }) {
 
   useEffect(() => {
     if (nut) {
-      const nutObject = NUTS.find((item) => item.name === nut);
-      const event = new CustomEvent('ol:add-nuts', { detail: { ...nutObject } });
+      const { name, url } = NUTS.find((item) => item.name === nut);
+      const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
+        detail: {
+          group: 'nuts',
+          layers: [
+            { type: 'vector', sourceType: 'vector', params: { name }, sourceParams: { url } },
+          ],
+        },
+      });
       document.getElementById(mapContainerId).dispatchEvent(event);
     }
   }, [nut, mapContainerId]);
 
   return (
     <Box>
-      <FormControl fullWidth>
-        <FormLabel id="nuts">NUTS</FormLabel>
-        <RadioGroup aria-labelledby="nuts" value={nut} onChange={handleChange}>
-          {NUTS.map((nut) => (
-            <FormControlLabel
-              key={nut.name}
-              value={nut.name}
-              control={<Radio />}
-              label={nut.name}
-            />
-          ))}
-        </RadioGroup>
-      </FormControl>
+      <FormGroup>
+        <FormControl fullWidth>
+          <FormLabel id="nuts">NUTS</FormLabel>
+          <RadioGroup aria-labelledby="nuts" value={nut} onChange={handleChange}>
+            {NUTS.map((nut) => (
+              <FormControlLabel
+                key={nut.name}
+                value={nut.name}
+                control={<Radio />}
+                label={nut.name}
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+      </FormGroup>
     </Box>
   );
 }
