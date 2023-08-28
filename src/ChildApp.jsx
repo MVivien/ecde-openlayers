@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import Divider from '@mui/material/Divider';
 
 import Loading from './Loading.jsx';
 
@@ -11,7 +12,8 @@ const Chart = lazy(() => import('./Chart.jsx'));
 
 function ChildApp({ onClose }) {
   return (
-    <Box className="child-app">
+    <Box className="child-app" sx={{ marginTop: '3rem' }}>
+      <Divider />
       <Typography
         variant="subtitle1"
         gutterBottom
