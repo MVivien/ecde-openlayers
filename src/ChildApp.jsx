@@ -13,7 +13,6 @@ const Chart = lazy(() => import('./Chart.jsx'));
 function ChildApp({ onClose }) {
   return (
     <Box className="child-app" sx={{ marginTop: '3rem' }}>
-      <Divider />
       <Typography
         variant="subtitle1"
         gutterBottom

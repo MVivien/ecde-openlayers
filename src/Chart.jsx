@@ -14,6 +14,7 @@ function Chart() {
       ],
       {
         margin: { t: 0 },
+        autosize: true,
       },
     );
   }, []);

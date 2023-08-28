@@ -10,6 +10,7 @@ import NutsSelector from './NutsSelector.jsx';
 import EcChartsSelector from './EcChartsSelector.jsx';
 import ChildApp from './ChildApp.jsx';
 import Loading from './Loading.jsx';
+import OtherControls from './OtherControls.jsx';
 
 const Map = lazy(() => import('./Map.jsx'));
 
@@ -19,6 +20,15 @@ const Item = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
   textAlign: 'center',
   color: theme.palette.text.secondary,
+}));
+
+const AbsoluteGrid = styled(Grid)(({ theme }) => ({
+  position: 'absolute',
+  right: 0,
+  top: 0,
+  zIndex: 1,
+  marginRight: theme.spacing(2),
+  marginTop: theme.spacing(2),
 }));
 
 function App() {
@@ -37,11 +47,22 @@ function App() {
     <>
       <CssBaseline />
       <Container maxWidth="lg">
-        <Grid container spacing={2}>
-          <Grid sm={3}>
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            position: 'relative',
+          }}
+        >
+          <AbsoluteGrid sm={4}>
             <Item>
               <NutsSelector mapContainerId="map-container" />
               <EcChartsSelector mapContainerId="map-container" />
+            </Item>
+          </AbsoluteGrid>
+          <Grid sm={3}>
+            <Item>
+              <OtherControls />
               {childApp ? <ChildApp onClose={handleClose} /> : null}
             </Item>
           </Grid>
