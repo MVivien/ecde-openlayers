@@ -9,6 +9,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 
 import { EVENT_GROUP_SET_LAYERS } from './constants';
+import { registerEvent } from './map_events';
 
 const NUTS = [
   { name: 'NUTS 0', url: '/nuts_0.json' },
@@ -16,8 +17,8 @@ const NUTS = [
   { name: 'NUTS 2', url: '/nuts_2.json' },
 ];
 
-function NutsSelector({ mapContainerId }) {
-  const [nut, setNut] = useState('');
+function NutsSelector() {
+  const [nut, setNut] = useState(NUTS[0].name);
 
   const handleChange = (event) => {
     setNut(event.target.value);
@@ -34,9 +35,9 @@ function NutsSelector({ mapContainerId }) {
           ],
         },
       });
-      document.getElementById(mapContainerId).dispatchEvent(event);
+      registerEvent(event);
     }
-  }, [nut, mapContainerId]);
+  }, [nut]);
 
   return (
     <Box>
@@ -58,9 +59,5 @@ function NutsSelector({ mapContainerId }) {
     </Box>
   );
 }
-
-NutsSelector.propTypes = {
-  mapContainerId: PropTypes.string.isRequired,
-};
 
 export default NutsSelector;

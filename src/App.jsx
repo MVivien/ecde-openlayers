@@ -56,8 +56,8 @@ function App() {
         >
           <AbsoluteGrid sm={4}>
             <Item>
-              <NutsSelector mapContainerId="map-container" />
-              <EcChartsSelector mapContainerId="map-container" />
+              <NutsSelector />
+              <EcChartsSelector />
             </Item>
           </AbsoluteGrid>
           <Grid sm={3}>

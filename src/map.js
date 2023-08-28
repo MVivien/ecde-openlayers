@@ -19,6 +19,8 @@ import { toStringHDMS } from 'ol/coordinate';
 
 import { EVENT_GROUP_SET_LAYERS } from './constants';
 
+import { consumeAllEvents, storeMapReference } from './map_events';
+
 // Elemets used to define the colormap
 const min = 0; // the smallest area
 const max = 20; // the biggest area
@@ -93,6 +95,7 @@ function selectStyle(feature) {
 }
 
 function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
+  storeMapReference(mapCointainer);
   console.debug('initMap started');
 
   // Create an overlay to anchor the hover popup to the map.
@@ -241,13 +244,14 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
   map.addInteraction(selectClick);
 
   /* Events management */
-
   mapCointainer.addEventListener(EVENT_GROUP_SET_LAYERS, function (event) {
     const { group, layers } = event.detail;
     console.debug(`${EVENT_GROUP_SET_LAYERS} event received: ${group}`);
     setLayersInGroup(group, layers);
     console.debug('ol:add-nuts event completed');
   });
+
+  consumeAllEvents();
 
   console.debug('initMap completed');
   return map;

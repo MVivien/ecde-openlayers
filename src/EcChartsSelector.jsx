@@ -8,6 +8,7 @@ import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
 
 import { EVENT_GROUP_SET_LAYERS } from './constants';
+import { registerEvent } from './map_events.js';
 
 const EC_CHARTS = [
   {
@@ -27,8 +28,9 @@ const EC_CHARTS = [
   },
 ];
 
-function EcChartsSelector({ mapContainerId }) {
-  const [ecc, setEcc] = useState(EC_CHARTS.map(() => false));
+function EcChartsSelector() {
+  // ecc is an array of true/false values, one for each EC_CHARTS item
+  const [ecc, setEcc] = useState(EC_CHARTS.map(({ name }) => name === EC_CHARTS[0].name));
 
   const handleChange = (event) => {
     const { checked, value: index } = event.target;
@@ -38,10 +40,6 @@ function EcChartsSelector({ mapContainerId }) {
   };
 
   useEffect(() => {
-    const element = document.getElementById(mapContainerId);
-    if (!element) {
-      return;
-    }
     const eccs = EC_CHARTS.filter((_, index) => ecc[index]);
     const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
       detail: {
@@ -54,8 +52,8 @@ function EcChartsSelector({ mapContainerId }) {
         })),
       },
     });
-    element.dispatchEvent(event);
-  }, [ecc, mapContainerId]);
+    registerEvent(event);
+  }, [ecc]);
   return (
     <Box>
       <FormControl fullWidth>
@@ -85,9 +83,5 @@ function EcChartsSelector({ mapContainerId }) {
     </Box>
   );
 }
-
-EcChartsSelector.propTypes = {
-  mapContainerId: PropTypes.string.isRequired,
-};
 
 export default EcChartsSelector;
