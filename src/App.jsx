@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -8,6 +8,8 @@ import Container from '@mui/material/Container';
 
 import NutsSelector from './NutsSelector.jsx';
 import EcChartsSelector from './EcChartsSelector.jsx';
+import ChildApp from './ChildApp.jsx';
+import Loading from './Loading.jsx';
 
 const Map = lazy(() => import('./Map.jsx'));
 
@@ -20,6 +22,17 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function App() {
+  const [childApp, setChildApp] = useState(false);
+
+  const handleMapClick = (lat, lon) => {
+    console.log(`Map clicked at ${lat}, ${lon}`);
+    setChildApp(true);
+  };
+
+  const handleClose = () => {
+    setChildApp(false);
+  };
+
   return (
     <>
       <CssBaseline />
@@ -29,6 +42,7 @@ function App() {
             <Item>
               <NutsSelector mapContainerId="map-container" />
               <EcChartsSelector mapContainerId="map-container" />
+              {childApp ? <ChildApp onClose={handleClose} /> : null}
             </Item>
           </Grid>
           <Grid sm={9}>
@@ -40,7 +54,7 @@ function App() {
               }}
             >
               <Suspense fallback={<Loading />}>
-                <Map />
+                <Map onClick={handleMapClick} />
               </Suspense>
             </Item>
           </Grid>
@@ -48,10 +62,6 @@ function App() {
       </Container>
     </>
   );
-}
-
-function Loading() {
-  return <h2>🌀 Loading...</h2>;
 }
 
 export default App;

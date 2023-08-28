@@ -92,10 +92,7 @@ function selectStyle(feature) {
   return selected;
 }
 
-function initMap(
-  mapCointainer,
-  { hoverContainer, hoverContent, clickContainer, clickContent, clickCloser },
-) {
+function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
   console.debug('initMap started');
 
   // Create an overlay to anchor the hover popup to the map.
@@ -107,23 +104,6 @@ function initMap(
       },
     },
   });
-
-  // Create an overlay to anchor the click popup to the map.
-  const clickOverlay = new Overlay({
-    element: clickContainer,
-    autoPan: {
-      animation: {
-        duration: 250,
-      },
-    },
-  });
-
-  // Add a click handler to hide the popup.
-  clickCloser.onclick = function () {
-    clickOverlay.setPosition(undefined);
-    clickCloser.blur();
-    return false;
-  };
 
   // select interaction working on "click"
   const selectClick = new Select({
@@ -179,7 +159,7 @@ function initMap(
   const map = new Map({
     target: mapCointainer,
     layers: [tile_layer],
-    overlays: [clickOverlay, hoverOverlay],
+    overlays: [hoverOverlay],
     view: new View({
       center: fromLonLat([10, 55]),
       zoom: 4,
@@ -251,19 +231,9 @@ function initMap(
     const hdms = toStringHDMS(toLonLat(coordinate));
     const lon = hdms.split(' ').slice(4, 9).toString().replaceAll(',', ' ');
     const lat = hdms.split(' ').slice(0, 4).toString().replaceAll(',', ' ');
-    const pixel = map.getPixelFromCoordinate(coordinate);
+    // const pixel = map.getPixelFromCoordinate(coordinate);
 
-    clickContent.innerHTML = 'You clicked here:<br>';
-    if (map.hasFeatureAtPixel(pixel)) {
-      map.forEachFeatureAtPixel(pixel, function (feature) {
-        if (feature.get('name')) {
-          clickContent.innerHTML += feature.get('name') + '<br>';
-        }
-      });
-    }
-    clickContent.innerHTML += '<code>' + lat + '<br>' + lon + '</code>';
-    hoverOverlay.setPosition(undefined);
-    clickOverlay.setPosition(coordinate);
+    onClick(lat, lon);
   }
 
   map.on('pointermove', hoverPopup);
