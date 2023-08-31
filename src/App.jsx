@@ -33,6 +33,7 @@ const AbsoluteGrid = styled(Grid)(({ theme }) => ({
 
 function App() {
   const [childApp, setChildApp] = useState(false);
+  const [rcp, setRcp] = useState('rcp_4_5');
 
   const handleMapClick = (lat, lon) => {
     console.log(`Map clicked at ${lat}, ${lon}`);
@@ -56,13 +57,13 @@ function App() {
         >
           <AbsoluteGrid sm={4}>
             <Item>
-              <NutsSelector />
+              <NutsSelector rcp={rcp}/>
               <EcChartsSelector />
             </Item>
           </AbsoluteGrid>
           <Grid sm={3}>
             <Item>
-              <OtherControls />
+              <OtherControls rcp={rcp} setRcp={setRcp}/>
               {childApp ? <ChildApp onClose={handleClose} /> : null}
             </Item>
           </Grid>
