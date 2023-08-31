@@ -11,7 +11,6 @@
     "@mui/material": "^5.14.3",
     "colormap": "^2.3.2",
     "ol": "6.15.1",
-    "ol-geocoder": "^4.2.0",
     "ol-layerswitcher": "^4.1.1",
     "ol-popup": "^5.1.0",
     "plotly.js-dist-min": "^2.26.0",

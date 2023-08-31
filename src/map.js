@@ -1,5 +1,4 @@
 import GeoJSON from 'ol/format/GeoJSON';
-import Geocoder from 'ol-geocoder';
 import Group from 'ol/layer/Group';
 import Map from 'ol/Map';
 import OSM from 'ol/source/OSM';
@@ -169,39 +168,6 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
       maxZoom: 6,
       minZoom: 3,
     }),
-  });
-
-  const geocoder = new Geocoder('nominatim', {
-    provider: 'osm',
-    lang: 'en',
-    placeholder: 'Search for ...',
-    limit: 5,
-    debug: false,
-    autoComplete: true,
-    keepOpen: true,
-  });
-  map.addControl(geocoder);
-
-  // Function removing the pin Geocoder is using by default
-  function remove_search_pin() {
-    const remove_layer_name = 'geocoder-layer';
-    const layers_to_remove = [];
-    map.getLayers().forEach(function (layer) {
-      const layer_name = layer.getProperties().name;
-      if (layer_name && layer_name.match(remove_layer_name)) {
-        layers_to_remove.push(layer);
-      }
-    });
-
-    for (let i = 0; i < layers_to_remove.length; i++) {
-      map.removeLayer(layers_to_remove[i]);
-    }
-  }
-
-  // Listen when an address is chosen
-  geocoder.on('addresschosen', function (evt) {
-    remove_search_pin();
-    clickPopup(evt);
   });
 
   // Hover popup interaction
