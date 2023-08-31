@@ -11,7 +11,8 @@ dist/*
 .env.development.local
 .env.test.local
 .env.production.local
-.idea/*
+/.idea/*
+/public/reduced_data.json
 
 .installed
 npm-debug.log*
