@@ -5,12 +5,11 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-export default function BasicSelect() {
-  const [control1, setControl1] = useState('');
+export default function BasicSelect({rcp, setRcp}) {
   const [control2, setControl2] = useState(30);
 
-  const handleChangeCtrl1 = (event) => {
-    setControl1(event.target.value);
+  const handleRcpChange = (event) => {
+    setRcp(event.target.value);
   };
 
   const handleChangeCtrl2 = (event) => {
@@ -24,13 +23,12 @@ export default function BasicSelect() {
         <Select
           labelId="control-1-label"
           id="control-1"
-          value={control1}
-          label="Control 1"
-          onChange={handleChangeCtrl1}
+          value={rcp}
+          label="RCP scenario"
+          onChange={handleRcpChange}
         >
-          <MenuItem value={10}>10</MenuItem>
-          <MenuItem value={20}>20</MenuItem>
-          <MenuItem value={30}>30</MenuItem>
+          <MenuItem value='rcp_4_5'>RCP4.5</MenuItem>
+          <MenuItem value='rcp_8_5'>RCP8.5</MenuItem>
         </Select>
       </FormControl>
       <FormControl fullWidth>
