@@ -35,8 +35,8 @@ function clamp(value, low, high) {
 }
 
 function get_value(feature) {
-  if (feature.getProperties().values) {
-    return feature.getProperties().values[0];
+  if (feature.getProperties().value) {
+    return feature.getProperties().value;
   } else {
     return null;
   }
@@ -212,13 +212,13 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     hoverContent.innerHTML = '';
     if (map.hasFeatureAtPixel(pixel)) {
       map.forEachFeatureAtPixel(pixel, function (feature) {
-        if (feature.get('name')) {
-          if (feature.get('values')) {
+        if (feature.get('NAME_LATN')) {
+          if (feature.get('value')) {
             hoverContent.innerHTML +=
-              feature.get('name') + ': ' + feature.get('values')[0].toFixed(2) + '°C <br>';
+              feature.get('NAME_LATN') + ': ' + feature.get('value').toFixed(2) + '°C <br>';
             hoverOverlay.setPosition(coordinate);
           } else {
-            hoverContent.innerHTML += feature.get('name') + ': No value <br>';
+            hoverContent.innerHTML += feature.get('NAME_LATN') + ': No value <br>';
             hoverOverlay.setPosition(coordinate);
           }
         }
