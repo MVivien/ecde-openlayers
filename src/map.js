@@ -116,8 +116,6 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
   });
   //! [feature selection]
 
-  const groups = {};
-
   // Add layer switcher
   const layerSwitcher = new LayerSwitcher({
     reverse: true,
@@ -126,15 +124,15 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     groupSelectStyle: "group",
   });
 
-  const setLayersInGroup = (group, layers = []) => {
-    if (!groups[group]) {
-    groups[group] = new Group({
-        title: 'NUTS Regions',
-        fold: 'open',
-        layers: [],
-      });
-      map.addLayer(groups[group]);
-    }
+  const switcherGroup = new Group({
+    title: 'NUTS Regions',
+    fold: 'open',
+    layers: [],
+    name: 'switcherGroup',
+  });
+  switcherGroup.title = "test";
+
+  const setLayersInGroup = (title, layers = []) => {
 
     const olLayers = layers.map((layer) => {
       const { name, type, sourceType, params = {}, sourceParams = {} } = layer;
@@ -158,9 +156,11 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
       return olLayer;
     });
 
-    groups[group].setLayers(new Collection(olLayers));
-    groups[group].changed();
-    return groups[group].getLayers().getArray();
+    switcherGroup.setLayers(new Collection(olLayers));
+    switcherGroup.setProperties({'title': title});
+    switcherGroup.changed();
+    layerSwitcher.renderPanel();
+    return switcherGroup.getLayers().getArray();
   };
 
   // Tile layer
@@ -180,6 +180,8 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
       minZoom: 3,
     }),
   });
+
+  map.addLayer(switcherGroup);
 
   // Hover popup interaction
   function hoverPopup(evt) {
@@ -228,9 +230,8 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     console.debug('ol:add-nuts event completed');
   });
 
-  consumeAllEvents();
-
   map.addControl(layerSwitcher);
+  consumeAllEvents();
 
   console.debug('initMap completed');
   return map;
