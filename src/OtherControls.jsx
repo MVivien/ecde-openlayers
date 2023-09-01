@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+
+import { EVENT_GROUP_SET_LAYERS } from './constants';
+import { registerEvent } from './map_events';
 
 export default function BasicSelect({rcp, setRcp}) {
   const [control2, setControl2] = useState(30);
@@ -11,6 +14,23 @@ export default function BasicSelect({rcp, setRcp}) {
   const handleRcpChange = (event) => {
     setRcp(event.target.value);
   };
+
+  useEffect(() => {
+    if (rcp) {
+      // const { name, url } = NUTS.find((item) => item.name === nut);
+      const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
+        detail: {
+          group: 'nuts',
+          layers: [
+             { name: "NUTS 0", type: 'vector', sourceType: 'vector', params: "NUTS 0", sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}`}},
+             { name: "NUTS 1", type: 'vector', sourceType: 'vector', params: "NUTS 1", sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}`}},
+             { name: "NUTS 2", type: 'vector', sourceType: 'vector', params: "NUTS 2", sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}`}}
+          ],
+        },
+      });
+      registerEvent(event);
+    }
+  });
 
   const handleChangeCtrl2 = (event) => {
     setControl2(event.target.value);
