@@ -20,11 +20,11 @@ export default function BasicSelect({rcp, setRcp}) {
       // const { name, url } = NUTS.find((item) => item.name === nut);
       const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
         detail: {
-          group: 'nuts',
+          group: 'NUTS Regions',
           layers: [
-             { name: "NUTS 0", type: 'vector', sourceType: 'vector', params: "NUTS 0", sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}`}},
-             { name: "NUTS 1", type: 'vector', sourceType: 'vector', params: "NUTS 1", sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}`}},
-             { name: "NUTS 2", type: 'vector', sourceType: 'vector', params: "NUTS 2", sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}`}}
+             { name: `NUTS 0`, type: 'vector', sourceType: 'vector', params: `NUTS 0`, sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}`}},
+             { name: `NUTS 1`, type: 'vector', sourceType: 'vector', params: `NUTS 1`, sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}`}},
+             { name: `NUTS 2`, type: 'vector', sourceType: 'vector', params: `NUTS 2`, sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}`}}
           ],
         },
       });
