@@ -2,6 +2,8 @@ import GeoJSON from 'ol/format/GeoJSON';
 import Group from 'ol/layer/Group';
 import Map from 'ol/Map';
 import OSM from 'ol/source/OSM';
+import LayerSwitcher from "ol-layerswitcher";
+import { BaseLayerOptions, GroupLayerOptions } from "ol-layerswitcher";
 import Overlay from 'ol/Overlay.js';
 import Select from 'ol/interaction/Select.js';
 import TileWMS from 'ol/source/TileWMS.js';
@@ -116,9 +118,19 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
 
   const groups = {};
 
+  // Add layer switcher
+  const layerSwitcher = new LayerSwitcher({
+    reverse: true,
+    activationMode: "click",
+    startActive: true,
+    groupSelectStyle: "group",
+  });
+
   const setLayersInGroup = (group, layers = []) => {
     if (!groups[group]) {
-      groups[group] = new Group({
+    groups[group] = new Group({
+        title: 'NUTS Regions',
+        fold: 'open',
         layers: [],
       });
       map.addLayer(groups[group]);
@@ -143,7 +155,6 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
         ...defaultLayerParams,
         ...params,
       });
-
       return olLayer;
     });
 
@@ -218,6 +229,8 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
   });
 
   consumeAllEvents();
+
+  map.addControl(layerSwitcher);
 
   console.debug('initMap completed');
   return map;
