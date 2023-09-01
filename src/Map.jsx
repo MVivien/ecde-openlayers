@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import { initMap } from './map.js';
 
-import 'ol-geocoder/dist/ol-geocoder.min.css';
 import 'ol-popup/src/ol-popup.css';
 import 'ol/ol.css';
 import 'ol-layerswitcher/dist/ol-layerswitcher.css';
