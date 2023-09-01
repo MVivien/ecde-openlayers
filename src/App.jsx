@@ -55,12 +55,6 @@ function App() {
             position: 'relative',
           }}
         >
-          <AbsoluteGrid sm={4}>
-            <Item>
-              <NutsSelector rcp={rcp}/>
-              <EcChartsSelector />
-            </Item>
-          </AbsoluteGrid>
           <Grid sm={3}>
             <Item>
               <OtherControls rcp={rcp} setRcp={setRcp}/>
