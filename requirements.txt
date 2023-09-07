@@ -3,3 +3,4 @@ xarray
 flask
 cdsapi
 netcdf4
+plotly
