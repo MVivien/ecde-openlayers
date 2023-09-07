@@ -1,23 +1,24 @@
 import Plotly from 'plotly.js-dist-min';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-function Chart() {
+function Chart({ rcp }) {
+  const [plotData, setPlotData] = useState(null);
+
   useEffect(() => {
-    Plotly.newPlot(
-      'plotly',
-      [
-        {
-          x: [1, 2, 3],
-          y: [2, 6, 3],
-          type: 'scatter',
-        },
-      ],
-      {
-        margin: { t: 0 },
-        autosize: true,
-      },
-    );
-  }, []);
+    async function loadPlot() {
+      const plot = await fetch(`http://localhost:5000/plot1?rcp=${rcp}`);
+      const json = await plot.json();
+      setPlotData(json);
+    }
+    loadPlot();
+  }, [rcp]);
+
+  useEffect(() => {
+    if (!plotData) {
+      return;
+    }
+    Plotly.newPlot('plotly', plotData.data, plotData.layout);
+  }, [rcp, plotData]);
 
   return <section className="plotly-chart" id="plotly" />;
 }
