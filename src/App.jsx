@@ -39,8 +39,8 @@ function App() {
 
   const handleMapClick = (lat, lon) => {
     console.log(`Map clicked at ${lat}, ${lon}`);
-    setLat(lat)
-    setLon(lon)
+    setLat(lat);
+    setLon(lon);
     setChildApp(true);
   };
 
@@ -61,8 +61,8 @@ function App() {
         >
           <Grid sm={3}>
             <Item>
-              <OtherControls rcp={rcp} setRcp={setRcp}/>
-              {childApp ? <ChildApp lat={lat} lon={lon} onClose={handleClose} /> : null}
+              <OtherControls rcp={rcp} setRcp={setRcp} />
+              {childApp ? <ChildApp lat={lat} lon={lon} onClose={handleClose} rcp={rcp} /> : null}
             </Item>
           </Grid>
           <Grid sm={9}>
