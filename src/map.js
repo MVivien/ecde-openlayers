@@ -3,7 +3,6 @@ import Group from 'ol/layer/Group';
 import Map from 'ol/Map';
 import OSM from 'ol/source/OSM';
 import LayerSwitcher from 'ol-layerswitcher';
-import { BaseLayerOptions, GroupLayerOptions } from 'ol-layerswitcher';
 import Overlay from 'ol/Overlay.js';
 import Select from 'ol/interaction/Select.js';
 import TileWMS from 'ol/source/TileWMS.js';
