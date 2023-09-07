@@ -1,6 +1,5 @@
 import geopandas as gpd
 import xarray as xr
-import json
 import os
 
 from flask import Flask, request, send_file, Response, jsonify
@@ -11,6 +10,7 @@ import plotly.io as io
 
 app = Flask(__name__)
 CORS(app)
+
 
 @app.route("/geojson")
 def generate_geojson():
