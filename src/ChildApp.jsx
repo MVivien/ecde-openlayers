@@ -9,7 +9,7 @@ import Loading from './Loading.jsx';
 
 const Chart = lazy(() => import('./Chart.jsx'));
 
-function ChildApp({ onClose, lat, lon }) {
+function ChildApp({ onClose, lat, lon, rcp }) {
   return (
     <Box className="child-app" sx={{ marginTop: '3rem' }}>
       <Typography
@@ -28,7 +28,7 @@ function ChildApp({ onClose, lat, lon }) {
         </IconButton>
       </Typography>
       <Suspense fallback={<Loading />}>
-        <Chart />
+        <Chart rcp={rcp} />
       </Suspense>
     </Box>
   );
