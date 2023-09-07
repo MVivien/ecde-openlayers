@@ -3,7 +3,7 @@ import Map from 'ol/Map.js';
 import Projection from 'ol/proj/Projection.js';
 import TileLayer from 'ol/layer/WebGLTile.js';
 import View from 'ol/View.js';
-import {getCenter} from 'ol/extent.js';
+import { getCenter } from 'ol/extent.js';
 
 const projection = new Projection({
   code: 'EPSG:32721',

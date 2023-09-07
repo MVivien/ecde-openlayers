@@ -4,7 +4,7 @@ import TileLayer from 'ol/layer/WebGLTile.js';
 //! [import]
 import View from 'ol/View.js';
 import XYZ from 'ol/source/XYZ.js';
-import {fromLonLat} from 'ol/proj.js';
+import { fromLonLat } from 'ol/proj.js';
 
 const key = 'get_your_own_D6rA4zTHduk6KOKTXzGB';
 const attributions =
@@ -21,11 +21,7 @@ const elevation = [
   [
     '*',
     0.1 * 255,
-    [
-      '+',
-      ['*', 256 * 256, ['band', 1]],
-      ['+', ['*', 256, ['band', 2]], ['band', 3]],
-    ],
+    ['+', ['*', 256 * 256, ['band', 1]], ['+', ['*', 256, ['band', 2]], ['band', 3]]],
   ],
 ];
 //! [elevation]
@@ -34,8 +30,7 @@ const elevation = [
 const layer = new TileLayer({
   opacity: 0.6,
   source: new XYZ({
-    url:
-      'https://api.maptiler.com/tiles/terrain-rgb/{z}/{x}/{y}.png?key=' + key,
+    url: 'https://api.maptiler.com/tiles/terrain-rgb/{z}/{x}/{y}.png?key=' + key,
     maxZoom: 10,
     tileSize: 512,
     crossOrigin: 'anonymous',
@@ -44,12 +39,7 @@ const layer = new TileLayer({
     variables: {
       level: 0,
     },
-    color: [
-      'case',
-      ['<=', elevation, ['var', 'level']],
-      [139, 212, 255, 1],
-      [139, 212, 255, 0],
-    ],
+    color: ['case', ['<=', elevation, ['var', 'level']], [139, 212, 255, 1], [139, 212, 255, 0]],
   },
 });
 //! [layer]
@@ -78,7 +68,7 @@ const control = document.getElementById('level');
 const output = document.getElementById('output');
 const listener = function () {
   output.innerText = control.value;
-  layer.updateStyleVariables({level: parseFloat(control.value)});
+  layer.updateStyleVariables({ level: parseFloat(control.value) });
 };
 control.addEventListener('input', listener);
 control.addEventListener('change', listener);

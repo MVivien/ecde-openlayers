@@ -2,8 +2,8 @@ import GeoJSON from 'ol/format/GeoJSON';
 import Group from 'ol/layer/Group';
 import Map from 'ol/Map';
 import OSM from 'ol/source/OSM';
-import LayerSwitcher from "ol-layerswitcher";
-import { BaseLayerOptions, GroupLayerOptions } from "ol-layerswitcher";
+import LayerSwitcher from 'ol-layerswitcher';
+import { BaseLayerOptions, GroupLayerOptions } from 'ol-layerswitcher';
 import Overlay from 'ol/Overlay.js';
 import Select from 'ol/interaction/Select.js';
 import TileWMS from 'ol/source/TileWMS.js';
@@ -119,9 +119,9 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
   // Add layer switcher
   const layerSwitcher = new LayerSwitcher({
     reverse: true,
-    activationMode: "click",
+    activationMode: 'click',
     startActive: true,
-    groupSelectStyle: "group",
+    groupSelectStyle: 'group',
   });
 
   const switcherGroup = new Group({
@@ -130,10 +130,9 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     layers: [],
     name: 'switcherGroup',
   });
-  switcherGroup.title = "test";
+  switcherGroup.title = 'test';
 
   const setLayersInGroup = (title, layers = []) => {
-
     const olLayers = layers.map((layer) => {
       const { name, type, sourceType, params = {}, sourceParams = {} } = layer;
 
@@ -157,7 +156,7 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     });
 
     switcherGroup.setLayers(new Collection(olLayers));
-    switcherGroup.setProperties({'title': title});
+    switcherGroup.setProperties({ title: title });
     switcherGroup.changed();
     layerSwitcher.renderPanel();
     return switcherGroup.getLayers().getArray();

@@ -8,10 +8,10 @@ import Snap from 'ol/interaction/Snap';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import View from 'ol/View';
-import {Fill, Stroke, Style} from 'ol/style';
+import { Fill, Stroke, Style } from 'ol/style';
 //! [imports]
 import colormap from 'colormap';
-import {getArea} from 'ol/sphere';
+import { getArea } from 'ol/sphere';
 //! [imports]
 
 //! [color]
@@ -69,26 +69,26 @@ map.addInteraction(
   new DragAndDrop({
     source: source,
     formatConstructors: [GeoJSON],
-  })
+  }),
 );
 
 map.addInteraction(
   new Modify({
     source: source,
-  })
+  }),
 );
 
 map.addInteraction(
   new Draw({
     source: source,
     type: 'Polygon',
-  })
+  }),
 );
 
 map.addInteraction(
   new Snap({
     source: source,
-  })
+  }),
 );
 
 const clear = document.getElementById('clear');
@@ -96,7 +96,7 @@ clear.addEventListener('click', function () {
   source.clear();
 });
 
-const format = new GeoJSON({featureProjection: 'EPSG:3857'});
+const format = new GeoJSON({ featureProjection: 'EPSG:3857' });
 const download = document.getElementById('download');
 source.on('change', function () {
   const features = source.getFeatures();

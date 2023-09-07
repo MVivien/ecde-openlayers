@@ -3,8 +3,8 @@
 import MVT from 'ol/format/MVT';
 import VectorTileLayer from 'ol/layer/VectorTile';
 import VectorTileSource from 'ol/source/VectorTile';
-import {Map, View} from 'ol';
-import {fromLonLat} from 'ol/proj';
+import { Map, View } from 'ol';
+import { fromLonLat } from 'ol/proj';
 //! [imports]
 
 //! [map]

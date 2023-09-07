@@ -22,7 +22,7 @@
 .ol-popup:before {
   top: 100%;
   border: solid transparent;
-  content: " ";
+  content: ' ';
   height: 0;
   width: 0;
   position: absolute;
@@ -51,7 +51,7 @@
 }
 
 .ol-click-popup-closer:after {
-  content: "✖";
+  content: '✖';
 }
 
 .ol-control button {

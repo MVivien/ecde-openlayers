@@ -1,7 +1,7 @@
 import OSM from 'ol/source/OSM';
 import TileLayer from 'ol/layer/Tile';
-import {Map, View} from 'ol';
-import {fromLonLat} from 'ol/proj';
+import { Map, View } from 'ol';
+import { fromLonLat } from 'ol/proj';
 //! [import-layer]
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -9,7 +9,7 @@ import VectorSource from 'ol/source/Vector';
 //! [import-geolocation]
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
-import {circular} from 'ol/geom/Polygon';
+import { circular } from 'ol/geom/Polygon';
 //! [import-geolocation]
 //! [import-control]
 import Control from 'ol/control/Control';
@@ -43,9 +43,7 @@ navigator.geolocation.watchPosition(
     const accuracy = circular(coords, pos.coords.accuracy);
     source.clear(true);
     source.addFeatures([
-      new Feature(
-        accuracy.transform('EPSG:4326', map.getView().getProjection())
-      ),
+      new Feature(accuracy.transform('EPSG:4326', map.getView().getProjection())),
       new Feature(new Point(fromLonLat(coords))),
     ]);
   },
@@ -54,7 +52,7 @@ navigator.geolocation.watchPosition(
   },
   {
     enableHighAccuracy: true,
-  }
+  },
 );
 //! [geolocation]
 //! [control]
@@ -72,6 +70,6 @@ locate.addEventListener('click', function () {
 map.addControl(
   new Control({
     element: locate,
-  })
+  }),
 );
 //! [control]

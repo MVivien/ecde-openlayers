@@ -1,10 +1,10 @@
 import 'ol/ol.css';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
-import {Map, View} from 'ol';
-import {Stamen, Vector as VectorSource} from 'ol/source';
-import {Tile as TileLayer, WebGLPoints as WebGLPointsLayer} from 'ol/layer';
-import {fromLonLat} from 'ol/proj';
+import { Map, View } from 'ol';
+import { Stamen, Vector as VectorSource } from 'ol/source';
+import { Tile as TileLayer, WebGLPoints as WebGLPointsLayer } from 'ol/layer';
+import { fromLonLat } from 'ol/proj';
 
 const source = new VectorSource();
 
@@ -31,7 +31,7 @@ client.onload = function () {
         mass: parseFloat(line[1]) || 0,
         year: parseInt(line[2]) || 0,
         geometry: new Point(coords),
-      })
+      }),
     );
   }
   source.addFeatures(features);
@@ -77,11 +77,7 @@ const meteorites = new WebGLPointsLayer({
     symbol: {
       symbolType: 'circle',
       //! [size]
-      size: [
-        '*',
-        decay,
-        ['+', ['*', ['clamp', ['*', ['get', 'mass'], 1 / 20000], 0, 1], 18], 8],
-      ],
+      size: ['*', decay, ['+', ['*', ['clamp', ['*', ['get', 'mass'], 1 / 20000], 0, 1], 18], 8]],
       //! [size]
       color: 'rgb(255, 0, 0)',
       //! [opacity]

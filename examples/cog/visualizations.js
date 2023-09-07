@@ -6,7 +6,7 @@ import colormap from 'colormap';
 function getColorStops(name, min, max, steps, reverse) {
   const delta = (max - min) / (steps - 1);
   const stops = new Array(steps * 2);
-  const colors = colormap({colormap: name, nshades: steps, format: 'rgba'});
+  const colors = colormap({ colormap: name, nshades: steps, format: 'rgba' });
   if (reverse) {
     colors.reverse();
   }

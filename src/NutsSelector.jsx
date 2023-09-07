@@ -16,7 +16,7 @@ const NUTS = [
   { name: 'NUTS 2', url: 'nuts_2.json' },
 ];
 
-function NutsSelector({rcp}) {
+function NutsSelector({ rcp }) {
   const [nut, setNut] = useState(NUTS[0].name);
 
   const handleChange = (event) => {
@@ -30,7 +30,12 @@ function NutsSelector({rcp}) {
         detail: {
           group: 'nuts',
           layers: [
-            { type: 'vector', sourceType: 'vector', params: { name }, sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}`} },
+            {
+              type: 'vector',
+              sourceType: 'vector',
+              params: { name },
+              sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}` },
+            },
           ],
         },
       });
