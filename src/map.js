@@ -16,10 +16,17 @@ import Collection from 'ol/Collection.js';
 import { click } from 'ol/events/condition.js';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { toStringHDMS } from 'ol/coordinate';
+import proj4 from 'proj4';
+import {register} from 'ol/proj/proj4.js';
+import {get as getProjection} from 'ol/proj.js';
 
 import { EVENT_GROUP_SET_LAYERS } from './constants';
 
 import { consumeAllEvents, storeMapReference } from './map_events';
+
+proj4.defs("EPSG:3035","+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs");
+register(proj4);
+const europeProjection = getProjection('EPSG:3035');
 
 // Elemets used to define the colormap
 const min = 0; // the smallest area
@@ -172,8 +179,9 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     layers: [tile_layer],
     overlays: [hoverOverlay],
     view: new View({
-      center: fromLonLat([10, 55]),
-      zoom: 4,
+      projection:europeProjection,
+      center: fromLonLat([40, 28]),
+      zoom: 5,
       maxZoom: 6,
       minZoom: 3,
     }),
