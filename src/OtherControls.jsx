@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
+import { MenuItem, ToggleButtonGroup, ToggleButton, Typography, Divider } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
@@ -57,17 +57,54 @@ export default function BasicSelect({ rcp, setRcp }) {
   return (
     <Box sx={{ minWidth: 120, display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <FormControl fullWidth>
-        <InputLabel id="control-1-label">Control 1</InputLabel>
-        <Select
-          labelId="control-1-label"
+        <Typography variant="subtitle1" paragraph component="label" align="left">
+          Regions
+        </Typography>
+        <ToggleButtonGroup
+          variant="outlined"
+          aria-label="outlined button group"
+          size="small"
+          // id="control-1"
+          // value={rcp}
+          // label="RCP scenario"
+          // onChange={handleRcpChange}
+        >
+          <ToggleButton value="nuts">NUTS</ToggleButton>
+          <ToggleButton value="transnational">Transnational regions</ToggleButton>
+          <ToggleButton value="europe">Europe Zones</ToggleButton>
+        </ToggleButtonGroup>
+        <Divider sx={{ m: 1 }}></Divider>
+        <Typography variant="subtitle1" paragraph component="label" align="left">
+          Time Span
+        </Typography>
+        <ToggleButtonGroup
+          variant="outlined"
+          aria-label="outlined button group"
+          // id="control-1"
+          // value={rcp}
+          // label="RCP scenario"
+          // onChange={handleRcpChange}
+        >
+          <ToggleButton value="annual">Year</ToggleButton>
+          <ToggleButton value="seasonal">Season</ToggleButton>
+          <ToggleButton value="monthly">Month</ToggleButton>
+        </ToggleButtonGroup>
+        <Divider sx={{ m: 1 }}></Divider>
+        <Typography variant="subtitle1" paragraph component="label" align="left">
+          Scenario
+        </Typography>
+        <ToggleButtonGroup
+          variant="outlined"
+          aria-label="outlined button group"
           id="control-1"
           value={rcp}
           label="RCP scenario"
           onChange={handleRcpChange}
         >
-          <MenuItem value="rcp_4_5">RCP4.5</MenuItem>
-          <MenuItem value="rcp_8_5">RCP8.5</MenuItem>
-        </Select>
+          <ToggleButton value="rcp_4_5">RCP4.5</ToggleButton>
+          <ToggleButton value="rcp_8_5">RCP8.5</ToggleButton>
+        </ToggleButtonGroup>
+        <Divider sx={{ m: 1 }}></Divider>
       </FormControl>
       <FormControl fullWidth>
         <InputLabel id="control-2-label">Control 2</InputLabel>
