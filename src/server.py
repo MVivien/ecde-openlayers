@@ -32,7 +32,7 @@ def generate_geojson():
         )
     )
     gdf = geodataframe.merge(df, on='NUTS_ID')
-
+    gdf = gdf.to_crs('epsg:3035')
     gdf.to_file("../public/reduced_data.json", driver="GeoJSON")
 
     return send_file("../public/reduced_data.json", mimetype="application/json")
