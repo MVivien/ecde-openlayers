@@ -219,9 +219,28 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     const hdms = toStringHDMS(toLonLat(coordinate));
     const lon = hdms.split(' ').slice(4, 9).toString().replaceAll(',', ' ');
     const lat = hdms.split(' ').slice(0, 4).toString().replaceAll(',', ' ');
-    // const pixel = map.getPixelFromCoordinate(coordinate);
+    const pixel = map.getPixelFromCoordinate(coordinate);
+    const output = {};
 
-    onClick(lat, lon);
+    function getRegionNamePixel(px) {
+      if (map.hasFeatureAtPixel(px)) {
+        map.forEachFeatureAtPixel(px, function (feature) {
+          output.region = feature.get('NUTS_ID');
+          }
+          );
+/*          if (feature.get('NUTS_ID')) {
+            return 'test3'; // feature.get('NUTS_ID')
+          } else {
+            return 'no nuts id';
+          }
+          });*/
+      } else {
+        output.region = 'no feature';
+      }
+    return output.region
+    }
+
+    onClick(lat, lon, getRegionNamePixel(pixel));
   }
 
   map.on('pointermove', hoverPopup);
