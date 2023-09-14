@@ -9,7 +9,7 @@ import Loading from './Loading.jsx';
 
 const Chart = lazy(() => import('./Chart.jsx'));
 
-function ChildApp({ onClose, lat, lon, rcp }) {
+function ChildApp({ onClose, lat, lon, region, rcp }) {
   return (
     <Box className="child-app" sx={{ marginTop: '3rem' }}>
       <Typography
@@ -22,13 +22,13 @@ function ChildApp({ onClose, lat, lon, rcp }) {
           alignItems: 'center',
         }}
       >
-        Child app at {lat} {lon}
+        Child app at {lat} {lon} {region}
         <IconButton aria-label="delete" onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </Typography>
       <Suspense fallback={<Loading />}>
-        <Chart rcp={rcp} />
+        <Chart rcp={rcp} region={region}/>
       </Suspense>
     </Box>
   );
