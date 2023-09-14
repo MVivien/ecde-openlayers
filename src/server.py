@@ -41,18 +41,19 @@ def generate_geojson():
 @app.route("/plot1")
 def plot1():
     rcp = request.args.get("rcp", type=str)
+    region = request.args.get("region", type=str)
 
     filename = os.path.join(
             os.path.dirname(__file__),
             f"../public/01_mean_temperature_projections-seasonal-{rcp}-rca4-ec_earth-r12i1p1-layer-nuts_0-latitude-v0.2.nc"
         )
     data = xr.open_dataarray(filename)
-    sel = data.sel(nuts="FR") - 273.15
+    sel = data.sel(nuts=region) - 273.15
     fig = px.line(sel.data)
 
-    io.write_json(fig, "../public/plot1.json")
+    io.write_json(fig, f"../public/plot1_{rcp}.json")
 
-    return send_file("../public/plot1.json", mimetype="application/json")
+    return send_file(f"../public/plot1_{rcp}.json", mimetype="application/json")
 
 
 if __name__ == "__main__":
