@@ -34,13 +34,15 @@ const AbsoluteGrid = styled(Grid)(({ theme }) => ({
 function App() {
   const [childApp, setChildApp] = useState(false);
   const [rcp, setRcp] = useState('rcp_4_5');
+  const [region, setRegion] = useState('FR');
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
 
-  const handleMapClick = (lat, lon) => {
-    console.log(`Map clicked at ${lat}, ${lon}`);
+  const handleMapClick = (lat, lon, region) => {
+    console.log(`Map clicked at ${lat}, ${lon}, ${region}`);
     setLat(lat);
     setLon(lon);
+    setRegion(region);
     setChildApp(true);
   };
 
@@ -62,7 +64,7 @@ function App() {
           <Grid sm={3}>
             <Item>
               <OtherControls rcp={rcp} setRcp={setRcp} />
-              {childApp ? <ChildApp lat={lat} lon={lon} onClose={handleClose} rcp={rcp} /> : null}
+              {childApp ? <ChildApp lat={lat} lon={lon} region={region} onClose={handleClose} rcp={rcp} /> : null}
             </Item>
           </Grid>
           <Grid sm={9}>
