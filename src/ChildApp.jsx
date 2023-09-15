@@ -28,7 +28,7 @@ function ChildApp({ onClose, lat, lon, region, rcp }) {
         </IconButton>
       </Typography>
       <Suspense fallback={<Loading />}>
-        <Chart rcp={rcp} region={region}/>
+        <Chart rcp={rcp} region={region} />
       </Suspense>
     </Box>
   );
