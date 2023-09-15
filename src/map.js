@@ -17,14 +17,17 @@ import { click } from 'ol/events/condition.js';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { toStringHDMS } from 'ol/coordinate';
 import proj4 from 'proj4';
-import {register} from 'ol/proj/proj4.js';
-import {get as getProjection} from 'ol/proj.js';
+import { register } from 'ol/proj/proj4.js';
+import { get as getProjection } from 'ol/proj.js';
 
 import { EVENT_GROUP_SET_LAYERS } from './constants';
 
 import { consumeAllEvents, storeMapReference } from './map_events';
 
-proj4.defs("EPSG:3035","+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs");
+proj4.defs(
+  'EPSG:3035',
+  '+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs',
+);
 register(proj4);
 const europeProjection = getProjection('EPSG:3035');
 
@@ -131,38 +134,58 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
   });
 
   const switcherGroup = new Group({
-    title: 'NUTS Regions',
+    title: '',
     fold: 'open',
     layers: [],
     name: 'switcherGroup',
   });
-  switcherGroup.title = 'test';
 
   const setLayersInGroup = (title, layers = []) => {
-    const olLayers = layers.map((layer) => {
-      const { name, type, sourceType, params = {}, sourceParams = {} } = layer;
+    let layerList;
 
-      const { cls: SourceCls, defaultParams: defaultSourceParams } = possibleSourcesCls[sourceType];
-      const { cls: LayerCls, defaultParams: defaultLayerParams } = possibleLayersCls[type];
+    if (switcherGroup.getProperties().title == title) {
 
-      const source = new SourceCls({
-        ...defaultSourceParams,
-        ...sourceParams,
+      layerList = switcherGroup.getLayersArray();
+      layers.forEach(function (_, i) {
+        const { name, type, sourceType, params = {}, sourceParams = {} } = layers[i];
+        const { cls: SourceCls, defaultParams: defaultSourceParams } =
+          possibleSourcesCls[sourceType];
+        const { cls: LayerCls, defaultParams: defaultLayerParams } = possibleLayersCls[type];
+
+        const source = new SourceCls({
+          ...defaultSourceParams,
+          ...layers[i].sourceParams,
+        });
+        layerList[i].setSource(source);
+        layerList[i].setStyle(featureStyle);
+      });
+    } else {
+      layerList = layers.map((layer) => {
+        const { name, type, sourceType, params = {}, sourceParams = {} } = layer;
+
+        const { cls: SourceCls, defaultParams: defaultSourceParams } =
+          possibleSourcesCls[sourceType];
+        const { cls: LayerCls, defaultParams: defaultLayerParams } = possibleLayersCls[type];
+        const source = new SourceCls({
+          ...defaultSourceParams,
+          ...sourceParams,
+        });
+
+        const olLayer = new LayerCls({
+          source: source,
+          title: name,
+          type: 'base',
+          style: featureStyle,
+          ...defaultLayerParams,
+          ...params,
+        });
+        return olLayer;
       });
 
-      const olLayer = new LayerCls({
-        source: source,
-        title: name,
-        type: 'base',
-        style: featureStyle,
-        ...defaultLayerParams,
-        ...params,
-      });
-      return olLayer;
-    });
+      switcherGroup.setLayers(new Collection(layerList));
+      switcherGroup.setProperties({ title: title });
+    }
 
-    switcherGroup.setLayers(new Collection(olLayers));
-    switcherGroup.setProperties({ title: title });
     switcherGroup.changed();
     layerSwitcher.renderPanel();
     return switcherGroup.getLayers().getArray();
@@ -179,7 +202,7 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     layers: [tile_layer],
     overlays: [hoverOverlay],
     view: new View({
-      projection:europeProjection,
+      projection: europeProjection,
       center: fromLonLat([40, 28]),
       zoom: 5,
       maxZoom: 6,
@@ -226,9 +249,8 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
       if (map.hasFeatureAtPixel(px)) {
         map.forEachFeatureAtPixel(px, function (feature) {
           output.region = feature.get('NUTS_ID');
-          }
-          );
-/*          if (feature.get('NUTS_ID')) {
+        });
+        /*          if (feature.get('NUTS_ID')) {
             return 'test3'; // feature.get('NUTS_ID')
           } else {
             return 'no nuts id';
@@ -237,7 +259,7 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
       } else {
         output.region = 'no feature';
       }
-    return output.region
+      return output.region;
     }
 
     onClick(lat, lon, getRegionNamePixel(pixel));
