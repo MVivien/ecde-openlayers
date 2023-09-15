@@ -1,7 +1,7 @@
 import Plotly from 'plotly.js-dist-min';
 import { useEffect, useState } from 'react';
 
-function Chart({ rcp, region } ) {
+function Chart({ rcp, region }) {
   const [plotData, setPlotData] = useState(null);
 
   useEffect(() => {
