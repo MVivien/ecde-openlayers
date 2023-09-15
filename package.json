@@ -23,7 +23,7 @@
     "test": "npm run lint",
     "start": "vite serve",
     "build": "vite build",
-    "prettier": "prettier /src/* --write"
+    "prettier": "prettier src/* --write"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.4",
