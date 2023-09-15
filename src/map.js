@@ -144,7 +144,6 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     let layerList;
 
     if (switcherGroup.getProperties().title == title) {
-
       layerList = switcherGroup.getLayersArray();
       layers.forEach(function (_, i) {
         const { name, type, sourceType, params = {}, sourceParams = {} } = layers[i];

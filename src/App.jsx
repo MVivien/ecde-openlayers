@@ -32,6 +32,7 @@ const AbsoluteGrid = styled(Grid)(({ theme }) => ({
 function App() {
   const [childApp, setChildApp] = useState(false);
   const [rcp, setRcp] = useState('rcp_4_5');
+  const [horizon, setHorizon] = useState('2011-01-01');
   const [region, setRegion] = useState('FR');
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
@@ -61,7 +62,7 @@ function App() {
         >
           <Grid sm={3}>
             <Item>
-              <OtherControls rcp={rcp} setRcp={setRcp} />
+              <OtherControls rcp={rcp} setRcp={setRcp} horizon={horizon} setHorizon={setHorizon} />
               {childApp ? (
                 <ChildApp lat={lat} lon={lon} region={region} onClose={handleClose} rcp={rcp} />
               ) : null}

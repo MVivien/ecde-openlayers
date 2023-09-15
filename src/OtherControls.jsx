@@ -8,11 +8,14 @@ import Select from '@mui/material/Select';
 import { EVENT_GROUP_SET_LAYERS } from './constants';
 import { registerEvent } from './map_events';
 
-export default function BasicSelect({ rcp, setRcp }) {
+export default function BasicSelect({ rcp, setRcp, horizon, setHorizon }) {
   const [control2, setControl2] = useState(30);
 
   const handleRcpChange = (event) => {
     setRcp(event.target.value);
+  };
+  const handleHorizonChange = (event) => {
+    setHorizon(event.target.value);
   };
 
   useEffect(() => {
@@ -29,28 +32,34 @@ export default function BasicSelect({ rcp, setRcp }) {
               type: 'vector',
               sourceType: 'vector',
               params: `NUTS 2`,
-              sourceParams: { url: `http://localhost:5000/geojson/nuts_2?rcp=${rcp}` },
+              sourceParams: {
+                url: `http://localhost:5000/geojson/nuts_2?rcp=${rcp}&horizon=${horizon}`,
+              },
             },
             {
               name: `NUTS 1`,
               type: 'vector',
               sourceType: 'vector',
               params: `NUTS 1`,
-              sourceParams: { url: `http://localhost:5000/geojson/nuts_1?rcp=${rcp}` },
+              sourceParams: {
+                url: `http://localhost:5000/geojson/nuts_1?rcp=${rcp}&horizon=${horizon}`,
+              },
             },
             {
               name: `NUTS 0`,
               type: 'vector',
               sourceType: 'vector',
               params: `NUTS 0`,
-              sourceParams: { url: `http://localhost:5000/geojson/nuts_0?rcp=${rcp}` },
+              sourceParams: {
+                url: `http://localhost:5000/geojson/nuts_0?rcp=${rcp}&horizon=${horizon}`,
+              },
             },
           ],
         },
       });
       registerEvent(event);
     }
-  }, [rcp]);
+  }, [rcp, horizon]);
 
   const handleChangeCtrl2 = (event) => {
     setControl2(event.target.value);
@@ -94,18 +103,23 @@ export default function BasicSelect({ rcp, setRcp }) {
         <Divider sx={{ m: 1 }}></Divider>
       </FormControl>
       <FormControl fullWidth>
-        <InputLabel id="control-2-label">Control 2</InputLabel>
-        <Select
-          labelId="control-2-label"
-          id="control-2"
-          value={control2}
-          label="Control 2"
-          onChange={handleChangeCtrl2}
+        <Typography variant="subtitle1" paragraph component="label" align="left">
+          Time Horizon
+        </Typography>
+        <ToggleButtonGroup
+          variant="outlined"
+          aria-label="outlined button group"
+          id="time-hprizon"
+          value={horizon}
+          label="Time Horizon"
+          onChange={handleHorizonChange}
+          size="small"
         >
-          <MenuItem value={15}>15</MenuItem>
-          <MenuItem value={30}>30</MenuItem>
-          <MenuItem value={45}>45</MenuItem>
-        </Select>
+          <ToggleButton value="1981-01-01">1981-2010</ToggleButton>
+          <ToggleButton value="2011-01-01">2011-2040</ToggleButton>
+          <ToggleButton value="2041-01-01">2041-2070</ToggleButton>
+          <ToggleButton value="2071-01-01">2071-2100</ToggleButton>
+        </ToggleButtonGroup>
       </FormControl>
     </Box>
   );

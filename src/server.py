@@ -16,13 +16,19 @@ CORS(app)
 @app.route("/geojson/<path:layer>")
 def generate_geojson(layer):
     rcp = request.args.get("rcp", type=str)
+    horizon = request.args.get("horizon", type=str)
 
-    url = f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-projections-yearly-layer-{layer}-latitude-v0.3-30yrs_average.nc"
+    if horizon == "1981-01-01":
+      url = f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-historical-yearly-layer-{layer}-latitude-1959-2022-v0.2-30yrs_average.nc"
+    else:
+      url = f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-projections-yearly-layer-{layer}-latitude-v0.3-30yrs_average.nc"
 
     with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
 
-    data = data.sel(scenario=rcp, avg_period='2011-01-01')
+    if "avg_period" in data.dims:
+        data = data.sel(scenario=rcp, avg_period=horizon)
+
     df = data.to_dataframe().reset_index()
     df = df.rename(columns={"nuts": "NUTS_ID", data.name: "value"})
 
