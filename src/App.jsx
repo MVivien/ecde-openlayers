@@ -6,8 +6,6 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 import Container from '@mui/material/Container';
 
-import NutsSelector from './NutsSelector.jsx';
-import EcChartsSelector from './EcChartsSelector.jsx';
 import ChildApp from './ChildApp.jsx';
 import Loading from './Loading.jsx';
 import OtherControls from './OtherControls.jsx';
@@ -64,7 +62,9 @@ function App() {
           <Grid sm={3}>
             <Item>
               <OtherControls rcp={rcp} setRcp={setRcp} />
-              {childApp ? <ChildApp lat={lat} lon={lon} region={region} onClose={handleClose} rcp={rcp} /> : null}
+              {childApp ? (
+                <ChildApp lat={lat} lon={lon} region={region} onClose={handleClose} rcp={rcp} />
+              ) : null}
             </Item>
           </Grid>
           <Grid sm={9}>
