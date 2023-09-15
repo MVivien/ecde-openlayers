@@ -16,39 +16,41 @@ export default function BasicSelect({ rcp, setRcp }) {
   };
 
   useEffect(() => {
+    console.log(rcp);
     if (rcp) {
+      console.log('controler');
       // const { name, url } = NUTS.find((item) => item.name === nut);
       const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
         detail: {
           group: 'NUTS Regions',
           layers: [
             {
-              name: `NUTS 0`,
+              name: `NUTS 2`,
               type: 'vector',
               sourceType: 'vector',
-              params: `NUTS 0`,
-              sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}` },
+              params: `NUTS 2`,
+              sourceParams: { url: `http://localhost:5000/geojson/nuts_2?rcp=${rcp}` },
             },
             {
               name: `NUTS 1`,
               type: 'vector',
               sourceType: 'vector',
               params: `NUTS 1`,
-              sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}` },
+              sourceParams: { url: `http://localhost:5000/geojson/nuts_1?rcp=${rcp}` },
             },
             {
-              name: `NUTS 2`,
+              name: `NUTS 0`,
               type: 'vector',
               sourceType: 'vector',
-              params: `NUTS 2`,
-              sourceParams: { url: `http://localhost:5000/geojson?rcp=${rcp}` },
+              params: `NUTS 0`,
+              sourceParams: { url: `http://localhost:5000/geojson/nuts_0?rcp=${rcp}` },
             },
           ],
         },
       });
       registerEvent(event);
     }
-  });
+  }, [rcp]);
 
   const handleChangeCtrl2 = (event) => {
     setControl2(event.target.value);
@@ -60,15 +62,7 @@ export default function BasicSelect({ rcp, setRcp }) {
         <Typography variant="subtitle1" paragraph component="label" align="left">
           Regions
         </Typography>
-        <ToggleButtonGroup
-          variant="outlined"
-          aria-label="outlined button group"
-          size="small"
-          // id="control-1"
-          // value={rcp}
-          // label="RCP scenario"
-          // onChange={handleRcpChange}
-        >
+        <ToggleButtonGroup variant="outlined" aria-label="outlined button group" size="small">
           <ToggleButton value="nuts">NUTS</ToggleButton>
           <ToggleButton value="transnational">Transnational regions</ToggleButton>
           <ToggleButton value="europe">Europe Zones</ToggleButton>
@@ -77,14 +71,7 @@ export default function BasicSelect({ rcp, setRcp }) {
         <Typography variant="subtitle1" paragraph component="label" align="left">
           Time Span
         </Typography>
-        <ToggleButtonGroup
-          variant="outlined"
-          aria-label="outlined button group"
-          // id="control-1"
-          // value={rcp}
-          // label="RCP scenario"
-          // onChange={handleRcpChange}
-        >
+        <ToggleButtonGroup variant="outlined" aria-label="outlined button group">
           <ToggleButton value="annual">Year</ToggleButton>
           <ToggleButton value="seasonal">Season</ToggleButton>
           <ToggleButton value="monthly">Month</ToggleButton>
