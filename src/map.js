@@ -222,7 +222,10 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
         if (feature.get('NAME_LATN')) {
           if (feature.get('value')) {
             hoverContent.innerHTML +=
-              feature.get('NAME_LATN') + ': ' + feature.get('value').toFixed(2) + '°C <br>';
+              feature.get('NAME_LATN') +
+              ': ' +
+              feature.get('value').toFixed(2) +
+              ' tropical nights <br>';
             hoverOverlay.setPosition(coordinate);
           } else {
             hoverContent.innerHTML += feature.get('NAME_LATN') + ': No value <br>';

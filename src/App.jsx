@@ -33,8 +33,9 @@ function App() {
   const [childApp, setChildApp] = useState(false);
   const [rcp, setRcp] = useState('rcp_4_5');
   const [horizon, setHorizon] = useState('2011-01-01');
-  const [region, setRegion] = useState('FR');
+  const [region, setRegion] = useState('');
   const [selectedLayer, setSelectedLayer] = useState('');
+  const [temporalAggregation, setTemporalAggregation] = useState('yearly');
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
 
@@ -64,9 +65,24 @@ function App() {
         >
           <Grid sm={3}>
             <Item>
-              <OtherControls rcp={rcp} setRcp={setRcp} horizon={horizon} setHorizon={setHorizon} />
+              <OtherControls
+                rcp={rcp}
+                setRcp={setRcp}
+                horizon={horizon}
+                setHorizon={setHorizon}
+                temporalAggregation={temporalAggregation}
+                setTemporalAggregation={setTemporalAggregation}
+              />
               {childApp ? (
-                <ChildApp onClose={handleClose} lat={lat} lon={lon} region={region} selectedLayer={selectedLayer} rcp={rcp} />
+                <ChildApp
+                  onClose={handleClose}
+                  lat={lat}
+                  lon={lon}
+                  region={region}
+                  selectedLayer={selectedLayer}
+                  temporalAggregation={temporalAggregation}
+                  rcp={rcp}
+                />
               ) : null}
             </Item>
           </Grid>

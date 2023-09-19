@@ -8,7 +8,14 @@ import Select from '@mui/material/Select';
 import { EVENT_GROUP_SET_LAYERS } from './constants';
 import { registerEvent } from './map_events';
 
-export default function BasicSelect({ rcp, setRcp, horizon, setHorizon }) {
+export default function BasicSelect({
+  rcp,
+  setRcp,
+  horizon,
+  setHorizon,
+  temporalAggregation,
+  setTemporalAggregation,
+}) {
   const [control2, setControl2] = useState(30);
 
   const handleRcpChange = (event) => {
@@ -16,6 +23,9 @@ export default function BasicSelect({ rcp, setRcp, horizon, setHorizon }) {
   };
   const handleHorizonChange = (event) => {
     setHorizon(event.target.value);
+  };
+  const handleTemporalAggregation = (event) => {
+    setTemporalAggregation(event.target.value);
   };
 
   useEffect(() => {
@@ -33,7 +43,7 @@ export default function BasicSelect({ rcp, setRcp, horizon, setHorizon }) {
               sourceType: 'vector',
               params: `NUTS 2`,
               sourceParams: {
-                url: `http://localhost:5000/geojson/nuts_2?rcp=${rcp}&horizon=${horizon}`,
+                url: `http://localhost:5000/geojson/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}`,
               },
             },
             {
@@ -42,7 +52,7 @@ export default function BasicSelect({ rcp, setRcp, horizon, setHorizon }) {
               sourceType: 'vector',
               params: `NUTS 1`,
               sourceParams: {
-                url: `http://localhost:5000/geojson/nuts_1?rcp=${rcp}&horizon=${horizon}`,
+                url: `http://localhost:5000/geojson/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}`,
               },
             },
             {
@@ -51,7 +61,7 @@ export default function BasicSelect({ rcp, setRcp, horizon, setHorizon }) {
               sourceType: 'vector',
               params: `NUTS 0`,
               sourceParams: {
-                url: `http://localhost:5000/geojson/nuts_0?rcp=${rcp}&horizon=${horizon}`,
+                url: `http://localhost:5000/geojson/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}`,
               },
             },
           ],
@@ -59,7 +69,7 @@ export default function BasicSelect({ rcp, setRcp, horizon, setHorizon }) {
       });
       registerEvent(event);
     }
-  }, [rcp, horizon]);
+  }, [rcp, horizon, temporalAggregation]);
 
   const handleChangeCtrl2 = (event) => {
     setControl2(event.target.value);
@@ -80,8 +90,13 @@ export default function BasicSelect({ rcp, setRcp, horizon, setHorizon }) {
         <Typography variant="subtitle1" paragraph component="label" align="left">
           Time Span
         </Typography>
-        <ToggleButtonGroup variant="outlined" aria-label="outlined button group">
-          <ToggleButton value="annual">Year</ToggleButton>
+        <ToggleButtonGroup
+          variant="outlined"
+          aria-label="outlined button group"
+          value={temporalAggregation}
+          onChange={handleTemporalAggregation}
+        >
+          <ToggleButton value="yearly">Year</ToggleButton>
           <ToggleButton value="seasonal">Season</ToggleButton>
           <ToggleButton value="monthly">Month</ToggleButton>
         </ToggleButtonGroup>
