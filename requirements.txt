@@ -5,3 +5,5 @@ cdsapi
 netcdf4
 plotly
 fsspec
+requests
+aiohttp
