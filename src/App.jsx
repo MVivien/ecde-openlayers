@@ -34,14 +34,16 @@ function App() {
   const [rcp, setRcp] = useState('rcp_4_5');
   const [horizon, setHorizon] = useState('2011-01-01');
   const [region, setRegion] = useState('FR');
+  const [selectedLayer, setSelectedLayer] = useState('');
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
 
-  const handleMapClick = (lat, lon, region) => {
-    console.log(`Map clicked at ${lat}, ${lon}, ${region}`);
+  const handleMapClick = (lat, lon, region, selectedLayer) => {
+    console.log(`Map clicked at ${lat}, ${lon}, ${region}, ${selectedLayer}`);
     setLat(lat);
     setLon(lon);
     setRegion(region);
+    setSelectedLayer(selectedLayer);
     setChildApp(true);
   };
 
@@ -64,7 +66,7 @@ function App() {
             <Item>
               <OtherControls rcp={rcp} setRcp={setRcp} horizon={horizon} setHorizon={setHorizon} />
               {childApp ? (
-                <ChildApp lat={lat} lon={lon} region={region} onClose={handleClose} rcp={rcp} />
+                <ChildApp onClose={handleClose} lat={lat} lon={lon} region={region} selectedLayer={selectedLayer} rcp={rcp} />
               ) : null}
             </Item>
           </Grid>

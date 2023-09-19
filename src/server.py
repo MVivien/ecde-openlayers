@@ -54,18 +54,18 @@ def generate_geojson(layer):
 def plot1():
     rcp = request.args.get("rcp", type=str)
     region = request.args.get("region", type=str)
+    selected_layer = request.args.get("selectedLayer", type=str)
 
-    filename = os.path.join(
-            os.path.dirname(__file__),
-            f"../public/01_mean_temperature_projections-seasonal-{rcp}-rca4-ec_earth-r12i1p1-layer-nuts_0-latitude-v0.2.nc"
-        )
-    data = xr.open_dataarray(filename)
-    sel = data.sel(nuts=region) - 273.15
+    url = f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-projections-yearly-layer-nuts_{selected_layer}-latitude-v0.3-quantiles.nc"
+
+    with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
+        data = xr.open_dataarray(f.name)
+    sel = data.sel(nuts=region, scenario=rcp, quantile=0.5)
     fig = px.line(sel.data)
 
-    io.write_json(fig, f"../public/plot1_{rcp}.json")
+    io.write_json(fig, f"../public/plot1_{rcp}_{selected_layer}.json")
 
-    return send_file(f"../public/plot1_{rcp}.json", mimetype="application/json")
+    return send_file(f"../public/plot1_{rcp}_{selected_layer}.json", mimetype="application/json")
 
 
 if __name__ == "__main__":

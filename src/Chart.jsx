@@ -1,17 +1,17 @@
 import Plotly from 'plotly.js-dist-min';
 import { useEffect, useState } from 'react';
 
-function Chart({ rcp, region }) {
+function Chart({ rcp, region, selectedLayer }) {
   const [plotData, setPlotData] = useState(null);
 
   useEffect(() => {
     async function loadPlot() {
-      const plot = await fetch(`http://localhost:5000/plot1?rcp=${rcp}&region=${region}`);
+      const plot = await fetch(`http://localhost:5000/plot1?rcp=${rcp}&region=${region}&selectedLayer=${selectedLayer}`);
       const json = await plot.json();
       setPlotData(json);
     }
     loadPlot();
-  }, [rcp, region]);
+  }, [rcp, region, selectedLayer]);
 
   useEffect(() => {
     if (!plotData) {

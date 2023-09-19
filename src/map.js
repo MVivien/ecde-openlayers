@@ -243,25 +243,26 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     const lat = hdms.split(' ').slice(0, 4).toString().replaceAll(',', ' ');
     const pixel = map.getPixelFromCoordinate(coordinate);
     const output = {};
+    let region = '';
+    let selectedLayer = '';
 
-    function getRegionNamePixel(px) {
-      if (map.hasFeatureAtPixel(px)) {
-        map.forEachFeatureAtPixel(px, function (feature) {
-          output.region = feature.get('NUTS_ID');
-        });
-        /*          if (feature.get('NUTS_ID')) {
+    if (map.hasFeatureAtPixel(pixel)) {
+      map.forEachFeatureAtPixel(pixel, function (feature) {
+        region = feature.get('NUTS_ID');
+        selectedLayer = feature.get('LEVL_CODE');
+      });
+      /*          if (feature.get('NUTS_ID')) {
             return 'test3'; // feature.get('NUTS_ID')
           } else {
             return 'no nuts id';
           }
           });*/
-      } else {
-        output.region = 'no feature';
-      }
-      return output.region;
+    } else {
+      region = 'no region selected';
+      layer = 'no layer selected';
     }
 
-    onClick(lat, lon, getRegionNamePixel(pixel));
+    onClick(lat, lon, region, selectedLayer);
   }
 
   map.on('pointermove', hoverPopup);
