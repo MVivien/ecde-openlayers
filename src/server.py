@@ -68,9 +68,9 @@ def plot1():
     sel = data.sel(nuts=region, scenario=rcp, quantile=0.5)
     fig = px.line(sel.data)
 
-    io.write_json(fig, f"../public/plot1_{rcp}_{selected_layer}.json")
+    io.write_json(fig, os.path.join(os.path.dirname(__file__), f"../public/plot1_{rcp}_{selected_layer}.json"))
 
-    return send_file(f"../public/plot1_{rcp}_{selected_layer}.json", mimetype="application/json")
+    return send_file(os.path.join(os.path.dirname(__file__), f"../public/plot1_{rcp}_{selected_layer}.json"), mimetype="application/json")
 
 
 if __name__ == "__main__":
