@@ -20,6 +20,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import ToggleButton from "@mui/material/ToggleButton";
 import Stack from "@mui/material/Stack";
 import Slider from "@mui/material/Slider";
+import { ToggleButtonGroup } from '@mui/material';
 
 const Map = lazy(() => import('./Map.jsx'));
 
@@ -39,6 +40,37 @@ const AbsoluteGrid = styled(Grid)(({ theme }) => ({
   marginRight: theme.spacing(2),
   marginTop: theme.spacing(2),
 }));
+
+function App() {
+  const [childApp, setChildApp] = useState(false);
+  const [rcp, setRcp] = useState('rcp_4_5');
+  const [horizon, setHorizon] = useState('2011-01-01');
+  const [region, setRegion] = useState('');
+  const [selectedLayer, setSelectedLayer] = useState('');
+  const [temporalAggregation, setTemporalAggregation] = useState('yearly');
+  const [lat, setLat] = useState('');
+  const [lon, setLon] = useState('');
+
+  const handleMapClick = (lat, lon, region, selectedLayer) => {
+    console.log(`Map clicked at ${lat}, ${lon}, ${region}, ${selectedLayer}`);
+    setLat(lat);
+    setLon(lon);
+    setRegion(region);
+    setSelectedLayer(selectedLayer);
+    setChildApp(true);
+  };
+
+  const handleClose = () => {
+    setChildApp(false);
+  };
+
+  const handleRcpChange = (event) => {
+    setRcp(event.target.value);
+  };
+
+  const handleHorizonChange = (event) => {
+    setHorizon(event.target.value);
+  };
 
 const cities = [
   { label: "Bologna", year: 1994 },
@@ -85,52 +117,44 @@ const inputs = (
       Thresold
     </Typography>
     <Slider defaultValue={30} min={1} max={100} aria-label="Thresold" />
-    <Typography component="label" variant="caption">
-      Scenario
-    </Typography>
-    <Stack spacing={0} alignItems="left" direction="row">
-      <ToggleButton size="small" defaultValue="1">
-        RCP 4.5
-      </ToggleButton>
-      <ToggleButton size="small" defaultValue="2">
-        RCP 8.5
-      </ToggleButton>
-    </Stack>
+    <Typography variant="subtitle1" paragraph component="label" align="left">
+          Scenario
+        </Typography>
+        <ToggleButtonGroup
+          variant="outlined"
+          aria-label="outlined button group"
+          id="control-1"
+          value={rcp}
+          label="RCP scenario"
+          onChange={handleRcpChange}
+        >
+          <ToggleButton value="rcp_4_5">RCP4.5</ToggleButton>
+          <ToggleButton value="rcp_8_5">RCP8.5</ToggleButton>
+        </ToggleButtonGroup>
     <FormControl fullWidth>
       <InputLabel id="demo2-label">Time horizon</InputLabel>
-      <Select labelId="demo2-label" id="demo2" defaultValue={10} label="First select">
-        <MenuItem value={10}>1981 - 2101</MenuItem>
-        <MenuItem value={20}>2011 - 2040</MenuItem>
-        <MenuItem value={30}>2041 - 2070</MenuItem>
+      <Select labelId="demo2-label" id="demo2" defaultValue={horizon} label="Time Horizon" onChange={handleHorizonChange}>
+        <MenuItem value={"1981-01-01"}>1981 - 2101</MenuItem>
+        <MenuItem value={"2011-01-01"}>2011 - 2040</MenuItem>
+        <MenuItem value={"2041-01-01"}>2041 - 2070</MenuItem>
+        <MenuItem value={"2071-01-01"}>2071 - 2100</MenuItem>
       </Select>
     </FormControl>
   </>
 );
 
-const outputs = <SubApp />;
+const outputs = childApp ? (
+  <ChildApp
+    onClose={handleClose}
+    lat={lat}
+    lon={lon}
+    region={region}
+    selectedLayer={selectedLayer}
+    temporalAggregation={temporalAggregation}
+    rcp={rcp}
+  />
+) : null;
 
-function App() {
-  const [childApp, setChildApp] = useState(false);
-  const [rcp, setRcp] = useState('rcp_4_5');
-  const [horizon, setHorizon] = useState('2011-01-01');
-  const [region, setRegion] = useState('');
-  const [selectedLayer, setSelectedLayer] = useState('');
-  const [temporalAggregation, setTemporalAggregation] = useState('yearly');
-  const [lat, setLat] = useState('');
-  const [lon, setLon] = useState('');
-
-  const handleMapClick = (lat, lon, region, selectedLayer) => {
-    console.log(`Map clicked at ${lat}, ${lon}, ${region}, ${selectedLayer}`);
-    setLat(lat);
-    setLon(lon);
-    setRegion(region);
-    setSelectedLayer(selectedLayer);
-    setChildApp(true);
-  };
-
-  const handleClose = () => {
-    setChildApp(false);
-  };
 
   return (
     <>
@@ -153,17 +177,6 @@ function App() {
                 temporalAggregation={temporalAggregation}
                 setTemporalAggregation={setTemporalAggregation}
               />
-              {childApp ? (
-                <ChildApp
-                  onClose={handleClose}
-                  lat={lat}
-                  lon={lon}
-                  region={region}
-                  selectedLayer={selectedLayer}
-                  temporalAggregation={temporalAggregation}
-                  rcp={rcp}
-                />
-              ) : null}
             </Item>
           </Grid>
           <Grid sm={9}>
