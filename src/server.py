@@ -43,14 +43,14 @@ def generate_geojson(layer):
     geodataframe = gpd.read_file(
         os.path.join(
             os.path.dirname(__file__),
-            f'../public/NUTS_RG_60M_2021_4326_{level}.geojson'
+            f'/NUTS_RG_60M_2021_4326_{level}.geojson'
         )
     )
     gdf = geodataframe.merge(df, on='NUTS_ID')
     gdf = gdf.to_crs('epsg:3035')
-    gdf.to_file("../public/reduced_data.json", driver="GeoJSON")
+    gdf.to_file(os.path.join(os.path.dirname(__file__), "../public/reduced_data.json"), driver="GeoJSON")
 
-    return send_file("../public/reduced_data.json", mimetype="application/json")
+    return send_file(os.path.join(os.path.dirname(__file__), "../public/reduced_data.json"), mimetype="application/json")
 
 
 @app.route("/plot1")
