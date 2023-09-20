@@ -43,7 +43,7 @@ def generate_geojson(layer):
     geodataframe = gpd.read_file(
         os.path.join(
             os.path.dirname(__file__),
-            f'/NUTS_RG_60M_2021_4326_{level}.geojson'
+            f'../public/NUTS_RG_60M_2021_4326_{level}.geojson'
         )
     )
     gdf = geodataframe.merge(df, on='NUTS_ID')
