@@ -62,6 +62,10 @@ function App() {
     setRegion(region);
     setSelectedLayer(selectedLayer);
     setChildApp(true);
+    setOpenPlotDrawer(true);
+    setTimeout(()=>{
+      setOpenPlotDrawer(null);
+    });
   };
 
   const handleClose = () => {
@@ -219,6 +223,7 @@ const outputs = childApp ? (
             inputsXs="top"
             outputsMd="right"
             outputsXs="bottom"
+            openPlotDrawer={openPlotDrawer}
           >
             <Map onClick={handleMapClick} />
           </MapApplication>

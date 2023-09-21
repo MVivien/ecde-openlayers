@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import PropTypes from "prop-types";
 import { useDrag } from "@use-gesture/react";
 
@@ -142,6 +142,7 @@ export default function MapApplication({
   inputsXs = "bottom",
   outputsMd = "left",
   outputsXs = "bottom",
+  openPlotDrawer,
 }) {
   const theme = useTheme();
   const large = useMediaQuery(theme.breakpoints.up("md"));
@@ -172,6 +173,13 @@ export default function MapApplication({
   const outputsOnTop =
     ((outputsMd === "top" && large) || (outputsXs === "top" && !large)) && Boolean(outputs);
   const somethingOnTop = inputsOnTop || outputsOnTop;
+
+  //open Right drawer on map click
+  useEffect(() => {
+      if(openPlotDrawer){
+        setDrawerRight(true);
+      }
+  },[openPlotDrawer]);
 
   const drawerContainerStyles = large
     ? {
