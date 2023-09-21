@@ -115,7 +115,7 @@ function useDrawer(open = false, position = "left") {
     const reference = position === "left" || position === "right" ? mx : my;
     if (down || Math.abs(reference) < 20) {
       // hysteresis
-      return;
+        return;
     }
     if (reference > 0 && (position === "left" || position === "top") && !drawer) {
       setDrawer(true);
@@ -150,7 +150,7 @@ export default function MapApplication({
   const [drawerRight, setDrawerRight, bindRight] = useDrawer(false, "right");
   const [drawerTop, setDrawerTop, bindTop] = useDrawer(false, "top");
 
-  const drawerBleeding = 34;
+  const drawerBleeding = 60;
 
   const inputsOnLeft =
     ((inputsMd === "left" && large) || (inputsXs === "left" && !large)) && Boolean(inputs);

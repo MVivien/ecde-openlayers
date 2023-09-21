@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, lazy, useState, useEffect } from 'react';
 
 import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -21,6 +21,9 @@ import ToggleButton from "@mui/material/ToggleButton";
 import Stack from "@mui/material/Stack";
 import Slider from "@mui/material/Slider";
 import { ToggleButtonGroup } from '@mui/material';
+
+import { EVENT_GROUP_SET_LAYERS } from './constants';
+import { registerEvent } from './map_events';
 
 const Map = lazy(() => import('./Map.jsx'));
 
@@ -50,6 +53,7 @@ function App() {
   const [temporalAggregation, setTemporalAggregation] = useState('yearly');
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
+  const [openPlotDrawer, setOpenPlotDrawer] = useState(false);
 
   const handleMapClick = (lat, lon, region, selectedLayer) => {
     console.log(`Map clicked at ${lat}, ${lon}, ${region}, ${selectedLayer}`);
@@ -72,6 +76,52 @@ function App() {
     setHorizon(event.target.value);
   };
 
+  const handleTemporalAggregation = (event) => {
+    setTemporalAggregation(event.target.value);
+  };
+
+  useEffect(() => {
+    if (rcp) {
+      console.log('controler');
+      // const { name, url } = NUTS.find((item) => item.name === nut);
+      const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
+        detail: {
+          group: 'NUTS Regions',
+          layers: [
+            {
+              name: `NUTS 2`,
+              type: 'vector',
+              sourceType: 'vector',
+              params: `NUTS 2`,
+              sourceParams: {
+                url: `http://localhost:5000/geojson/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}`,
+              },
+            },
+            {
+              name: `NUTS 1`,
+              type: 'vector',
+              sourceType: 'vector',
+              params: `NUTS 1`,
+              sourceParams: {
+                url: `http://localhost:5000/geojson/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}`,
+              },
+            },
+            {
+              name: `NUTS 0`,
+              type: 'vector',
+              sourceType: 'vector',
+              params: `NUTS 0`,
+              sourceParams: {
+                url: `http://localhost:5000/geojson/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}`,
+              },
+            },
+          ],
+        },
+      });
+      registerEvent(event);
+    }
+  }, [rcp, horizon, temporalAggregation]);
+
 const cities = [
   { label: "Bologna", year: 1994 },
   { label: "Ferrara", year: 1972 },
@@ -89,34 +139,33 @@ const cities = [
 
 const inputs = (
   <>
-    <Typography component="label" variant="caption">
-      Europe Agroglimatic Indicators Explorer
-    </Typography>
-    <Autocomplete
-      disablePortal
-      id="combo-box-demo"
-      options={cities}
-      renderInput={(params) => <TextField {...params} label="City" />}
-      fullWidth
-    />
-    <Typography component="label" variant="caption">
-      Variable
+    <Typography variant="subtitle1" paragraph component="label" align="left">
+          Regions
     </Typography>
     <Stack spacing={2} justifyContent="center" direction="row">
-      <ToggleButton size="small" defaultValue="1">
-        Heath stress
+      <ToggleButton size="small" defaultValue="nuts">
+        NUTS
       </ToggleButton>
-      <ToggleButton size="small" defaultValue="2">
-        Thresold
+      <ToggleButton size="small" defaultValue="transnational">
+        Transnational regions
       </ToggleButton>
-      <ToggleButton size="small" defaultValue="3">
-        Scenario
+      <ToggleButton size="small" defaultValue="europe">
+        Europe Zones
       </ToggleButton>
     </Stack>
-    <Typography component="label" variant="caption">
-      Thresold
+    <Typography variant="subtitle1" paragraph component="label" align="left">
+          Time span
     </Typography>
-    <Slider defaultValue={30} min={1} max={100} aria-label="Thresold" />
+    <ToggleButtonGroup
+          variant="outlined"
+          aria-label="outlined button group"
+          value={temporalAggregation}
+          onChange={handleTemporalAggregation}
+        >
+          <ToggleButton value="yearly">Year</ToggleButton>
+          <ToggleButton value="seasonal">Season</ToggleButton>
+          <ToggleButton value="monthly">Month</ToggleButton>
+        </ToggleButtonGroup>
     <Typography variant="subtitle1" paragraph component="label" align="left">
           Scenario
         </Typography>
@@ -131,9 +180,11 @@ const inputs = (
           <ToggleButton value="rcp_4_5">RCP4.5</ToggleButton>
           <ToggleButton value="rcp_8_5">RCP8.5</ToggleButton>
         </ToggleButtonGroup>
+        <Typography variant="subtitle1" paragraph component="label" align="left">
+          Time Horizon
+        </Typography>
     <FormControl fullWidth>
-      <InputLabel id="demo2-label">Time horizon</InputLabel>
-      <Select labelId="demo2-label" id="demo2" defaultValue={horizon} label="Time Horizon" onChange={handleHorizonChange}>
+      <Select labelId="demo2-label" id="demo2" defaultValue={horizon} onChange={handleHorizonChange}>
         <MenuItem value={"1981-01-01"}>1981 - 2101</MenuItem>
         <MenuItem value={"2011-01-01"}>2011 - 2040</MenuItem>
         <MenuItem value={"2041-01-01"}>2041 - 2070</MenuItem>
@@ -159,50 +210,20 @@ const outputs = childApp ? (
   return (
     <>
       <CssBaseline />
-      <Container maxWidth="lg">
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            position: 'relative',
-          }}
-        >
-          <Grid sm={3}>
-            <Item>
-              <OtherControls
-                rcp={rcp}
-                setRcp={setRcp}
-                horizon={horizon}
-                setHorizon={setHorizon}
-                temporalAggregation={temporalAggregation}
-                setTemporalAggregation={setTemporalAggregation}
-              />
-            </Item>
-          </Grid>
-          <Grid sm={9}>
-            <Item
-              sx={{
-                height: 'calc(100svh - var(--Grid-rowSpacing))',
-                display: 'flex',
-                alignItems: 'stretch',
-              }}
-            >
-              <Suspense fallback={<Loading />}>
-                <MapApplication
-                  inputs={inputs}
-                  outputs={outputs}
-                  inputsMd="left"
-                  inputsXs="top"
-                  outputsMd="right"
-                  outputsXs="bottom"
-                >
-                  <Map onClick={handleMapClick} />
-                </MapApplication>
-              </Suspense>
-            </Item>
-          </Grid>
-        </Grid>
-      </Container>
+      <Grid>
+        <Suspense fallback={<Loading />}>
+          <MapApplication
+            inputs={inputs}
+            outputs={outputs}
+            inputsMd="left"
+            inputsXs="top"
+            outputsMd="right"
+            outputsXs="bottom"
+          >
+            <Map onClick={handleMapClick} />
+          </MapApplication>
+        </Suspense>
+      </Grid>
     </>
   );
 }
