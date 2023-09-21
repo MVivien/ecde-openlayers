@@ -325,7 +325,7 @@ export default function MapApplication({
       sx={{
         ".MuiPaper-root": {
           overflow: "visible",
-          height: `calc(50% - ${drawerBleeding}px)`,
+          //height: `calc(50% - ${drawerBleeding}px)`, //decrease the height on mobile
         },
       }}
     >
@@ -375,7 +375,7 @@ export default function MapApplication({
       sx={{
         ".MuiPaper-root": {
           overflow: "visible",
-          height: `calc(40% - ${drawerBleeding}px)`,
+          //height: `calc(40% - ${drawerBleeding}px)`, //decrease the height on mobile
         },
       }}
     >
