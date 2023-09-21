@@ -145,7 +145,7 @@ export default function MapApplication({
   openPlotDrawer,
 }) {
   const theme = useTheme();
-  const large = useMediaQuery(theme.breakpoints.up("md"));
+  const [large, setLarge] = useState(true);
   const [drawerLeft, setDrawerLeft, bindLeft] = useDrawer(false, "left");
   const [drawerBottom, setDrawerBottom, bindBottom] = useDrawer(false, "bottom");
   const [drawerRight, setDrawerRight, bindRight] = useDrawer(false, "right");
@@ -176,10 +176,19 @@ export default function MapApplication({
 
   //open Right drawer on map click
   useEffect(() => {
-      if(openPlotDrawer){
-        setDrawerRight(true);
+      if(window.outerWidth<800){
+        setLarge(false);
       }
-  },[openPlotDrawer]);
+      if(openPlotDrawer){
+        if(large){
+          setDrawerRight(true);
+        }
+        else{
+          setDrawerBottom(true);
+        }
+        
+      }
+  },[openPlotDrawer,large]);
 
   const drawerContainerStyles = large
     ? {
@@ -404,7 +413,7 @@ export default function MapApplication({
       {swipeableDrawerBottom}
       {swipeableDrawerTop}
       <AppContainer>
-        <Grid xs={12} sx={{ flexGrow: 1 }}>
+        <Grid sx={{ flexGrow: 1 }}>
           {children}
         </Grid>
       </AppContainer>
