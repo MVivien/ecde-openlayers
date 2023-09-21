@@ -147,13 +147,13 @@ const inputs = (
           Regions
     </Typography>
     <Stack spacing={2} justifyContent="center" direction="row">
-      <ToggleButton size="small" defaultValue="nuts">
+      <ToggleButton size="small" defaultValue="nuts" value="nuts">
         NUTS
       </ToggleButton>
-      <ToggleButton size="small" defaultValue="transnational">
+      <ToggleButton size="small" defaultValue="transnational" value="transnational">
         Transnational regions
       </ToggleButton>
-      <ToggleButton size="small" defaultValue="europe">
+      <ToggleButton size="small" defaultValue="europe" value="europe">
         Europe Zones
       </ToggleButton>
     </Stack>
