@@ -5,21 +5,21 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 import Container from '@mui/material/Container';
-import MapApplication from "./components/MapApplication";
-import SubApp from "./SubApp";
+import MapApplication from './components/MapApplication';
+import SubApp from './SubApp';
 import ChildApp from './ChildApp.jsx';
 import Loading from './Loading.jsx';
 import OtherControls from './OtherControls.jsx';
-import { Typography } from "@mui/material";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import ToggleButton from "@mui/material/ToggleButton";
-import Stack from "@mui/material/Stack";
-import Slider from "@mui/material/Slider";
+import { Typography } from '@mui/material';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import ToggleButton from '@mui/material/ToggleButton';
+import Stack from '@mui/material/Stack';
+import Slider from '@mui/material/Slider';
 import { ToggleButtonGroup } from '@mui/material';
 
 import { EVENT_GROUP_SET_LAYERS } from './constants';
@@ -63,7 +63,7 @@ function App() {
     setSelectedLayer(selectedLayer);
     setChildApp(true);
     setOpenPlotDrawer(true);
-    setTimeout(()=>{
+    setTimeout(() => {
       setOpenPlotDrawer(null);
     });
   };
@@ -126,90 +126,88 @@ function App() {
     }
   }, [rcp, horizon, temporalAggregation]);
 
-const cities = [
-  { label: "Bologna", year: 1994 },
-  { label: "Ferrara", year: 1972 },
-  { label: "Reading", year: 1974 },
-  { label: "Bonn", year: 2008 },
-  { label: "Milan", year: 1957 },
-  { label: "Rome", year: 1993 },
-  { label: "London", year: 1994 },
-  {
-    label: "Madrid",
-    year: 2003,
-  },
-  { label: "Amsterdam", year: 1966 },
-];
+  const cities = [
+    { label: 'Bologna', year: 1994 },
+    { label: 'Ferrara', year: 1972 },
+    { label: 'Reading', year: 1974 },
+    { label: 'Bonn', year: 2008 },
+    { label: 'Milan', year: 1957 },
+    { label: 'Rome', year: 1993 },
+    { label: 'London', year: 1994 },
+    {
+      label: 'Madrid',
+      year: 2003,
+    },
+    { label: 'Amsterdam', year: 1966 },
+  ];
 
-const inputs = (
-  <>
-    <Typography variant="subtitle1" paragraph component="label" align="left">
-          Regions
-    </Typography>
-    <Stack spacing={2} justifyContent="center" direction="row">
-      <ToggleButton size="small" defaultValue="nuts" value="nuts">
-        NUTS
-      </ToggleButton>
-      <ToggleButton size="small" defaultValue="transnational" value="transnational">
-        Transnational regions
-      </ToggleButton>
-      <ToggleButton size="small" defaultValue="europe" value="europe">
-        Europe Zones
-      </ToggleButton>
-    </Stack>
-    <Typography variant="subtitle1" paragraph component="label" align="left">
-          Time span
-    </Typography>
-    <ToggleButtonGroup
-          variant="outlined"
-          aria-label="outlined button group"
-          value={temporalAggregation}
-          onChange={handleTemporalAggregation}
-        >
-          <ToggleButton value="yearly">Year</ToggleButton>
-          <ToggleButton value="seasonal">Season</ToggleButton>
-          <ToggleButton value="monthly">Month</ToggleButton>
-        </ToggleButtonGroup>
-    <Typography variant="subtitle1" paragraph component="label" align="left">
-          Scenario
-        </Typography>
-        <ToggleButtonGroup
-          variant="outlined"
-          aria-label="outlined button group"
-          id="control-1"
-          value={rcp}
-          label="RCP scenario"
-          onChange={handleRcpChange}
-        >
-          <ToggleButton value="rcp_4_5">RCP4.5</ToggleButton>
-          <ToggleButton value="rcp_8_5">RCP8.5</ToggleButton>
-        </ToggleButtonGroup>
-        <Typography variant="subtitle1" paragraph component="label" align="left">
-          Time Horizon
-        </Typography>
-    <FormControl fullWidth>
-      <Select labelId="demo2-label" id="demo2" defaultValue={horizon} onChange={handleHorizonChange}>
-        <MenuItem value={"1981-01-01"}>1981 - 2101</MenuItem>
-        <MenuItem value={"2011-01-01"}>2011 - 2040</MenuItem>
-        <MenuItem value={"2041-01-01"}>2041 - 2070</MenuItem>
-        <MenuItem value={"2071-01-01"}>2071 - 2100</MenuItem>
-      </Select>
-    </FormControl>
-  </>
-);
+  const inputs = (
+    <>
+      <Typography variant="subtitle1" paragraph component="label" align="left">
+        Regions
+      </Typography>
+      <ToggleButtonGroup variant="outlined" aria-label="outlined button group">
+        <ToggleButton value="nuts">NUTS</ToggleButton>
+        <ToggleButton value="transnational">Transnational regions</ToggleButton>
+        <ToggleButton value="europe">Europe Zones</ToggleButton>
+      </ToggleButtonGroup>
+      <Typography variant="subtitle1" paragraph component="label" align="left">
+        Time span
+      </Typography>
+      <ToggleButtonGroup
+        variant="outlined"
+        aria-label="outlined button group"
+        value={temporalAggregation}
+        onChange={handleTemporalAggregation}
+      >
+        <ToggleButton value="yearly">Year</ToggleButton>
+        <ToggleButton value="seasonal">Season</ToggleButton>
+        <ToggleButton value="monthly">Month</ToggleButton>
+      </ToggleButtonGroup>
+      <Typography variant="subtitle1" paragraph component="label" align="left">
+        Scenario
+      </Typography>
+      <ToggleButtonGroup
+        variant="outlined"
+        aria-label="outlined button group"
+        id="control-1"
+        value={rcp}
+        label="RCP scenario"
+        onChange={handleRcpChange}
+      >
+        <ToggleButton value="rcp_4_5">RCP4.5</ToggleButton>
+        <ToggleButton value="rcp_8_5">RCP8.5</ToggleButton>
+      </ToggleButtonGroup>
+      <Typography variant="subtitle1" paragraph component="label" align="left">
+        Time Horizon
+      </Typography>
+      <ToggleButtonGroup
+        variant="outlined"
+        aria-label="outlined button group"
+        id="time-hprizon"
+        value={horizon}
+        label="Time Horizon"
+        onChange={handleHorizonChange}
+      >
+        <ToggleButton value="1981-01-01">1981-2010</ToggleButton>
+        <ToggleButton value="2011-01-01">2011-2040</ToggleButton>
+        <ToggleButton value="2041-01-01">2041-2070</ToggleButton>
+        <ToggleButton value="2071-01-01">2071-2100</ToggleButton>
+      </ToggleButtonGroup>
+    </>
+  );
 
-const outputs = childApp ? (
-  <ChildApp
-    onClose={handleClose}
-    lat={lat}
-    lon={lon}
-    region={region}
-    selectedLayer={selectedLayer}
-    temporalAggregation={temporalAggregation}
-    rcp={rcp}
-  />
-) : null;
-
+  const outputs = childApp ? (
+    <ChildApp
+      onClose={handleClose}
+      lat={lat}
+      lon={lon}
+      region={region}
+      selectedLayer={selectedLayer}
+      temporalAggregation={temporalAggregation}
+      rcp={rcp}
+    />
+  ) : null;
 
   return (
     <>
