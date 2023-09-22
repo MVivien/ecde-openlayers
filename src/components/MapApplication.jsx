@@ -143,13 +143,17 @@ export default function MapApplication({
   outputsMd = 'left',
   outputsXs = 'bottom',
   openPlotDrawer,
+  drawerDefaultLeft = false,
+  drawerDefaultBottom = false,
+  drawerDefaultRight = false,
+  drawerDefaultTop = false,
 }) {
   const theme = useTheme();
   const [large, setLarge] = useState(true);
-  const [drawerLeft, setDrawerLeft, bindLeft] = useDrawer(false, 'left');
-  const [drawerBottom, setDrawerBottom, bindBottom] = useDrawer(false, 'bottom');
-  const [drawerRight, setDrawerRight, bindRight] = useDrawer(false, 'right');
-  const [drawerTop, setDrawerTop, bindTop] = useDrawer(false, 'top');
+  const [drawerLeft, setDrawerLeft, bindLeft] = useDrawer(drawerDefaultLeft, 'left');
+  const [drawerBottom, setDrawerBottom, bindBottom] = useDrawer(drawerDefaultBottom, 'bottom');
+  const [drawerRight, setDrawerRight, bindRight] = useDrawer(drawerDefaultRight, 'right');
+  const [drawerTop, setDrawerTop, bindTop] = useDrawer(drawerDefaultTop, 'top');
 
   const drawerBleeding = 60;
 
@@ -194,7 +198,7 @@ export default function MapApplication({
         flexDirection: 'column',
         gap: theme.spacing(2),
         padding: theme.spacing(2, 0),
-        minWidth: '25dvw',
+        minWidth: '20dvw',
       }
     : {
         display: 'flex',
@@ -422,4 +426,8 @@ MapApplication.propTypes = {
   inputsXs: PropTypes.oneOf(['left', 'right', 'top', 'bottom']),
   outputsMd: PropTypes.oneOf(['left', 'right', 'top', 'bottom']),
   outputsXs: PropTypes.oneOf(['left', 'right', 'top', 'bottom']),
+  drawerDefaultLeft: PropTypes.bool,
+  drawerDefaultTop: PropTypes.bool,
+  drawerDefaultRight: PropTypes.bool,
+  drawerDefaultBottom: PropTypes.bool,
 };

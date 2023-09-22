@@ -222,6 +222,8 @@ function App() {
             outputsMd="right"
             outputsXs="bottom"
             openPlotDrawer={openPlotDrawer}
+            drawerDefaultLeft={true}
+            drawerDefaultTop={true}
           >
             <Map onClick={handleMapClick} />
           </MapApplication>
