@@ -1,39 +1,39 @@
-import { useState , useEffect} from "react";
-import PropTypes from "prop-types";
-import { useDrag } from "@use-gesture/react";
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { useDrag } from '@use-gesture/react';
 
-import { grey } from "@mui/material/colors";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import { useTheme } from "@mui/material/styles";
+import { grey } from '@mui/material/colors';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import { useTheme } from '@mui/material/styles';
 
-import AppContainer from "./AppContainer";
-import SubAppContainer from "./SubAppContainer";
+import AppContainer from './AppContainer';
+import SubAppContainer from './SubAppContainer';
 
-function PullerContainer({ children, drawerBleeding, position = "left", ...rest }) {
-  if (position === "left" || position === "right") {
+function PullerContainer({ children, drawerBleeding, position = 'left', ...rest }) {
+  if (position === 'left' || position === 'right') {
     return (
       <Box
         sx={{
-          alignItems: "center",
+          alignItems: 'center',
           backgroundColor: grey[200],
           borderBottomRightRadius: 8,
           borderTopRightRadius: 8,
           bottom: 0,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          position: "absolute",
-          ...(position === "left" && { right: -drawerBleeding }),
-          ...(position === "right" && { left: -drawerBleeding }),
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          position: 'absolute',
+          ...(position === 'left' && { right: -drawerBleeding }),
+          ...(position === 'right' && { left: -drawerBleeding }),
           top: 0,
-          visibility: "visible",
+          visibility: 'visible',
           width: drawerBleeding,
           zIndex: 1,
-          "&:hover": {
-            cursor: "pointer",
+          '&:hover': {
+            cursor: 'pointer',
             backgroundColor: grey[100],
           },
         }}
@@ -48,19 +48,19 @@ function PullerContainer({ children, drawerBleeding, position = "left", ...rest 
       <Box
         sx={{
           backgroundColor: grey[200],
-          position: "absolute",
-          ...(position === "bottom" && { top: -drawerBleeding }),
-          ...(position === "top" && { bottom: -drawerBleeding }),
+          position: 'absolute',
+          ...(position === 'bottom' && { top: -drawerBleeding }),
+          ...(position === 'top' && { bottom: -drawerBleeding }),
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
-          visibility: "visible",
+          visibility: 'visible',
           right: 0,
           left: 0,
           zIndex: 1,
-          touchAction: "none",
+          touchAction: 'none',
           height: drawerBleeding,
-          "&:hover": {
-            cursor: "pointer",
+          '&:hover': {
+            cursor: 'pointer',
             backgroundColor: grey[100],
           },
         }}
@@ -72,17 +72,17 @@ function PullerContainer({ children, drawerBleeding, position = "left", ...rest 
   }
 }
 
-function Puller({ children, position = "left", ...rest }) {
-  if (position === "left" || position === "right") {
+function Puller({ children, position = 'left', ...rest }) {
+  if (position === 'left' || position === 'right') {
     return (
       <Box
         sx={{
           width: 6,
-          height: "25vh",
+          height: '25vh',
           backgroundColor: grey[600],
           borderRadius: 3,
-          position: "absolute",
-          top: "calc(50% - 25vh / 2)",
+          position: 'absolute',
+          top: 'calc(50% - 25vh / 2)',
         }}
         {...rest}
       >
@@ -97,9 +97,9 @@ function Puller({ children, position = "left", ...rest }) {
           height: 6,
           backgroundColor: grey[600],
           borderRadius: 3,
-          position: "absolute",
+          position: 'absolute',
           top: 8,
-          left: "calc(50% - 15px)",
+          left: 'calc(50% - 15px)',
         }}
         {...rest}
       >
@@ -109,21 +109,21 @@ function Puller({ children, position = "left", ...rest }) {
   }
 }
 
-function useDrawer(open = false, position = "left") {
+function useDrawer(open = false, position = 'left') {
   const [drawer, setDrawer] = useState(open);
   const bind = useDrag(({ down, movement: [mx, my] }) => {
-    const reference = position === "left" || position === "right" ? mx : my;
+    const reference = position === 'left' || position === 'right' ? mx : my;
     if (down || Math.abs(reference) < 20) {
       // hysteresis
-        return;
+      return;
     }
-    if (reference > 0 && (position === "left" || position === "top") && !drawer) {
+    if (reference > 0 && (position === 'left' || position === 'top') && !drawer) {
       setDrawer(true);
-    } else if (reference < 0 && (position === "right" || position === "bottom") && !drawer) {
+    } else if (reference < 0 && (position === 'right' || position === 'bottom') && !drawer) {
       setDrawer(true);
-    } else if (reference < 0 && (position === "left" || position === "top") && drawer) {
+    } else if (reference < 0 && (position === 'left' || position === 'top') && drawer) {
       setDrawer(false);
-    } else if (reference > 0 && (position === "right" || position === "bottom") && drawer) {
+    } else if (reference > 0 && (position === 'right' || position === 'bottom') && drawer) {
       setDrawer(false);
     }
   });
@@ -138,72 +138,70 @@ export default function MapApplication({
   inputs = null,
   outputs = null,
   children,
-  inputsMd = "left",
-  inputsXs = "bottom",
-  outputsMd = "left",
-  outputsXs = "bottom",
+  inputsMd = 'left',
+  inputsXs = 'bottom',
+  outputsMd = 'left',
+  outputsXs = 'bottom',
   openPlotDrawer,
 }) {
   const theme = useTheme();
   const [large, setLarge] = useState(true);
-  const [drawerLeft, setDrawerLeft, bindLeft] = useDrawer(false, "left");
-  const [drawerBottom, setDrawerBottom, bindBottom] = useDrawer(false, "bottom");
-  const [drawerRight, setDrawerRight, bindRight] = useDrawer(false, "right");
-  const [drawerTop, setDrawerTop, bindTop] = useDrawer(false, "top");
+  const [drawerLeft, setDrawerLeft, bindLeft] = useDrawer(false, 'left');
+  const [drawerBottom, setDrawerBottom, bindBottom] = useDrawer(false, 'bottom');
+  const [drawerRight, setDrawerRight, bindRight] = useDrawer(false, 'right');
+  const [drawerTop, setDrawerTop, bindTop] = useDrawer(false, 'top');
 
   const drawerBleeding = 60;
 
   const inputsOnLeft =
-    ((inputsMd === "left" && large) || (inputsXs === "left" && !large)) && Boolean(inputs);
+    ((inputsMd === 'left' && large) || (inputsXs === 'left' && !large)) && Boolean(inputs);
   const outputsOnLeft =
-    ((outputsMd === "left" && large) || (outputsXs === "left" && !large)) && Boolean(outputs);
+    ((outputsMd === 'left' && large) || (outputsXs === 'left' && !large)) && Boolean(outputs);
   const somethingOnLeft = inputsOnLeft || outputsOnLeft;
   const inputsOnBottom =
-    ((inputsMd === "bottom" && large) || (inputsXs === "bottom" && !large)) && Boolean(inputs);
+    ((inputsMd === 'bottom' && large) || (inputsXs === 'bottom' && !large)) && Boolean(inputs);
   const outputsOnBottom =
-    ((outputsMd === "bottom" && large) || (outputsXs === "bottom" && !large)) && Boolean(outputs);
+    ((outputsMd === 'bottom' && large) || (outputsXs === 'bottom' && !large)) && Boolean(outputs);
   const somethingOnBottom = inputsOnBottom || outputsOnBottom;
   const inputsOnRight =
-    ((inputsMd === "right" && large) || (inputsXs === "right" && !large)) && Boolean(inputs);
+    ((inputsMd === 'right' && large) || (inputsXs === 'right' && !large)) && Boolean(inputs);
   const outputsOnRight =
-    ((outputsMd === "right" && large) || (outputsXs === "right" && !large)) && Boolean(outputs);
+    ((outputsMd === 'right' && large) || (outputsXs === 'right' && !large)) && Boolean(outputs);
   const somethingOnRight = inputsOnRight || outputsOnRight;
   const inputsOnTop =
-    ((inputsMd === "top" && large) || (inputsXs === "top" && !large)) && Boolean(inputs);
+    ((inputsMd === 'top' && large) || (inputsXs === 'top' && !large)) && Boolean(inputs);
   const outputsOnTop =
-    ((outputsMd === "top" && large) || (outputsXs === "top" && !large)) && Boolean(outputs);
+    ((outputsMd === 'top' && large) || (outputsXs === 'top' && !large)) && Boolean(outputs);
   const somethingOnTop = inputsOnTop || outputsOnTop;
 
   //open Right drawer on map click
   useEffect(() => {
-      if(window.outerWidth<800){
-        setLarge(false);
+    if (window.outerWidth < 800) {
+      setLarge(false);
+    }
+    if (openPlotDrawer) {
+      if (large) {
+        setDrawerRight(true);
+      } else {
+        setDrawerBottom(true);
       }
-      if(openPlotDrawer){
-        if(large){
-          setDrawerRight(true);
-        }
-        else{
-          setDrawerBottom(true);
-        }
-        
-      }
-  },[openPlotDrawer,large]);
+    }
+  }, [openPlotDrawer, large]);
 
   const drawerContainerStyles = large
     ? {
-        display: "flex",
-        flexDirection: "column",
+        display: 'flex',
+        flexDirection: 'column',
         gap: theme.spacing(2),
         padding: theme.spacing(2, 0),
-        minWidth: "25dvw",
+        minWidth: '25dvw',
       }
     : {
-        display: "flex",
-        flexDirection: "column",
+        display: 'flex',
+        flexDirection: 'column',
         gap: theme.spacing(2),
         padding: theme.spacing(2, 0),
-        width: "100%",
+        width: '100%',
       };
 
   const swipeableDrawerLeft = somethingOnLeft ? (
@@ -223,8 +221,8 @@ export default function MapApplication({
         keepMounted: true,
       }}
       sx={{
-        ".MuiPaper-root": {
-          overflow: "visible",
+        '.MuiPaper-root': {
+          overflow: 'visible',
         },
       }}
     >
@@ -245,7 +243,7 @@ export default function MapApplication({
         fullHeight
         sx={{
           backgroundColor: grey[200],
-          overflowY: "auto",
+          overflowY: 'auto',
         }}
       >
         <Box sx={drawerContainerStyles}>
@@ -273,8 +271,8 @@ export default function MapApplication({
         keepMounted: true,
       }}
       sx={{
-        ".MuiPaper-root": {
-          overflow: "visible",
+        '.MuiPaper-root': {
+          overflow: 'visible',
         },
       }}
     >
@@ -295,7 +293,7 @@ export default function MapApplication({
         fullHeight
         sx={{
           backgroundColor: grey[200],
-          overflowY: "auto",
+          overflowY: 'auto',
         }}
       >
         <Box sx={drawerContainerStyles}>
@@ -323,8 +321,8 @@ export default function MapApplication({
         keepMounted: true,
       }}
       sx={{
-        ".MuiPaper-root": {
-          overflow: "visible",
+        '.MuiPaper-root': {
+          overflow: 'visible',
           //height: `calc(50% - ${drawerBleeding}px)`, //decrease the height on mobile
         },
       }}
@@ -345,7 +343,7 @@ export default function MapApplication({
       <SubAppContainer
         sx={{
           backgroundColor: grey[200],
-          overflowY: "auto",
+          overflowY: 'auto',
         }}
       >
         <Box sx={drawerContainerStyles}>
@@ -373,8 +371,8 @@ export default function MapApplication({
         keepMounted: true,
       }}
       sx={{
-        ".MuiPaper-root": {
-          overflow: "visible",
+        '.MuiPaper-root': {
+          overflow: 'visible',
           //height: `calc(40% - ${drawerBleeding}px)`, //decrease the height on mobile
         },
       }}
@@ -395,7 +393,7 @@ export default function MapApplication({
       <SubAppContainer
         sx={{
           backgroundColor: grey[200],
-          overflowY: "auto",
+          overflowY: 'auto',
         }}
       >
         <Box sx={drawerContainerStyles}>
@@ -413,17 +411,15 @@ export default function MapApplication({
       {swipeableDrawerBottom}
       {swipeableDrawerTop}
       <AppContainer>
-        <Grid sx={{ flexGrow: 1 }}>
-          {children}
-        </Grid>
+        <Grid sx={{ flexGrow: 1 }}>{children}</Grid>
       </AppContainer>
     </>
   );
 }
 
 MapApplication.propTypes = {
-  inputsMd: PropTypes.oneOf(["left", "right", "top", "bottom"]),
-  inputsXs: PropTypes.oneOf(["left", "right", "top", "bottom"]),
-  outputsMd: PropTypes.oneOf(["left", "right", "top", "bottom"]),
-  outputsXs: PropTypes.oneOf(["left", "right", "top", "bottom"]),
+  inputsMd: PropTypes.oneOf(['left', 'right', 'top', 'bottom']),
+  inputsXs: PropTypes.oneOf(['left', 'right', 'top', 'bottom']),
+  outputsMd: PropTypes.oneOf(['left', 'right', 'top', 'bottom']),
+  outputsXs: PropTypes.oneOf(['left', 'right', 'top', 'bottom']),
 };
