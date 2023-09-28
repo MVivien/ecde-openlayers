@@ -219,7 +219,7 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     hoverContent.innerHTML = '';
     if (map.hasFeatureAtPixel(pixel)) {
       map.forEachFeatureAtPixel(pixel, function (feature) {
-        if (feature.get('NAME_LATN')) {
+        if (feature.get('NAME_LATN') && hoverContent.innerHTML=='') {
           if (feature.get('value')) {
             hoverContent.innerHTML +=
               feature.get('NAME_LATN') +
