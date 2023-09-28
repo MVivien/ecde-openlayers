@@ -79,9 +79,15 @@ button.ol-zoom-out {
   bottom: 10%;
   right: 5%;
 }
+@media only screen and (min-device-width: 200px) and (max-device-width: 900px) {
+  .ol-unselectable.ol-control.layer-switcher {
+      position: absolute;
+      top: 40rem;
+      right: 1rem;
+  }
+  }
 
 @media only screen and (min-device-width: 200px) and (max-device-width: 900px) {
-  .ol-unselectable.ol-control.layer-switcher,
   button.ol-zoom-in,
   button.ol-zoom-out {
     visibility: hidden;
