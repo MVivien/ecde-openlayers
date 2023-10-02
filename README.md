@@ -5,7 +5,7 @@ After cloning the repository `cd` into the `ecde-openlayers` folder.
 To install the python related dependencies run:
 
     pip install -e .
-    pip -r requirements.txt
+    pip install -r requirements.txt
 
 To launch the back-end flask server un:
 
