@@ -4,6 +4,7 @@
   background-color: #04041b;
   width: 100%;
   min-width: 400px;
+  height: 100%;
 }
 
 .ol-click-popup {
@@ -60,6 +61,37 @@
 
 .ol-control button:hover {
   background-color: rgba(40, 40, 40, 1) !important;
+}
+
+.ol-unselectable.ol-control.layer-switcher {
+  margin-right: 5%;
+}
+
+button.ol-zoom-in,
+button.ol-zoom-out {
+  position: fixed;
+  bottom: 14%;
+  right: 5%;
+}
+
+button.ol-zoom-out {
+  position: fixed;
+  bottom: 10%;
+  right: 5%;
+}
+@media only screen and (min-device-width: 200px) and (max-device-width: 900px) {
+  .ol-unselectable.ol-control.layer-switcher {
+      position: absolute;
+      top: 40rem;
+      right: 1rem;
+  }
+  }
+
+@media only screen and (min-device-width: 200px) and (max-device-width: 900px) {
+  button.ol-zoom-in,
+  button.ol-zoom-out {
+    visibility: hidden;
+  }
 }
 
 #layers {

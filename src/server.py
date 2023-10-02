@@ -11,7 +11,7 @@ import plotly.io as io
 
 app = Flask(__name__)
 CORS(app)
-
+DIR = os.path.join(os.path.dirname(__file__)
 
 @app.route("/geojson/<path:layer>")
 def generate_geojson(layer):
@@ -40,17 +40,12 @@ def generate_geojson(layer):
         'nuts_1': 'LEVL_1',
         'nuts_2': 'LEVL_2',
     }[layer]
-    geodataframe = gpd.read_file(
-        os.path.join(
-            os.path.dirname(__file__),
-            f'../public/NUTS_RG_60M_2021_4326_{level}.geojson'
-        )
-    )
+    geodataframe = gpd.read_file(os.path.join(DIR, f'../public/NUTS_RG_60M_2021_4326_{level}.geojson'))
     gdf = geodataframe.merge(df, on='NUTS_ID')
     gdf = gdf.to_crs('epsg:3035')
-    gdf.to_file(os.path.join(os.path.dirname(__file__), "../public/reduced_data.json"), driver="GeoJSON")
+    gdf.to_file(os.path.join(DIR, "../public/reduced_data.json"), driver="GeoJSON")
 
-    return send_file(os.path.join(os.path.dirname(__file__), "../public/reduced_data.json"), mimetype="application/json")
+    return send_file(os.path.join(DIR, "../public/reduced_data.json"), mimetype="application/json")
 
 
 @app.route("/plot1")
@@ -68,9 +63,9 @@ def plot1():
     sel = data.sel(nuts=region, scenario=rcp, quantile=0.5)
     fig = px.line(sel.data)
 
-    io.write_json(fig, os.path.join(os.path.dirname(__file__), f"../public/plot1_{rcp}_{selected_layer}.json"))
+    io.write_json(fig, os.path.join(DIR, f"../public/plot1_{rcp}_{selected_layer}.json"))
 
-    return send_file(os.path.join(os.path.dirname(__file__), f"../public/plot1_{rcp}_{selected_layer}.json"), mimetype="application/json")
+    return send_file(os.path.join(DIR, f"../public/plot1_{rcp}_{selected_layer}.json"), mimetype="application/json")
 
 
 if __name__ == "__main__":
