@@ -1,0 +1,108 @@
+#map-container {
+  margin: 0;
+  font-family: sans-serif;
+  background-color: #04041b;
+  width: 100%;
+  min-width: 400px;
+  height: 100%;
+}
+
+.ol-click-popup {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+  bottom: 12px;
+  left: -50px;
+  min-width: 150px;
+}
+
+.ol-click-popup:after,
+.ol-popup:before {
+  top: 100%;
+  border: solid transparent;
+  content: ' ';
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.ol-click-popup:after {
+  border-top-color: white;
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px;
+}
+
+.ol-click-popup:before {
+  border-top-color: #cccccc;
+  border-width: 11px;
+  left: 48px;
+  margin-left: -11px;
+}
+
+.ol-click-popup-closer {
+  text-decoration: none;
+  position: absolute;
+  top: 2px;
+  right: 8px;
+}
+
+.ol-click-popup-closer:after {
+  content: '✖';
+}
+
+.ol-control button {
+  background-color: rgba(40, 40, 40, 0.8) !important;
+}
+
+.ol-control button:hover {
+  background-color: rgba(40, 40, 40, 1) !important;
+}
+
+.ol-unselectable.ol-control.layer-switcher {
+  margin-right: 5%;
+}
+
+button.ol-zoom-in,
+button.ol-zoom-out {
+  position: fixed;
+  bottom: 14%;
+  right: 5%;
+}
+
+button.ol-zoom-out {
+  position: fixed;
+  bottom: 10%;
+  right: 5%;
+}
+@media only screen and (min-device-width: 200px) and (max-device-width: 900px) {
+  .ol-unselectable.ol-control.layer-switcher {
+      position: absolute;
+      top: 40rem;
+      right: 1rem;
+  }
+  }
+
+@media only screen and (min-device-width: 200px) and (max-device-width: 900px) {
+  button.ol-zoom-in,
+  button.ol-zoom-out {
+    visibility: hidden;
+  }
+}
+
+#layers {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+#layers a {
+  display: inline-block;
+  padding: 0.5rem;
+  background: white;
+  cursor: pointer;
+}

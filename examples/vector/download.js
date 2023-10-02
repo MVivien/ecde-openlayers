@@ -4,7 +4,7 @@ import Map from 'ol/Map';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import View from 'ol/View';
-import {DragAndDrop, Draw, Modify, Snap} from 'ol/interaction';
+import { DragAndDrop, Draw, Modify, Snap } from 'ol/interaction';
 
 const map = new Map({
   target: 'map-container',
@@ -27,26 +27,26 @@ map.addInteraction(
   new DragAndDrop({
     source: source,
     formatConstructors: [GeoJSON],
-  })
+  }),
 );
 
 map.addInteraction(
   new Modify({
     source: source,
-  })
+  }),
 );
 
 map.addInteraction(
   new Draw({
     source: source,
     type: 'Polygon',
-  })
+  }),
 );
 
 map.addInteraction(
   new Snap({
     source: source,
-  })
+  }),
 );
 
 //! [clear]
@@ -57,12 +57,11 @@ clear.addEventListener('click', function () {
 //! [clear]
 
 //! [download]
-const format = new GeoJSON({featureProjection: 'EPSG:3857'});
+const format = new GeoJSON({ featureProjection: 'EPSG:3857' });
 const download = document.getElementById('download');
 source.on('change', function () {
   const features = source.getFeatures();
   const json = format.writeFeatures(features);
-  download.href =
-    'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+  download.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
 });
 //! [download]

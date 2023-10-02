@@ -1,0 +1,9 @@
+geopandas
+xarray
+flask
+cdsapi
+netcdf4
+plotly
+fsspec
+requests
+aiohttp

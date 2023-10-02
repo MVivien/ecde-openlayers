@@ -1,14 +1,14 @@
 import MapboxVectorLayer from 'ol/layer/MapboxVector';
-import {Map, View} from 'ol';
-import {fromLonLat} from 'ol/proj';
+import { Map, View } from 'ol';
+import { fromLonLat } from 'ol/proj';
 //! [import-layer]
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import {Stroke, Style} from 'ol/style';
+import { Stroke, Style } from 'ol/style';
 //! [import-layer]
 //! [import-interaction]
 import Feature from 'ol/Feature';
-import {fromExtent} from 'ol/geom/Polygon';
+import { fromExtent } from 'ol/geom/Polygon';
 //! [import-interaction]
 
 const map = new Map({
@@ -20,8 +20,7 @@ const map = new Map({
 });
 
 const layer = new MapboxVectorLayer({
-  styleUrl:
-    'https://api.maptiler.com/maps/bright/style.json?key=lirfd6Fegsjkvs0lshxe',
+  styleUrl: 'https://api.maptiler.com/maps/bright/style.json?key=lirfd6Fegsjkvs0lshxe',
   // or, instead of the above, try
   // styleUrl: 'mapbox://styles/mapbox/bright-v9',
   // accessToken: 'Your token from https://mapbox.com/'
@@ -52,7 +51,7 @@ map.on('pointermove', function (event) {
     },
     {
       hitTolerance: 2,
-    }
+    },
   );
 });
 //! [interaction]

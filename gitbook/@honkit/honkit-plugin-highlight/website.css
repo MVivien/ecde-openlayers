@@ -135,8 +135,22 @@ Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmai
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal code .hljs-number,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal pre .hljs-string,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal code .hljs-string,
-.book.color-theme-1 .book-body .page-wrapper .page-inner section.normal pre .hljs-meta .hljs-meta-string,
-.book.color-theme-1 .book-body .page-wrapper .page-inner section.normal code .hljs-meta .hljs-meta-string,
+.book.color-theme-1
+  .book-body
+  .page-wrapper
+  .page-inner
+  section.normal
+  pre
+  .hljs-meta
+  .hljs-meta-string,
+.book.color-theme-1
+  .book-body
+  .page-wrapper
+  .page-inner
+  section.normal
+  code
+  .hljs-meta
+  .hljs-meta-string,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal pre .hljs-literal,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal code .hljs-literal,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal pre .hljs-doctag,
@@ -164,9 +178,22 @@ Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmai
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal pre .hljs-variable,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal code .hljs-variable,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal pre .hljs-template-variable,
-.book.color-theme-1 .book-body .page-wrapper .page-inner section.normal code .hljs-template-variable,
+.book.color-theme-1
+  .book-body
+  .page-wrapper
+  .page-inner
+  section.normal
+  code
+  .hljs-template-variable,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal pre .hljs-class .hljs-title,
-.book.color-theme-1 .book-body .page-wrapper .page-inner section.normal code .hljs-class .hljs-title,
+.book.color-theme-1
+  .book-body
+  .page-wrapper
+  .page-inner
+  section.normal
+  code
+  .hljs-class
+  .hljs-title,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal pre .hljs-type,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal code .hljs-type {
   color: #b58900;
@@ -179,8 +206,22 @@ Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmai
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal code .hljs-subst,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal pre .hljs-meta,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal code .hljs-meta,
-.book.color-theme-1 .book-body .page-wrapper .page-inner section.normal pre .hljs-meta .hljs-keyword,
-.book.color-theme-1 .book-body .page-wrapper .page-inner section.normal code .hljs-meta .hljs-keyword,
+.book.color-theme-1
+  .book-body
+  .page-wrapper
+  .page-inner
+  section.normal
+  pre
+  .hljs-meta
+  .hljs-keyword,
+.book.color-theme-1
+  .book-body
+  .page-wrapper
+  .page-inner
+  section.normal
+  code
+  .hljs-meta
+  .hljs-keyword,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal pre .hljs-selector-attr,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal code .hljs-selector-attr,
 .book.color-theme-1 .book-body .page-wrapper .page-inner section.normal pre .hljs-selector-pseudo,
@@ -230,7 +271,13 @@ Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmai
 .book.color-theme-2 .book-body .page-wrapper .page-inner section.normal pre .hljs-variable,
 .book.color-theme-2 .book-body .page-wrapper .page-inner section.normal code .hljs-variable,
 .book.color-theme-2 .book-body .page-wrapper .page-inner section.normal pre .hljs-template-variable,
-.book.color-theme-2 .book-body .page-wrapper .page-inner section.normal code .hljs-template-variable,
+.book.color-theme-2
+  .book-body
+  .page-wrapper
+  .page-inner
+  section.normal
+  code
+  .hljs-template-variable,
 .book.color-theme-2 .book-body .page-wrapper .page-inner section.normal pre .hljs-tag,
 .book.color-theme-2 .book-body .page-wrapper .page-inner section.normal code .hljs-tag,
 .book.color-theme-2 .book-body .page-wrapper .page-inner section.normal pre .hljs-name,

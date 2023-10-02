@@ -4,7 +4,7 @@ import Map from 'ol/Map.js';
 import TileLayer from 'ol/layer/WebGLTile.js';
 import View from 'ol/View.js';
 import XYZ from 'ol/source/XYZ.js';
-import {fromLonLat} from 'ol/proj.js';
+import { fromLonLat } from 'ol/proj.js';
 //! [import]
 
 const key = 'get_your_own_D6rA4zTHduk6KOKTXzGB';

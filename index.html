@@ -1,97 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>OpenLayers</title>
-    <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
-    <script src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
-    <!-- The lines below are only needed for old environments like Internet Explorer and Android 4.x -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://emoji.slack-edge.com/T0LVBGRT3/brandy/62158ba9fdafbaed.jpg"
+    />
     <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=fetch,requestAnimationFrame,Element.prototype.classList,TextDecoder"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/3.18.3/minified.js"></script>
-    <style>
-      @import "node_modules/ol/ol.css";
-    </style>
-    <link rel="stylesheet" href="https://unpkg.com/ol-popup@4.0.0/src/ol-popup.css" />
-    <link rel="stylesheet" href="https://unpkg.com/ol-geocoder@latest/dist/ol-geocoder.min.css" />
-
-    <style>
-      html, body, #map-container {
-        margin: 0;
-        height: 100%;
-        width: 100%;
-        font-family: sans-serif;
-        background-color: #04041b;
-      }
-      .ol-click-popup {
-        position: absolute;
-        background-color: white;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-        padding: 15px;
-        border-radius: 10px;
-        border: 1px solid #cccccc;
-        bottom: 12px;
-        left: -50px;
-        min-width: 150px;
-      }
-      .ol-click-popup:after, .ol-popup:before {
-        top: 100%;
-        border: solid transparent;
-        content: " ";
-        height: 0;
-        width: 0;
-        position: absolute;
-        pointer-events: none;
-      }
-      .ol-click-popup:after {
-        border-top-color: white;
-        border-width: 10px;
-        left: 48px;
-        margin-left: -10px;
-      }
-      .ol-click-popup:before {
-        border-top-color: #cccccc;
-        border-width: 11px;
-        left: 48px;
-        margin-left: -11px;
-      }
-      .ol-click-popup-closer {
-        text-decoration: none;
-        position: absolute;
-        top: 2px;
-        right: 8px;
-      }
-      .ol-click-popup-closer:after {
-        content: "✖";
-      }
-      .ol-control button {
-        background-color: rgba(40, 40, 40, 0.8) !important;
-      }
-      .ol-control button:hover {
-        background-color: rgba(40, 40, 40, 1) !important;
-      }
-      #layers {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-      }
-      #layers a {
-        display: inline-block;
-        padding: 0.5rem;
-        background: white;
-        cursor: pointer;
-      }
-
-    </style>
   </head>
+
   <body>
-    <div id="map-container"></div>
-    <div id="hover-popup" class="ol-click-popup">
-      <div id="hover-popup-content"></div>
-    </div>
-    <div id="click-popup" class="ol-click-popup">
-      <a href="#" id="click-popup-closer" class="ol-click-popup-closer"></a>
-      <div id="click-popup-content"></div>
-    </div>
-    <script src="./main.js" type="module"></script>
+    <section id="root"></section>
+    <script src="/src/main.jsx" type="module"></script>
   </body>
 </html>
