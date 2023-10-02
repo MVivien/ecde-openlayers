@@ -11,7 +11,8 @@ import plotly.io as io
 
 app = Flask(__name__)
 CORS(app)
-DIR = os.path.join(os.path.dirname(__file__)
+DIR = os.path.join(os.path.dirname(__file__))
+
 
 @app.route("/geojson/<path:layer>")
 def generate_geojson(layer):
