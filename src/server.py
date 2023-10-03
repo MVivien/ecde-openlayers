@@ -2,24 +2,24 @@ import geopandas as gpd
 import xarray as xr
 import os
 
-from flask import Flask, request, send_file, Response, jsonify
-from flask_cors import CORS
+import fastapi
+import fastapi.middleware.cors
 import fsspec
 
 import plotly.express as px
 import plotly.io as io
 
-app = Flask(__name__)
-CORS(app)
+app = fastapi.FastAPI()
 DIR = os.path.join(os.path.dirname(__file__))
 
 
-@app.route("/geojson/<path:layer>")
-def generate_geojson(layer):
-    rcp = request.args.get("rcp", type=str)
-    horizon = request.args.get("horizon", type=str)
-    temporal_aggregation = request.args.get("temporalAggregation", type=str)
-
+@app.get("/geojson/{layer}")
+def generate_geojson(
+    layer: str,
+    rcp: str = fastapi.Query("rcp26"),
+    horizon: str = fastapi.Query("1981-01-01"),
+    temporal_aggregation: str = fastapi.Query("annual", alias="temporalAggregation"),
+) -> fastapi.responses.StreamingResponse:
     if horizon == "1981-01-01":
       url = f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-historical" \
             f"-{temporal_aggregation}-layer-{layer}-latitude-1959-2022-v0.2-30yrs_average.nc"
@@ -46,28 +46,37 @@ def generate_geojson(layer):
     gdf = gdf.to_crs('epsg:3035')
     gdf.to_file(os.path.join(DIR, "../public/reduced_data.json"), driver="GeoJSON")
 
-    return send_file(os.path.join(DIR, "../public/reduced_data.json"), mimetype="application/json")
+    return fastapi.responses.FileResponse(os.path.join(DIR, "../public/reduced_data.json"))
 
 
-@app.route("/plot1")
-def plot1():
-    rcp = request.args.get("rcp", type=str)
-    region = request.args.get("region", type=str)
-    selected_layer = request.args.get("selectedLayer", type=str)
-    temporal_aggregation = request.args.get("temporalAggregation", type=str)
-
+@app.get("/plot1")
+def plot1(
+    rcp: str = fastapi.Query("rcp26"),
+    region: str = fastapi.Query("AT"),
+    selected_layer: str = fastapi.Query("0"),
+    temporal_aggregation: str = fastapi.Query("annual", alias="temporalAggregation"),
+):
     url = f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-projections" \
           f"-{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-v0.3-quantiles.nc"
 
     with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
+    print(data)
     sel = data.sel(nuts=region, scenario=rcp, quantile=0.5)
     fig = px.line(sel.data)
 
     io.write_json(fig, os.path.join(DIR, f"../public/plot1_{rcp}_{selected_layer}.json"))
 
-    return send_file(os.path.join(DIR, f"../public/plot1_{rcp}_{selected_layer}.json"), mimetype="application/json")
+    return fastapi.responses.FileResponse(os.path.join(DIR, f"../public/plot1_{rcp}_{selected_layer}.json"))
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+origins = [
+   "http://localhost:5173",
+]
+app.add_middleware(
+    fastapi.middleware.cors.CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
