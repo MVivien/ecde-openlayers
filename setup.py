@@ -9,7 +9,7 @@ setup(
         "xarray",
         "netcdf4",
         "geopandas",
-        "flask",
-        "flask_cors",
+        "fastapi",
+        "uvicorn",
     ],
 )

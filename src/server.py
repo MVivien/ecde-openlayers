@@ -16,9 +16,9 @@ DIR = os.path.join(os.path.dirname(__file__))
 @app.get("/geojson/{layer}")
 def generate_geojson(
     layer: str,
-    rcp: str = fastapi.Query("rcp26"),
-    horizon: str = fastapi.Query("1981-01-01"),
-    temporal_aggregation: str = fastapi.Query("annual", alias="temporalAggregation"),
+    rcp: str = fastapi.Query(...),
+    horizon: str = fastapi.Query(...),
+    temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
 ) -> fastapi.responses.StreamingResponse:
     if horizon == "1981-01-01":
       url = f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-historical" \
@@ -51,14 +51,14 @@ def generate_geojson(
 
 @app.get("/plot1")
 def plot1(
-    rcp: str = fastapi.Query("rcp26"),
-    region: str = fastapi.Query("AT"),
-    selected_layer: str = fastapi.Query("0"),
-    temporal_aggregation: str = fastapi.Query("annual", alias="temporalAggregation"),
+    rcp: str = fastapi.Query(...),
+    region: str = fastapi.Query(...),
+    selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
+    temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
 ):
     url = f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-projections" \
           f"-{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-v0.3-quantiles.nc"
-
+    print(url)
     with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
     print(data)
