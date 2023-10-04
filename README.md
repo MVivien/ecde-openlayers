@@ -9,7 +9,7 @@ To install the python related dependencies run:
 
 To launch the back-end flask server un:
 
-    uvicorn src.server:app --port 5000 --reload
+    uvicorn src.app.server:app --port 5000 --reload
 
 To install the front end related dependencies:
 

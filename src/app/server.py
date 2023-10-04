@@ -6,8 +6,9 @@ import fastapi
 import fastapi.middleware.cors
 import fsspec
 
-import plotly.express as px
 import plotly.io as io
+
+from . import plots
 
 app = fastapi.FastAPI()
 DIR = os.path.join(os.path.dirname(__file__))
@@ -41,33 +42,31 @@ def generate_geojson(
         'nuts_1': 'LEVL_1',
         'nuts_2': 'LEVL_2',
     }[layer]
-    geodataframe = gpd.read_file(os.path.join(DIR, f'../public/NUTS_RG_60M_2021_4326_{level}.geojson'))
+    geodataframe = gpd.read_file(os.path.join(DIR, f'../../public/NUTS_RG_60M_2021_4326_{level}.geojson'))
     gdf = geodataframe.merge(df, on='NUTS_ID')
     gdf = gdf.to_crs('epsg:3035')
-    gdf.to_file(os.path.join(DIR, "../public/reduced_data.json"), driver="GeoJSON")
+    gdf.to_file(os.path.join(DIR, "../../public/reduced_data.json"), driver="GeoJSON")
 
-    return fastapi.responses.FileResponse(os.path.join(DIR, "../public/reduced_data.json"))
+    return fastapi.responses.FileResponse(os.path.join(DIR, "../../public/reduced_data.json"))
 
 
-@app.get("/plot1")
-def plot1(
-    rcp: str = fastapi.Query(...),
+@app.get("/plots/historical_anomalies")
+def historical_anomalies(
     region: str = fastapi.Query(...),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
 ):
-    url = f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-projections" \
-          f"-{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-v0.3-quantiles.nc"
+    url = f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-historical" \
+          f"-{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-1959-2022-v0.2-anomalies.nc"
     print(url)
     with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
-    print(data)
-    sel = data.sel(nuts=region, scenario=rcp, quantile=0.5)
-    fig = px.line(sel.data)
+    sel = data.sel(nuts=region)
+    fig = plots.historical_anomalies(sel)
 
-    io.write_json(fig, os.path.join(DIR, f"../public/plot1_{rcp}_{selected_layer}.json"))
+    io.write_json(fig, os.path.join(DIR, f"../../public/historical_anomalies_{selected_layer}.json"))
 
-    return fastapi.responses.FileResponse(os.path.join(DIR, f"../public/plot1_{rcp}_{selected_layer}.json"))
+    return fastapi.responses.FileResponse(os.path.join(DIR, f"../../public/historical_anomalies_{selected_layer}.json"))
 
 
 origins = [

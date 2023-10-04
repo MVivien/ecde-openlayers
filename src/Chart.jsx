@@ -7,7 +7,7 @@ function Chart({ rcp, region, selectedLayer, temporalAggregation }) {
   useEffect(() => {
     async function loadPlot() {
       const plot = await fetch(
-        `http://localhost:5000/plot1?rcp=${rcp}&region=${region}&selectedLayer=${selectedLayer}&temporalAggregation=${temporalAggregation}`,
+        `http://localhost:5000/plots/historical_anomalies?region=${region}&selectedLayer=${selectedLayer}&temporalAggregation=${temporalAggregation}`,
       );
       const json = await plot.json();
       setPlotData(json);
