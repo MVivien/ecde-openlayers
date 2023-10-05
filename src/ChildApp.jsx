@@ -9,7 +9,7 @@ import Loading from './Loading.jsx';
 
 const Chart = lazy(() => import('./Chart.jsx'));
 
-function ChildApp({ onClose, lat, lon, region, selectedLayer, rcp, temporalAggregation }) {
+function ChildApp({ onClose, lat, lon, region, selectedLayer, temporalAggregation }) {
   return (
     <Box className="child-app" sx={{ marginTop: '3rem' }}>
       <Typography
@@ -28,8 +28,22 @@ function ChildApp({ onClose, lat, lon, region, selectedLayer, rcp, temporalAggre
         </IconButton>
       </Typography>
       <Suspense fallback={<Loading />}>
+        <Typography variant="subtitle1" paragraph component="label" align="left">
+          Plot 1
+        </Typography>
         <Chart
-          rcp={rcp}
+          id="historical_anomalies"
+          plot_name="historical_anomalies"
+          region={region}
+          selectedLayer={selectedLayer}
+          temporalAggregation={temporalAggregation}
+        />
+        <Typography variant="subtitle1" paragraph component="label" align="left">
+          Plot 2
+        </Typography>
+        <Chart
+          id="actual_evolution"
+          plot_name="actual_evolution"
           region={region}
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}

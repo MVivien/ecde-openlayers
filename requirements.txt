@@ -1,9 +1,10 @@
-geopandas
-xarray
-flask
+aiohttp
 cdsapi
+fastapi
+fsspec
+geopandas
 netcdf4
 plotly
-fsspec
 requests
-aiohttp
+uvicorn
+xarray
