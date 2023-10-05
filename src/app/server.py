@@ -64,24 +64,51 @@ def historical_anomalies(
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
 ):
-    url = (
-        f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-historical"
-        f"-{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-1959-2022-v0.2-anomalies.nc"
+    data_url = (
+        f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-historical-"
+        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-1959-2022-v0.2-anomalies.nc"
     )
-    print(url)
-    with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
+    with fsspec.open(f"filecache::{data_url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
     sel = data.sel(nuts=region)
     fig = plots.historical_anomalies(sel, units="days")
-
-    io.write_json(
-        fig,
-        os.path.join(DIR, f"../../public/historical_anomalies_{selected_layer}.json"),
+    fig_json_path = os.path.join(
+        DIR, f"../../public/historical_anomalies_{selected_layer}.json"
     )
+    io.write_json(fig, fig_json_path)
+    return fastapi.responses.FileResponse(fig_json_path)
 
-    return fastapi.responses.FileResponse(
-        os.path.join(DIR, f"../../public/historical_anomalies_{selected_layer}.json")
+
+@app.get("/plots/actual_evolution")
+def actual_evolution(
+    region: str = fastapi.Query(...),
+    selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
+    temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+):
+    historical_data_url = (
+        f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/historical/05_tropical_nights-historical-"
+        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-1959-2022-v0.2.nc"
     )
+    projections_data_url = (
+        f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-projections-"
+        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-v0.3-quantiles.nc"
+    )
+    with fsspec.open(
+        f"filecache::{historical_data_url}", filecache={"same_names": True}
+    ) as f:
+        historical_data = xr.open_dataarray(f.name)
+    with fsspec.open(
+        f"filecache::{projections_data_url}", filecache={"same_names": True}
+    ) as f:
+        projections_data = xr.open_dataarray(f.name)
+    historical_sel = historical_data.sel(nuts=region)
+    projections_sel = projections_data.sel(nuts=region)
+    fig = plots.actual_evolution(historical_sel, projections_sel, units="days")
+    fig_json_path = os.path.join(
+        DIR, f"../../public/actual_evolution_{selected_layer}.json"
+    )
+    io.write_json(fig, fig_json_path)
+    return fastapi.responses.FileResponse(fig_json_path)
 
 
 origins = [
