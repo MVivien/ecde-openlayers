@@ -12,7 +12,7 @@ from . import plots
 
 app = fastapi.FastAPI()
 DIR = os.path.join(os.path.dirname(__file__))
-
+HOST = 'http://ecde-data.copernicus-climate.eu'
 
 @app.get("/geojson/{layer}")
 def generate_geojson(
@@ -24,16 +24,16 @@ def generate_geojson(
     print(temporalAggregation)
     if horizon == "1981-01-01":
         url = (
-            f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-historical"
+            f"{HOST}/05_tropical_nights/plots/05_tropical_nights-historical"
             f"-{temporalAggregation}-layer-{layer}-latitude-1959-2022-v0.2-30yrs_average.nc"
         )
     else:
         url = (
-            f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-projections"
+            f"{HOST}/05_tropical_nights/plots/05_tropical_nights-projections"
             f"-{temporalAggregation}-layer-{layer}-latitude-v0.3-30yrs_average.nc"
         )
 
-    with fsspec.open(f"filecache::{url}", filecache={"same_names": True}, https={"ssl": False}) as f:
+    with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
 
     if "avg_period" in data.dims:
@@ -66,10 +66,10 @@ def historical_anomalies(
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
 ):
     data_url = (
-        f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-historical-"
+        f"{HOST}/05_tropical_nights/plots/05_tropical_nights-historical-"
         f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-1959-2022-v0.2-anomalies.nc"
     )
-    with fsspec.open(f"filecache::{data_url}", filecache={"same_names": True}, https={"ssl": False}) as f:
+    with fsspec.open(f"filecache::{data_url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
     sel = data.sel(nuts=region)
     fig = plots.historical_anomalies(sel, units="days")
@@ -87,19 +87,19 @@ def actual_evolution(
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
 ):
     historical_data_url = (
-        f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/historical/05_tropical_nights-historical-"
+        f"{HOST}/05_tropical_nights/historical/05_tropical_nights-historical-"
         f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-1959-2022-v0.2.nc"
     )
     projections_data_url = (
-        f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-projections-"
+        f"{HOST}/05_tropical_nights/plots/05_tropical_nights-projections-"
         f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-v0.3-quantiles.nc"
     )
     with fsspec.open(
-        f"filecache::{historical_data_url}", filecache={"same_names": True}, https={"ssl": False}
+        f"filecache::{historical_data_url}", filecache={"same_names": True}
     ) as f:
         historical_data = xr.open_dataarray(f.name)
     with fsspec.open(
-        f"filecache::{projections_data_url}", filecache={"same_names": True}, https={"ssl": False}
+        f"filecache::{projections_data_url}", filecache={"same_names": True}
     ) as f:
         projections_data = xr.open_dataarray(f.name)
     historical_sel = historical_data.sel(nuts=region)
