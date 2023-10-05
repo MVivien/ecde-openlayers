@@ -19,20 +19,21 @@ def generate_geojson(
     layer: str,
     rcp: str = fastapi.Query(...),
     horizon: str = fastapi.Query(...),
-    temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+    temporalAggregation: str = fastapi.Query(...),
 ) -> fastapi.responses.StreamingResponse:
+    print(temporalAggregation)
     if horizon == "1981-01-01":
         url = (
             f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-historical"
-            f"-{temporal_aggregation}-layer-{layer}-latitude-1959-2022-v0.2-30yrs_average.nc"
+            f"-{temporalAggregation}-layer-{layer}-latitude-1959-2022-v0.2-30yrs_average.nc"
         )
     else:
         url = (
             f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-projections"
-            f"-{temporal_aggregation}-layer-{layer}-latitude-v0.3-30yrs_average.nc"
+            f"-{temporalAggregation}-layer-{layer}-latitude-v0.3-30yrs_average.nc"
         )
 
-    with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
+    with fsspec.open(f"filecache::{url}", filecache={"same_names": True}, https={"ssl": False}) as f:
         data = xr.open_dataarray(f.name)
 
     if "avg_period" in data.dims:
@@ -68,7 +69,7 @@ def historical_anomalies(
         f"https://ecde-data.copernicus-climate.eu/05_tropical_nights/plots/05_tropical_nights-historical-"
         f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-1959-2022-v0.2-anomalies.nc"
     )
-    with fsspec.open(f"filecache::{data_url}", filecache={"same_names": True}) as f:
+    with fsspec.open(f"filecache::{data_url}", filecache={"same_names": True}, https={"ssl": False}) as f:
         data = xr.open_dataarray(f.name)
     sel = data.sel(nuts=region)
     fig = plots.historical_anomalies(sel, units="days")
@@ -94,11 +95,11 @@ def actual_evolution(
         f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-v0.3-quantiles.nc"
     )
     with fsspec.open(
-        f"filecache::{historical_data_url}", filecache={"same_names": True}
+        f"filecache::{historical_data_url}", filecache={"same_names": True}, https={"ssl": False}
     ) as f:
         historical_data = xr.open_dataarray(f.name)
     with fsspec.open(
-        f"filecache::{projections_data_url}", filecache={"same_names": True}
+        f"filecache::{projections_data_url}", filecache={"same_names": True}, https={"ssl": False}
     ) as f:
         projections_data = xr.open_dataarray(f.name)
     historical_sel = historical_data.sel(nuts=region)
