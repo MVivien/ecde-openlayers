@@ -13,24 +13,29 @@ from . import plots
 app = fastapi.FastAPI()
 DIR = os.path.join(os.path.dirname(__file__))
 HOST = 'http://ecde-data.copernicus-climate.eu'
+VARIABLE = '05_tropical_nights'
+HISTORICAL_PERIOD = '1959-2022'
+VH = 'v0.2' # version of historical data
+VP = 'v0.3' # version of projections data
+
 
 @app.get("/geojson/{layer}")
 def generate_geojson(
     layer: str,
     rcp: str = fastapi.Query(...),
     horizon: str = fastapi.Query(...),
-    temporalAggregation: str = fastapi.Query(...),
+    temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
 ) -> fastapi.responses.StreamingResponse:
-    print(temporalAggregation)
+    print(temporal_aggregation)
     if horizon == "1981-01-01":
         url = (
-            f"{HOST}/05_tropical_nights/plots/05_tropical_nights-historical"
-            f"-{temporalAggregation}-layer-{layer}-latitude-1959-2022-v0.2-30yrs_average.nc"
+            f"{HOST}/{VARIABLE}/plots/{VARIABLE}-historical"
+            f"-{temporal_aggregation}-layer-{layer}-latitude-{HISTORICAL_PERIOD}-{VH}-30yrs_average.nc"
         )
     else:
         url = (
-            f"{HOST}/05_tropical_nights/plots/05_tropical_nights-projections"
-            f"-{temporalAggregation}-layer-{layer}-latitude-v0.3-30yrs_average.nc"
+            f"{HOST}/{VARIABLE}/plots/{VARIABLE}-projections"
+            f"-{temporal_aggregation}-layer-{layer}-latitude-{VP}-30yrs_average.nc"
         )
 
     with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
@@ -66,8 +71,8 @@ def historical_anomalies(
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
 ):
     data_url = (
-        f"{HOST}/05_tropical_nights/plots/05_tropical_nights-historical-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-1959-2022-v0.2-anomalies.nc"
+        f"{HOST}/{VARIABLE}/plots/{VARIABLE}-historical-"
+        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-{HISTORICAL_PERIOD}-{VH}-anomalies.nc"
     )
     with fsspec.open(f"filecache::{data_url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
@@ -87,12 +92,12 @@ def actual_evolution(
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
 ):
     historical_data_url = (
-        f"{HOST}/05_tropical_nights/historical/05_tropical_nights-historical-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-1959-2022-v0.2.nc"
+        f"{HOST}/{VARIABLE}/historical/{VARIABLE}-historical-"
+        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-{HISTORICAL_PERIOD}-{VH}.nc"
     )
     projections_data_url = (
-        f"{HOST}/05_tropical_nights/plots/05_tropical_nights-projections-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-v0.3-quantiles.nc"
+        f"{HOST}/{VARIABLE}/plots/{VARIABLE}-projections-"
+        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-{VP}-quantiles.nc"
     )
     with fsspec.open(
         f"filecache::{historical_data_url}", filecache={"same_names": True}
