@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import { useDrag } from '@use-gesture/react';
 
 import { grey } from '@mui/material/colors';
-import useMediaQuery from '@mui/material/useMediaQuery';
+//import useMediaQuery from '@mui/material/useMediaQuery';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { useTheme } from '@mui/material/styles';
-
 import AppContainer from './AppContainer';
 import SubAppContainer from './SubAppContainer';
 
@@ -129,6 +128,32 @@ function useDrawer(open = false, position = 'left') {
   });
   return [drawer, setDrawer, bind];
 }
+
+PullerContainer.propTypes = {
+  children: PropTypes.any,
+  drawerBleeding: PropTypes.any,
+  position: PropTypes.string,
+};
+
+Puller.propTypes = {
+  children: PropTypes.any,
+  position: PropTypes.string,
+};
+
+MapApplication.propTypes = {
+  inputs: PropTypes.any,
+  outputs: PropTypes.any,
+  children: PropTypes.any,
+  inputsMd: PropTypes.string,
+  inputsXs: PropTypes.string,
+  outputsMd: PropTypes.string,
+  outputsXs: PropTypes.string,
+  openPlotDrawer: PropTypes.any,
+  drawerDefaultLeft: PropTypes.bool,
+  drawerDefaultBottom: PropTypes.bool,
+  drawerDefaultRight: PropTypes.bool,
+  drawerDefaultTop: PropTypes.bool,
+};
 
 /**
  *

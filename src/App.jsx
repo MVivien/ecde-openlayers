@@ -1,48 +1,21 @@
 import { Suspense, lazy, useState, useEffect } from 'react';
 
+// eslint-disable-next-line no-unused-vars
 import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
-import Container from '@mui/material/Container';
 import MapApplication from './components/MapApplication';
-import SubApp from './SubApp';
 import ChildApp from './ChildApp.jsx';
 import Loading from './Loading.jsx';
-import OtherControls from './OtherControls.jsx';
-import { Typography } from '@mui/material';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
 import ToggleButton from '@mui/material/ToggleButton';
-import Stack from '@mui/material/Stack';
-import Slider from '@mui/material/Slider';
 import { ToggleButtonGroup } from '@mui/material';
-
+import Chip from '@mui/material/Chip';
 import { EVENT_GROUP_SET_LAYERS } from './constants';
 import { registerEvent } from './map_events';
+import SvgIcon from '@mui/material/SvgIcon';
+import Tooltip from '@mui/material/Tooltip';
 
 const Map = lazy(() => import('./Map.jsx'));
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-}));
-
-const AbsoluteGrid = styled(Grid)(({ theme }) => ({
-  position: 'absolute',
-  right: 0,
-  top: 0,
-  zIndex: 1,
-  marginRight: theme.spacing(2),
-  marginTop: theme.spacing(2),
-}));
 
 function App() {
   const [childApp, setChildApp] = useState(false);
@@ -126,34 +99,33 @@ function App() {
     }
   }, [rcp, horizon, temporalAggregation]);
 
-  const cities = [
-    { label: 'Bologna', year: 1994 },
-    { label: 'Ferrara', year: 1972 },
-    { label: 'Reading', year: 1974 },
-    { label: 'Bonn', year: 2008 },
-    { label: 'Milan', year: 1957 },
-    { label: 'Rome', year: 1993 },
-    { label: 'London', year: 1994 },
-    {
-      label: 'Madrid',
-      year: 2003,
-    },
-    { label: 'Amsterdam', year: 1966 },
-  ];
-
   const inputs = (
     <>
-      <Typography variant="subtitle1" paragraph component="label" align="left">
-        Regions
-      </Typography>
+      <Chip label="Regions" variant="label" component="label" />
       <ToggleButtonGroup variant="outlined" aria-label="outlined button group">
         <ToggleButton value="nuts">NUTS</ToggleButton>
         <ToggleButton value="transnational">Transnational regions</ToggleButton>
         <ToggleButton value="europe">Europe Zones</ToggleButton>
+        <div style={{ display: 'flex', alignItems: 'center', paddingLeft: '0.5rem' }}>
+          <Tooltip title="Info about regions">
+            <SvgIcon>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="#686666"
+                className="w-6 h-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </SvgIcon>
+          </Tooltip>
+        </div>
       </ToggleButtonGroup>
-      <Typography variant="subtitle1" paragraph component="label" align="left">
-        Time span
-      </Typography>
+      <Chip label="Time span" variant="label" component="label" />
       <ToggleButtonGroup
         variant="outlined"
         aria-label="outlined button group"
@@ -163,10 +135,26 @@ function App() {
         <ToggleButton value="yearly">Year</ToggleButton>
         <ToggleButton value="seasonal">Season</ToggleButton>
         <ToggleButton value="monthly">Month</ToggleButton>
+        <div style={{ display: 'flex', alignItems: 'center', paddingLeft: '0.5rem' }}>
+          <Tooltip title="Info about Time span">
+            <SvgIcon>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="#686666"
+                className="w-6 h-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </SvgIcon>
+          </Tooltip>
+        </div>
       </ToggleButtonGroup>
-      <Typography variant="subtitle1" paragraph component="label" align="left">
-        Scenario
-      </Typography>
+      <Chip label="Scenario" variant="label" component="label" />
       <ToggleButtonGroup
         variant="outlined"
         aria-label="outlined button group"
@@ -177,10 +165,26 @@ function App() {
       >
         <ToggleButton value="rcp_4_5">RCP4.5</ToggleButton>
         <ToggleButton value="rcp_8_5">RCP8.5</ToggleButton>
+        <div style={{ display: 'flex', alignItems: 'center', paddingLeft: '0.5rem' }}>
+          <Tooltip title="Info about Scenario">
+            <SvgIcon>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="#686666"
+                className="w-6 h-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </SvgIcon>
+          </Tooltip>
+        </div>
       </ToggleButtonGroup>
-      <Typography variant="subtitle1" paragraph component="label" align="left">
-        Time Horizon
-      </Typography>
+      <Chip label="Time Horizon" variant="label" component="label" />
       <ToggleButtonGroup
         variant="outlined"
         aria-label="outlined button group"
@@ -193,6 +197,24 @@ function App() {
         <ToggleButton value="2011-01-01">2011-2040</ToggleButton>
         <ToggleButton value="2041-01-01">2041-2070</ToggleButton>
         <ToggleButton value="2071-01-01">2071-2100</ToggleButton>
+        <div style={{ display: 'flex', alignItems: 'center', paddingLeft: '0.5rem' }}>
+          <Tooltip title="Info about Time Horizon">
+            <SvgIcon>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="#686666"
+                className="w-6 h-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </SvgIcon>
+          </Tooltip>
+        </div>
       </ToggleButtonGroup>
     </>
   );

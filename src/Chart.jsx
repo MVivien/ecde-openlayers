@@ -1,4 +1,5 @@
 import Plotly from 'plotly.js-dist-min';
+import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 
 function Chart({ id, plot_name, region, selectedLayer, temporalAggregation }) {
@@ -24,5 +25,13 @@ function Chart({ id, plot_name, region, selectedLayer, temporalAggregation }) {
 
   return <section className="plotly-chart" id={id} />;
 }
+
+Chart.propTypes = {
+  id: PropTypes.string,
+  plot_name: PropTypes.string,
+  region: PropTypes.string,
+  selectedLayer: PropTypes.string,
+  temporalAggregation: PropTypes.string,
+};
 
 export default Chart;

@@ -9,9 +9,35 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import './reset.css';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+  typography: {
+    subtitle1: {
+      fontSize: '1rem',
+      fontFamily: 'Calibri',
+      /*'@media (min-width:600px)': {
+           fontSize: '1.5rem',
+          },*/
+    },
+  },
+  components: {
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          fontSize: '1rem',
+          width: '40%',
+          borderRadius: '5px',
+        },
+      },
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>,
 );

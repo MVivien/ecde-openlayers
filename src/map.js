@@ -131,6 +131,7 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     activationMode: 'click',
     startActive: true,
     groupSelectStyle: 'group',
+    collapseLabel: '\u0058',
   });
 
   const switcherGroup = new Group({
@@ -142,7 +143,6 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
 
   const setLayersInGroup = (title, layers = []) => {
     let layerList;
-
     if (switcherGroup.getProperties().title == title) {
       layerList = switcherGroup.getLayersArray();
       layers.forEach(function (_, i) {
@@ -150,7 +150,6 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
         const { cls: SourceCls, defaultParams: defaultSourceParams } =
           possibleSourcesCls[sourceType];
         const { cls: LayerCls, defaultParams: defaultLayerParams } = possibleLayersCls[type];
-
         const source = new SourceCls({
           ...defaultSourceParams,
           ...layers[i].sourceParams,

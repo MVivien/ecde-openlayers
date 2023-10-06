@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import Chip from '@mui/material/Chip';
 
 import Loading from './Loading.jsx';
 
@@ -22,15 +23,18 @@ function ChildApp({ onClose, lat, lon, region, selectedLayer, temporalAggregatio
           alignItems: 'center',
         }}
       >
-        Child app at {lat} {lon} {region}
+        Plots at {lat} {lon} {region}
         <IconButton aria-label="delete" onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </Typography>
       <Suspense fallback={<Loading />}>
-        <Typography variant="subtitle1" paragraph component="label" align="left">
-          Plot 1
-        </Typography>
+        <Chip
+          label="Anomalies"
+          variant="label"
+          component="label"
+          style={{ marginBottom: '5px', marginTop: '5px' }}
+        />
         <Chart
           id="historical_anomalies"
           plot_name="historical_anomalies"
@@ -38,9 +42,12 @@ function ChildApp({ onClose, lat, lon, region, selectedLayer, temporalAggregatio
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
         />
-        <Typography variant="subtitle1" paragraph component="label" align="left">
-          Plot 2
-        </Typography>
+        <Chip
+          label="Evolution"
+          variant="label"
+          component="label"
+          style={{ marginBottom: '5px', marginTop: '10px' }}
+        />
         <Chart
           id="actual_evolution"
           plot_name="actual_evolution"
@@ -55,6 +62,11 @@ function ChildApp({ onClose, lat, lon, region, selectedLayer, temporalAggregatio
 
 ChildApp.propTypes = {
   onClose: PropTypes.func,
+  lat: PropTypes.string,
+  lon: PropTypes.string,
+  region: PropTypes.string,
+  selectedLayer: PropTypes.string,
+  temporalAggregation: PropTypes.string,
 };
 
 export default ChildApp;
