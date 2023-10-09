@@ -14,15 +14,17 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 const theme = createTheme({
   typography: {
     subtitle1: {
-      fontSize: '1rem',
-      fontFamily: 'Calibri',
+      fontSize: '1.2rem',
+      fontFamily: "font-family: 'Gill Sans','Gill Sans MT',Calibri,'Trebuchet MS',sans-serif;",
       /*'@media (min-width:600px)': {
            fontSize: '1.5rem',
           },*/
     },
     h4: {
+      fontSize: '1.2rem',
+      marginTop: '5px',
+      fontWeight: 500,
       '@media only screen and (min-device-width: 200px) and (max-device-width: 900px)': {
-        marginBottom: '5px',
         marginTop: '5px',
         fontSize: '1.8rem',
       },

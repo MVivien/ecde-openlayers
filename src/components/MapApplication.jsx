@@ -180,7 +180,7 @@ export default function MapApplication({
   const [drawerRight, setDrawerRight, bindRight] = useDrawer(drawerDefaultRight, 'right');
   const [drawerTop, setDrawerTop, bindTop] = useDrawer(drawerDefaultTop, 'top');
 
-  const drawerBleeding = 60;
+  const drawerBleeding = 40;
 
   const inputsOnLeft =
     ((inputsMd === 'left' && large) || (inputsXs === 'left' && !large)) && Boolean(inputs);
@@ -271,7 +271,7 @@ export default function MapApplication({
       <SubAppContainer
         fullHeight
         sx={{
-          backgroundColor: grey[100],
+          backgroundColor: 'white',
           overflowY: 'auto',
         }}
       >
@@ -321,7 +321,7 @@ export default function MapApplication({
       <SubAppContainer
         fullHeight
         sx={{
-          backgroundColor: grey[100],
+          backgroundColor: 'white',
           overflowY: 'auto',
         }}
       >
@@ -371,7 +371,7 @@ export default function MapApplication({
       </PullerContainer>
       <SubAppContainer
         sx={{
-          backgroundColor: grey[100],
+          backgroundColor: 'white',
           overflowY: 'auto',
         }}
       >
@@ -421,7 +421,7 @@ export default function MapApplication({
       </PullerContainer>
       <SubAppContainer
         sx={{
-          backgroundColor: grey[100],
+          backgroundColor: 'white',
           overflowY: 'auto',
         }}
       >

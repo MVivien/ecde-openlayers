@@ -20,9 +20,10 @@ function ChildApp({ onClose, lat, lon, region, selectedLayer, temporalAggregatio
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
+          fontWeight: 500,
         }}
       >
-        Plots at {lat} {lon} {region}
+        Plots at {region}
         <IconButton aria-label="delete" onClick={onClose}>
           <CloseIcon />
         </IconButton>

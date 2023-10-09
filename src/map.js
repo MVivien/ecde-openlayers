@@ -40,6 +40,10 @@ const ramp = colormap({
   nshades: steps,
 });
 
+const attributions =
+  '<a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap</a> ' +
+  '<a href="https://www.openstreetmap.org/copyright" target="_blank" >&copy; Powered by the <b>Copernicus Climate and Atmosphere Data Store</b></a>';
+
 function clamp(value, low, high) {
   return Math.max(low, Math.min(value, high));
 }
@@ -131,7 +135,7 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     activationMode: 'click',
     startActive: true,
     groupSelectStyle: 'group',
-    collapseLabel: '\u0058',
+    collapseLabel: '',
   });
 
   const switcherGroup = new Group({
@@ -191,7 +195,9 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
 
   // Tile layer
   const tile_layer = new TileLayer({
-    source: new OSM(),
+    source: new OSM({
+      attributions: attributions,
+    }),
   });
 
   // Create map
@@ -218,7 +224,7 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     hoverContent.innerHTML = '';
     if (map.hasFeatureAtPixel(pixel)) {
       map.forEachFeatureAtPixel(pixel, function (feature) {
-        if (feature.get('NAME_LATN') && hoverContent.innerHTML=='') {
+        if (feature.get('NAME_LATN') && hoverContent.innerHTML == '') {
           if (feature.get('value')) {
             hoverContent.innerHTML +=
               feature.get('NAME_LATN') +
@@ -244,7 +250,6 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     const lon = hdms.split(' ').slice(4, 9).toString().replaceAll(',', ' ');
     const lat = hdms.split(' ').slice(0, 4).toString().replaceAll(',', ' ');
     const pixel = map.getPixelFromCoordinate(coordinate);
-    const output = {};
     let region = '';
     let layer = '';
     let selectedLayer = '';
