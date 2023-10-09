@@ -128,7 +128,9 @@ def actual_evolution(
         projections_data = xr.open_dataarray(f.name)
     historical_sel = historical_data.sel(nuts=region)
     projections_sel = projections_data.sel(nuts=region)
-    fig = plots.actual_evolution(historical_sel, projections_sel, units="days")
+    fig = plots.actual_evolution(
+        historical_sel, projections_sel, ylabel="Tropical nights (days)", units="days"
+    )
     fig_json_path = os.path.join(
         DIR, f"../../public/actual_evolution_{selected_layer}.json"
     )
