@@ -18,8 +18,8 @@ function PullerContainer({ children, drawerBleeding, position = 'left', ...rest 
         sx={{
           alignItems: 'center',
           backgroundColor: grey[200],
-          borderBottomRightRadius: 8,
-          borderTopRightRadius: 8,
+          ...(position === 'left' && { borderBottomRightRadius: 8, borderTopRightRadius: 8 }),
+          ...(position === 'right' && { borderBottomLeftRadius: 8, borderTopLeftRadius: 8 }),
           bottom: 0,
           display: 'flex',
           flexDirection: 'column',
@@ -50,8 +50,8 @@ function PullerContainer({ children, drawerBleeding, position = 'left', ...rest 
           position: 'absolute',
           ...(position === 'bottom' && { top: -drawerBleeding }),
           ...(position === 'top' && { bottom: -drawerBleeding }),
-          borderTopLeftRadius: 8,
-          borderTopRightRadius: 8,
+          ...(position === 'bottom' && { borderTopLeftRadius: 8, borderTopRightRadius: 8 }),
+          ...(position === 'top' && { borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }),
           visibility: 'visible',
           right: 0,
           left: 0,
@@ -271,7 +271,7 @@ export default function MapApplication({
       <SubAppContainer
         fullHeight
         sx={{
-          backgroundColor: grey[200],
+          backgroundColor: grey[100],
           overflowY: 'auto',
         }}
       >
@@ -321,7 +321,7 @@ export default function MapApplication({
       <SubAppContainer
         fullHeight
         sx={{
-          backgroundColor: grey[200],
+          backgroundColor: grey[100],
           overflowY: 'auto',
         }}
       >
@@ -371,7 +371,7 @@ export default function MapApplication({
       </PullerContainer>
       <SubAppContainer
         sx={{
-          backgroundColor: grey[200],
+          backgroundColor: grey[100],
           overflowY: 'auto',
         }}
       >
@@ -421,7 +421,7 @@ export default function MapApplication({
       </PullerContainer>
       <SubAppContainer
         sx={{
-          backgroundColor: grey[200],
+          backgroundColor: grey[100],
           overflowY: 'auto',
         }}
       >

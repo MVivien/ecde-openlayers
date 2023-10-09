@@ -28,6 +28,14 @@ const theme = createTheme({
           fontSize: '1rem',
           width: '40%',
           borderRadius: '5px',
+          fontFamily: "'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif",
+        },
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          fontFamily: "'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif",
         },
       },
     },

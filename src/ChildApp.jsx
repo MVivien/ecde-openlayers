@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Chip from '@mui/material/Chip';
 
 import Loading from './Loading.jsx';
 
@@ -29,12 +28,10 @@ function ChildApp({ onClose, lat, lon, region, selectedLayer, temporalAggregatio
         </IconButton>
       </Typography>
       <Suspense fallback={<Loading />}>
-        <Chip
-          label="Anomalies"
-          variant="label"
-          component="label"
-          style={{ marginBottom: '5px', marginTop: '5px' }}
-        />
+        <h4 label style={{ marginBottom: '5px', marginTop: '5px' }}>
+          Anomalies
+        </h4>
+        <p style={{ marginBottom: '5px' }}>Plot about anomalies</p>
         <Chart
           id="historical_anomalies"
           plot_name="historical_anomalies"
@@ -42,12 +39,10 @@ function ChildApp({ onClose, lat, lon, region, selectedLayer, temporalAggregatio
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
         />
-        <Chip
-          label="Evolution"
-          variant="label"
-          component="label"
-          style={{ marginBottom: '5px', marginTop: '10px' }}
-        />
+        <h4 label style={{ marginBottom: '5px', marginTop: '5px' }}>
+          Evolution
+        </h4>
+        <p style={{ marginBottom: '5px' }}>Plot about evolution</p>
         <Chart
           id="actual_evolution"
           plot_name="actual_evolution"
@@ -65,7 +60,7 @@ ChildApp.propTypes = {
   lat: PropTypes.string,
   lon: PropTypes.string,
   region: PropTypes.string,
-  selectedLayer: PropTypes.string,
+  selectedLayer: PropTypes.number || PropTypes.string,
   temporalAggregation: PropTypes.string,
 };
 

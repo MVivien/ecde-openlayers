@@ -246,6 +246,7 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     const pixel = map.getPixelFromCoordinate(coordinate);
     const output = {};
     let region = '';
+    let layer = '';
     let selectedLayer = '';
 
     if (map.hasFeatureAtPixel(pixel)) {

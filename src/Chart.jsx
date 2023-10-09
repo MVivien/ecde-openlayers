@@ -30,7 +30,7 @@ Chart.propTypes = {
   id: PropTypes.string,
   plot_name: PropTypes.string,
   region: PropTypes.string,
-  selectedLayer: PropTypes.string,
+  selectedLayer: PropTypes.number || PropTypes.string,
   temporalAggregation: PropTypes.string,
 };
 

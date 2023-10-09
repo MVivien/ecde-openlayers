@@ -1,6 +1,6 @@
 #map-container {
   margin: 0;
-  font-family: sans-serif;
+  font-family: "Calibri";
   background-color: #04041b;
   width: 100%;
   min-width: 400px;
@@ -72,6 +72,10 @@
 
 .ol-unselectable.ol-control.layer-switcher {
   margin-right: 5%;
+}
+
+.ol-unselectable.ol-control.layer-switcher .panel{
+  border-radius: 15px;
 }
 
 button.ol-zoom-in,
