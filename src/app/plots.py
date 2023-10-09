@@ -218,3 +218,114 @@ def actual_evolution(
         )
     )
     return fig
+
+
+def anomaly_evolution(
+    historical_data: xr.DataArray,
+    projections_data: xr.DataArray,
+    temporal_aggregation: str = "annual",
+    ylabel: str = "",
+    title: str = "",
+    units: str = "",
+) -> go.Figure:
+    max_val = (
+        max(
+            [
+                data.max()
+                for data in [
+                    projections_data.sel(scenario="rcp_4_5", quantile=0.83),
+                    projections_data.sel(scenario="rcp_8_5", quantile=0.83),
+                    historical_data,
+                ]
+            ]
+        )
+    ) * 1.02
+    min_val = (
+        min(
+            [
+                data.min()
+                for data in [
+                    projections_data.sel(scenario="rcp_4_5", quantile=0.17),
+                    projections_data.sel(scenario="rcp_8_5", quantile=0.17),
+                    historical_data,
+                ]
+            ]
+        )
+    ) * 0.98
+    hovertemplate = "%{x}, %{y:" ".1f}" f" {units}"
+    common_layout = copy.deepcopy(LAYOUT)
+    local_layout = {
+        "legend": {"orientation": "h"},
+        "updatemenus": SCENARIO_BUTTONS,
+        "showlegend": False,
+        "yaxis": {"title": {"text": ylabel}, "range": [min_val, max_val]},
+        "xaxis_tickformat": TICKFORMAT[temporal_aggregation],
+    }
+    local_layout["annotations"] = [
+        utils.recursive_update(
+            copy.deepcopy(ANNOTATIONS), {"text": title, "showarrow": False}
+        )
+    ]
+    plot_layout = utils.recursive_update(common_layout, local_layout)
+    fig = go.Figure(layout=plot_layout)
+    scenarios = projections_data.scenario.values
+    for scenario in scenarios:
+        scenario_data = projections_data.sel(scenario=scenario)
+        fig = fig.add_trace(
+            go.Scatter(
+                x=scenario_data.time,
+                y=scenario_data.sel(quantile=0.17).values,
+                name=f"{SCENARIOS[scenario]['label']} 17th percentile",
+                visible=True,
+                legendgroup=SCENARIOS[scenario]["label"],
+                mode="lines",
+                line={
+                    "color": SCENARIOS[scenario]["linecolor"],
+                    "width": 0,
+                },
+                hovertemplate=hovertemplate,
+            )
+        )
+        fig = fig.add_trace(
+            go.Scatter(
+                x=scenario_data.time,
+                y=scenario_data.sel(quantile=0.83).values,
+                name=f"{SCENARIOS[scenario]['label']} 83rd percentile",
+                visible=True,
+                legendgroup=SCENARIOS[scenario]["label"],
+                mode="lines",
+                line={
+                    "color": SCENARIOS[scenario]["linecolor"],
+                    "width": 0,
+                },
+                fill="tonexty",
+                fillcolor=SCENARIOS[scenario]["fillcolor"],
+                hovertemplate=hovertemplate,
+            )
+        )
+        fig = fig.add_trace(
+            go.Scatter(
+                x=projections_data.time,
+                y=projections_data.sel(scenario=scenario, quantile=0.5).values,
+                name=f"{SCENARIOS[scenario]['label']} median",
+                visible=True,
+                mode="lines",
+                line={
+                    "color": SCENARIOS[scenario]["linecolor"],
+                    "shape": "spline",
+                    "smoothing": 1.3,
+                },
+                hovertemplate=hovertemplate,
+            )
+        )
+    fig = fig.add_trace(
+        go.Scatter(
+            x=historical_data.time,
+            y=historical_data.values,
+            name="ERA5",
+            visible=True,
+            mode="lines",
+            line={"color": COLORS["dark_grey"]},
+        )
+    )
+    return fig

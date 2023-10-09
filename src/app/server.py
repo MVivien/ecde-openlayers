@@ -68,7 +68,7 @@ def generate_geojson(
     )
     gdf = geodataframe.merge(df, on="NUTS_ID")
     gdf = gdf.to_crs("epsg:3035")
-    gdf_json_path = os.path.join(DIR, "../../public/reduced_data.json")
+    gdf_json_path = os.path.join(DIR, f"../../public/{variable}-reduced_data.json")
     gdf.to_file(gdf_json_path, driver="GeoJSON")
 
     return fastapi.responses.FileResponse(gdf_json_path)
@@ -93,7 +93,7 @@ def historical_anomalies(
     sel = data.sel(nuts=region)
     fig = plots.historical_anomalies(sel, units="days")
     fig_json_path = os.path.join(
-        DIR, f"../../public/historical_anomalies_{selected_layer}.json"
+        DIR, f"../../public/{variable}-historical_anomalies-{selected_layer}.json"
     )
     io.write_json(fig, fig_json_path)
     return fastapi.responses.FileResponse(fig_json_path)
@@ -132,7 +132,47 @@ def actual_evolution(
         historical_sel, projections_sel, ylabel="Tropical nights (days)", units="days"
     )
     fig_json_path = os.path.join(
-        DIR, f"../../public/actual_evolution_{selected_layer}.json"
+        DIR, f"../../public/{variable}-actual_evolution-{selected_layer}.json"
+    )
+    io.write_json(fig, fig_json_path)
+    return fastapi.responses.FileResponse(fig_json_path)
+
+
+@app.get("/plots/{variable}/anomaly_evolution")
+def anomaly_evolution(
+    variable: str,
+    region: str = fastapi.Query(...),
+    selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
+    temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+):
+    historical_data_url = (
+        f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
+        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{VARIABLES[variable]['historical_period']}-"
+        f"{VARIABLES[variable]['historical_version']}-"
+        "anomalies.nc"
+    )
+    projections_data_url = (
+        f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
+        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{VARIABLES[variable]['projections_version']}-"
+        "anomalies_quantiles.nc"
+    )
+    with fsspec.open(
+        f"filecache::{historical_data_url}", filecache={"same_names": True}
+    ) as f:
+        historical_data = xr.open_dataarray(f.name)
+    with fsspec.open(
+        f"filecache::{projections_data_url}", filecache={"same_names": True}
+    ) as f:
+        projections_data = xr.open_dataarray(f.name)
+    historical_sel = historical_data.sel(nuts=region)
+    projections_sel = projections_data.sel(nuts=region)
+    fig = plots.anomaly_evolution(
+        historical_sel, projections_sel, ylabel="Anomaly (days)", units="days"
+    )
+    fig_json_path = os.path.join(
+        DIR, f"../../public/{variable}-anomaly_evolution-{selected_layer}.json"
     )
     io.write_json(fig, fig_json_path)
     return fastapi.responses.FileResponse(fig_json_path)
