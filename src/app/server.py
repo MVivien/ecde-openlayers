@@ -12,9 +12,9 @@ from . import plots
 
 app = fastapi.FastAPI()
 DIR = os.path.join(os.path.dirname(__file__))
-DATA_HOST = 'http://ecde-data.copernicus-climate.eu'
+DATA_HOST = "http://ecde-data.copernicus-climate.eu"
 
-#FIXME: this is a temporary solution; an external configuration file should be used
+# FIXME: this is a temporary solution; an external configuration file should be used
 VARIABLES = {
     "05_tropical_nights": {
         "historical_period": "1959-2022",
@@ -22,6 +22,7 @@ VARIABLES = {
         "projections_version": "v0.3",
     },
 }
+
 
 @app.get("/geojson/{variable}/{layer}")
 def generate_geojson(
@@ -136,7 +137,7 @@ def actual_evolution(
 
 
 origins = [
-    "http://localDATA_HOST:5173",
+    "*",
 ]
 app.add_middleware(
     fastapi.middleware.cors.CORSMiddleware,
