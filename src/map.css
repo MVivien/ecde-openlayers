@@ -105,6 +105,12 @@ button.ol-zoom-out {
   button.ol-zoom-out {
     visibility: hidden;
   }
+
+
+
+  .MuiContainer-root {
+    max-height: 560px;
+  }
 }
 
 #layers {

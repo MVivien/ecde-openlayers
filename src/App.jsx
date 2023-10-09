@@ -117,13 +117,13 @@ function App() {
       </h4>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Chip label="Regions" variant="label" component="label" />
-        <Tooltip title="Info about regions" style={{ paddingLeft: '0.5rem' }}>
+        <Tooltip title="Info about regions">
           <SvgIcon>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="#686666"
-              className="w-6 h-6"
+              style={{ width: '1.2rem', marginLeft: '1rem' }}
             >
               <path
                 fillRule="evenodd"
@@ -142,13 +142,13 @@ function App() {
       <hr style={{ border: '0.5px solid lightgrey' }} />
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Chip label="Time span" variant="label" component="label" />
-        <Tooltip title="Info about time span" style={{ paddingLeft: '0.5rem' }}>
+        <Tooltip title="Info about time span">
           <SvgIcon>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="#686666"
-              className="w-6 h-6"
+              style={{ width: '1.2rem', marginLeft: '1rem' }}
             >
               <path
                 fillRule="evenodd"
@@ -172,13 +172,13 @@ function App() {
       <hr style={{ border: '0.5px solid lightgrey' }} />
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Chip label="Scenario" variant="label" component="label" />
-        <Tooltip title="Info about scenario" style={{ paddingLeft: '0.5rem' }}>
+        <Tooltip title="Info about scenario">
           <SvgIcon>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="#686666"
-              className="w-6 h-6"
+              style={{ width: '1.2rem', marginLeft: '1rem' }}
             >
               <path
                 fillRule="evenodd"
@@ -203,13 +203,13 @@ function App() {
       <hr style={{ border: '0.5px solid lightgrey' }} />
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Chip label="Time Horizon" variant="label" component="label" />
-        <Tooltip title="Info about regions" style={{ paddingLeft: '0.5rem' }}>
+        <Tooltip title="Info about regions">
           <SvgIcon>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="#686666"
-              className="w-6 h-6"
+              style={{ width: '1.2rem', marginLeft: '1rem' }}
             >
               <path
                 fillRule="evenodd"

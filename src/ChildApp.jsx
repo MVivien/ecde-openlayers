@@ -28,10 +28,8 @@ function ChildApp({ onClose, lat, lon, region, selectedLayer, temporalAggregatio
         </IconButton>
       </Typography>
       <Suspense fallback={<Loading />}>
-        <h4 label style={{ marginBottom: '5px', marginTop: '5px' }}>
-          Anomalies
-        </h4>
-        <p style={{ marginBottom: '5px' }}>Plot about anomalies</p>
+        <Typography variant="h4">Anomalies</Typography>
+        <Typography variant="p">Plot about anomalies</Typography>
         <Chart
           id="historical_anomalies"
           plot_name="historical_anomalies"
@@ -39,10 +37,8 @@ function ChildApp({ onClose, lat, lon, region, selectedLayer, temporalAggregatio
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
         />
-        <h4 label style={{ marginBottom: '5px', marginTop: '5px' }}>
-          Evolution
-        </h4>
-        <p style={{ marginBottom: '5px' }}>Plot about evolution</p>
+        <Typography variant="h4">Evolution</Typography>
+        <Typography variant="p">Plot about evolution</Typography>
         <Chart
           id="actual_evolution"
           plot_name="actual_evolution"
