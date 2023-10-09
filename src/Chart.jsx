@@ -7,7 +7,7 @@ function Chart({ id, plot_name, region, selectedLayer, temporalAggregation }) {
   useEffect(() => {
     async function loadPlot() {
       const plot = await fetch(
-        `http://localhost:5000/plots/${plot_name}?region=${region}&selectedLayer=${selectedLayer}&temporalAggregation=${temporalAggregation}`,
+        `http://localhost:5000/plots/05_tropical_nights/${plot_name}?region=${region}&selectedLayer=${selectedLayer}&temporalAggregation=${temporalAggregation}`,
       );
       const json = await plot.json();
       setPlotData(json);

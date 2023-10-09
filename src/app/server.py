@@ -12,15 +12,20 @@ from . import plots
 
 app = fastapi.FastAPI()
 DIR = os.path.join(os.path.dirname(__file__))
-HOST = 'http://ecde-data.copernicus-climate.eu'
-VARIABLE = '05_tropical_nights'
-HISTORICAL_PERIOD = '1959-2022'
-VH = 'v0.2' # version of historical data
-VP = 'v0.3' # version of projections data
+DATA_HOST = 'http://ecde-data.copernicus-climate.eu'
 
+#FIXME: this is a temporary solution; an external configuration file should be used
+VARIABLES = {
+    "05_tropical_nights": {
+        "historical_period": "1959-2022",
+        "historical_version": "v0.2",
+        "projections_version": "v0.3",
+    },
+}
 
-@app.get("/geojson/{layer}")
+@app.get("/geojson/{variable}/{layer}")
 def generate_geojson(
+    variable: str,
     layer: str,
     rcp: str = fastapi.Query(...),
     horizon: str = fastapi.Query(...),
@@ -29,13 +34,18 @@ def generate_geojson(
     print(temporal_aggregation)
     if horizon == "1981-01-01":
         url = (
-            f"{HOST}/{VARIABLE}/plots/{VARIABLE}-historical"
-            f"-{temporal_aggregation}-layer-{layer}-latitude-{HISTORICAL_PERIOD}-{VH}-30yrs_average.nc"
+            f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
+            f"{temporal_aggregation}-layer-{layer}-latitude-"
+            f"{VARIABLES[variable]['historical_period']}-"
+            f"{VARIABLES[variable]['historical_version']}-"
+            "30yrs_average.nc"
         )
     else:
         url = (
-            f"{HOST}/{VARIABLE}/plots/{VARIABLE}-projections"
-            f"-{temporal_aggregation}-layer-{layer}-latitude-{VP}-30yrs_average.nc"
+            f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
+            f"{temporal_aggregation}-layer-{layer}-latitude-"
+            f"{VARIABLES[variable]['projections_version']}-"
+            "30yrs_average.nc"
         )
 
     with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
@@ -57,22 +67,25 @@ def generate_geojson(
     )
     gdf = geodataframe.merge(df, on="NUTS_ID")
     gdf = gdf.to_crs("epsg:3035")
-    gdf.to_file(os.path.join(DIR, "../../public/reduced_data.json"), driver="GeoJSON")
+    gdf_json_path = os.path.join(DIR, "../../public/reduced_data.json")
+    gdf.to_file(gdf_json_path, driver="GeoJSON")
 
-    return fastapi.responses.FileResponse(
-        os.path.join(DIR, "../../public/reduced_data.json")
-    )
+    return fastapi.responses.FileResponse(gdf_json_path)
 
 
-@app.get("/plots/historical_anomalies")
+@app.get("/plots/{variable}/historical_anomalies")
 def historical_anomalies(
+    variable: str,
     region: str = fastapi.Query(...),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
 ):
     data_url = (
-        f"{HOST}/{VARIABLE}/plots/{VARIABLE}-historical-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-{HISTORICAL_PERIOD}-{VH}-anomalies.nc"
+        f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
+        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{VARIABLES[variable]['historical_period']}-"
+        f"{VARIABLES[variable]['historical_version']}-"
+        "anomalies.nc"
     )
     with fsspec.open(f"filecache::{data_url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
@@ -85,19 +98,24 @@ def historical_anomalies(
     return fastapi.responses.FileResponse(fig_json_path)
 
 
-@app.get("/plots/actual_evolution")
+@app.get("/plots/{variable}/actual_evolution")
 def actual_evolution(
+    variable: str,
     region: str = fastapi.Query(...),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
 ):
     historical_data_url = (
-        f"{HOST}/{VARIABLE}/historical/{VARIABLE}-historical-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-{HISTORICAL_PERIOD}-{VH}.nc"
+        f"{DATA_HOST}/{variable}/historical/{variable}-historical-"
+        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{VARIABLES[variable]['historical_period']}-"
+        f"{VARIABLES[variable]['historical_version']}.nc"
     )
     projections_data_url = (
-        f"{HOST}/{VARIABLE}/plots/{VARIABLE}-projections-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-{VP}-quantiles.nc"
+        f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
+        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{VARIABLES[variable]['projections_version']}-"
+        "quantiles.nc"
     )
     with fsspec.open(
         f"filecache::{historical_data_url}", filecache={"same_names": True}
@@ -118,7 +136,7 @@ def actual_evolution(
 
 
 origins = [
-    "http://localhost:5173",
+    "http://localDATA_HOST:5173",
 ]
 app.add_middleware(
     fastapi.middleware.cors.CORSMiddleware,
