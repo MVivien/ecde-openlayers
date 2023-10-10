@@ -168,29 +168,29 @@ const tile_layer = new TileLayer({
 // Defining a WMS layer
 const blackCarbon = new TileLayer({
     source: new TileWMS({
-      url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
-      params: {'LAYERS': 'composition_bbaod550'},
+      url: 'http://localhost:5020/mymodel/wms?request=GetCapabilities&version=1.3.0',
+      params: {'LAYERS': 'tos'},
     }),
-    title: "Black carbon aerosol optical depth at 550 nm"
+    title: "tos"
   })
 
 // Defining a WMS layer
 const so2Surface = new TileLayer({
     source: new TileWMS({
-      url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
-      params: {'LAYERS': 'composition_so2_surface'},
+      url: 'http://localhost:5020/mymodel/wms?request=GetCapabilities&version=1.3.0',
+      params: {'LAYERS': 't@pl'},
     }),
-    title: "Sulphur dioxide at surface",
+    title: "t@pl",
     visible: false
   })
 
 // Defining a WMS layer
 const aod550 = new TileLayer({
     source: new TileWMS({
-      url: 'http://eccharts.ecmwf.int/wms/?token=public&request=GetCapabilities&version=1.3.0',
-      params: {'LAYERS': 'composition_aod550'},
+      url: 'http://localhost:5020/mymodel/wms?request=GetCapabilities&version=1.3.0',
+      params: {'LAYERS': 'tp'},
     }),
-    title: "Total aerosol optical depth at 550 nm",
+    title: "tp",
     visible: false
   })
 
@@ -198,7 +198,7 @@ const aod550 = new TileLayer({
 const eccharts = new Group({
   title: 'eccharts',
   fold: 'open',
-  layers: [blackCarbon, so2Surface, aod550]
+  layers: [so2Surface, blackCarbon, aod550]
   })
 
 // Creating a Group for feature layers
@@ -216,7 +216,7 @@ const map = new Map({
   view: new View({
     center: fromLonLat([10, 55]),
     zoom: 4,
-    maxZoom: 6,
+    maxZoom: 12,
     minZoom: 3,
   }),
 });
