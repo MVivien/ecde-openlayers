@@ -259,18 +259,13 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
         region = feature.get('NUTS_ID');
         selectedLayer = feature.get('LEVL_CODE');
       });
-      /*          if (feature.get('NUTS_ID')) {
-            return 'test3'; // feature.get('NUTS_ID')
-          } else {
-            return 'no nuts id';
-          }
-          });*/
+
+      onClick(lat, lon, region, selectedLayer);
+
     } else {
       region = 'no region selected';
-      layer = 'no layer selected';
+      selectedLayer = 'no layer selected';
     }
-
-    onClick(lat, lon, region, selectedLayer);
   }
 
   map.on('pointermove', hoverPopup);
