@@ -145,13 +145,6 @@ def anomaly_evolution(
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
 ):
-    historical_data_url = (
-        f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
-        f"{VARIABLES[variable]['historical_period']}-"
-        f"{VARIABLES[variable]['historical_version']}-"
-        "anomalies.nc"
-    )
     projections_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
         f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
@@ -159,17 +152,12 @@ def anomaly_evolution(
         "anomalies_quantiles.nc"
     )
     with fsspec.open(
-        f"filecache::{historical_data_url}", filecache={"same_names": True}
-    ) as f:
-        historical_data = xr.open_dataarray(f.name)
-    with fsspec.open(
         f"filecache::{projections_data_url}", filecache={"same_names": True}
     ) as f:
         projections_data = xr.open_dataarray(f.name)
-    historical_sel = historical_data.sel(nuts=region)
     projections_sel = projections_data.sel(nuts=region)
     fig = plots.anomaly_evolution(
-        historical_sel, projections_sel, ylabel="Anomaly (days)", units="days"
+        projections_sel, ylabel="Anomaly (days)", units="days"
     )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-anomaly_evolution-{selected_layer}.json"

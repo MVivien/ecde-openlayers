@@ -16,6 +16,20 @@ COLORS = {
     "orange": "rgba(249,191,124,1)",
     "orange_shade": "rgba(249,191,124,0.3)",
 }
+MONTHS_SHORT = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+]
 LAYOUT = {
     "paper_bgcolor": "rgb(255,255,255)",
     "plot_bgcolor": "rgb(255,255,255)",
@@ -85,6 +99,34 @@ SCENARIO_BUTTONS = [
         ],
     },
 ]
+PERIOD_BUTTONS = [
+    {
+        "type": "buttons",
+        "direction": "right",
+        "active": 2,
+        "x": 0.5,
+        "xanchor": "center",
+        "y": -0.1,
+        "yanchor": "top",
+        "buttons": [
+            {
+                "label": "2011-2040",
+                "method": "update",
+                "args": [{"visible": [True] + [True] * 6 + [False] * 12}],
+            },
+            {
+                "label": "2041-2070",
+                "method": "update",
+                "args": [{"visible": [True] + [False] * 6 + [True] * 6 + [False] * 6}],
+            },
+            {
+                "label": "2071-2100",
+                "method": "update",
+                "args": [{"visible": [True] + [False] * 12 + [True] * 6}],
+            },
+        ],
+    },
+]
 
 
 def historical_anomalies(
@@ -117,6 +159,7 @@ def actual_evolution(
     title: str = "",
     units: str = "",
 ) -> go.Figure:
+    hovertemplate = "%{x}, %{y:" ".1f}" f" {units}"
     max_val = (
         max(
             [
@@ -141,7 +184,6 @@ def actual_evolution(
             ]
         )
     ) * 0.98
-    hovertemplate = "%{x}, %{y:" ".1f}" f" {units}"
     common_layout = copy.deepcopy(LAYOUT)
     local_layout = {
         "legend": {"orientation": "h"},
@@ -221,13 +263,13 @@ def actual_evolution(
 
 
 def anomaly_evolution(
-    historical_data: xr.DataArray,
     projections_data: xr.DataArray,
     temporal_aggregation: str = "annual",
     ylabel: str = "",
     title: str = "",
     units: str = "",
 ) -> go.Figure:
+    hovertemplate = "%{x}, %{y:" ".1f}" f" {units}"
     max_val = (
         max(
             [
@@ -235,7 +277,6 @@ def anomaly_evolution(
                 for data in [
                     projections_data.sel(scenario="rcp_4_5", quantile=0.83),
                     projections_data.sel(scenario="rcp_8_5", quantile=0.83),
-                    historical_data,
                 ]
             ]
         )
@@ -247,12 +288,10 @@ def anomaly_evolution(
                 for data in [
                     projections_data.sel(scenario="rcp_4_5", quantile=0.17),
                     projections_data.sel(scenario="rcp_8_5", quantile=0.17),
-                    historical_data,
                 ]
             ]
         )
     ) * 0.98
-    hovertemplate = "%{x}, %{y:" ".1f}" f" {units}"
     common_layout = copy.deepcopy(LAYOUT)
     local_layout = {
         "legend": {"orientation": "h"},
@@ -318,14 +357,4 @@ def anomaly_evolution(
                 hovertemplate=hovertemplate,
             )
         )
-    fig = fig.add_trace(
-        go.Scatter(
-            x=historical_data.time,
-            y=historical_data.values,
-            name="ERA5",
-            visible=True,
-            mode="lines",
-            line={"color": COLORS["dark_grey"]},
-        )
-    )
     return fig
