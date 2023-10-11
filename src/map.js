@@ -40,6 +40,10 @@ const ramp = colormap({
   nshades: steps,
 });
 
+const attributions =
+  '<a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap</a> ' +
+  '<a href="https://www.openstreetmap.org/copyright" target="_blank" >&copy; Powered by the <b>Copernicus Climate and Atmosphere Data Store</b></a>';
+
 function clamp(value, low, high) {
   return Math.max(low, Math.min(value, high));
 }
@@ -131,6 +135,7 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     activationMode: 'click',
     startActive: true,
     groupSelectStyle: 'group',
+    collapseLabel: '',
   });
 
   const switcherGroup = new Group({
@@ -142,7 +147,6 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
 
   const setLayersInGroup = (title, layers = []) => {
     let layerList;
-
     if (switcherGroup.getProperties().title == title) {
       layerList = switcherGroup.getLayersArray();
       layers.forEach(function (_, i) {
@@ -150,7 +154,6 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
         const { cls: SourceCls, defaultParams: defaultSourceParams } =
           possibleSourcesCls[sourceType];
         const { cls: LayerCls, defaultParams: defaultLayerParams } = possibleLayersCls[type];
-
         const source = new SourceCls({
           ...defaultSourceParams,
           ...layers[i].sourceParams,
@@ -192,7 +195,9 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
 
   // Tile layer
   const tile_layer = new TileLayer({
-    source: new OSM(),
+    source: new OSM({
+      attributions: attributions,
+    }),
   });
 
   // Create map
@@ -219,7 +224,7 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     hoverContent.innerHTML = '';
     if (map.hasFeatureAtPixel(pixel)) {
       map.forEachFeatureAtPixel(pixel, function (feature) {
-        if (feature.get('NAME_LATN') && hoverContent.innerHTML=='') {
+        if (feature.get('NAME_LATN') && hoverContent.innerHTML == '') {
           if (feature.get('value')) {
             hoverContent.innerHTML +=
               feature.get('NAME_LATN') +
@@ -245,8 +250,8 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     const lon = hdms.split(' ').slice(4, 9).toString().replaceAll(',', ' ');
     const lat = hdms.split(' ').slice(0, 4).toString().replaceAll(',', ' ');
     const pixel = map.getPixelFromCoordinate(coordinate);
-    const output = {};
     let region = '';
+    let layer = '';
     let selectedLayer = '';
 
     if (map.hasFeatureAtPixel(pixel)) {
@@ -254,18 +259,13 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
         region = feature.get('NUTS_ID');
         selectedLayer = feature.get('LEVL_CODE');
       });
-      /*          if (feature.get('NUTS_ID')) {
-            return 'test3'; // feature.get('NUTS_ID')
-          } else {
-            return 'no nuts id';
-          }
-          });*/
+
+      onClick(lat, lon, region, selectedLayer);
+
     } else {
       region = 'no region selected';
-      layer = 'no layer selected';
+      selectedLayer = 'no layer selected';
     }
-
-    onClick(lat, lon, region, selectedLayer);
   }
 
   map.on('pointermove', hoverPopup);

@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import { useDrag } from '@use-gesture/react';
 
 import { grey } from '@mui/material/colors';
-import useMediaQuery from '@mui/material/useMediaQuery';
+//import useMediaQuery from '@mui/material/useMediaQuery';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { useTheme } from '@mui/material/styles';
-
 import AppContainer from './AppContainer';
 import SubAppContainer from './SubAppContainer';
 
@@ -19,8 +18,8 @@ function PullerContainer({ children, drawerBleeding, position = 'left', ...rest 
         sx={{
           alignItems: 'center',
           backgroundColor: grey[200],
-          borderBottomRightRadius: 8,
-          borderTopRightRadius: 8,
+          ...(position === 'left' && { borderBottomRightRadius: 8, borderTopRightRadius: 8 }),
+          ...(position === 'right' && { borderBottomLeftRadius: 8, borderTopLeftRadius: 8 }),
           bottom: 0,
           display: 'flex',
           flexDirection: 'column',
@@ -51,8 +50,8 @@ function PullerContainer({ children, drawerBleeding, position = 'left', ...rest 
           position: 'absolute',
           ...(position === 'bottom' && { top: -drawerBleeding }),
           ...(position === 'top' && { bottom: -drawerBleeding }),
-          borderTopLeftRadius: 8,
-          borderTopRightRadius: 8,
+          ...(position === 'bottom' && { borderTopLeftRadius: 8, borderTopRightRadius: 8 }),
+          ...(position === 'top' && { borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }),
           visibility: 'visible',
           right: 0,
           left: 0,
@@ -130,6 +129,32 @@ function useDrawer(open = false, position = 'left') {
   return [drawer, setDrawer, bind];
 }
 
+PullerContainer.propTypes = {
+  children: PropTypes.any,
+  drawerBleeding: PropTypes.any,
+  position: PropTypes.string,
+};
+
+Puller.propTypes = {
+  children: PropTypes.any,
+  position: PropTypes.string,
+};
+
+MapApplication.propTypes = {
+  inputs: PropTypes.any,
+  outputs: PropTypes.any,
+  children: PropTypes.any,
+  inputsMd: PropTypes.string,
+  inputsXs: PropTypes.string,
+  outputsMd: PropTypes.string,
+  outputsXs: PropTypes.string,
+  openPlotDrawer: PropTypes.any,
+  drawerDefaultLeft: PropTypes.bool,
+  drawerDefaultBottom: PropTypes.bool,
+  drawerDefaultRight: PropTypes.bool,
+  drawerDefaultTop: PropTypes.bool,
+};
+
 /**
  *
  * @returns CADS Application layout for map based applications
@@ -155,7 +180,7 @@ export default function MapApplication({
   const [drawerRight, setDrawerRight, bindRight] = useDrawer(drawerDefaultRight, 'right');
   const [drawerTop, setDrawerTop, bindTop] = useDrawer(drawerDefaultTop, 'top');
 
-  const drawerBleeding = 60;
+  const drawerBleeding = 40;
 
   const inputsOnLeft =
     ((inputsMd === 'left' && large) || (inputsXs === 'left' && !large)) && Boolean(inputs);
@@ -246,7 +271,7 @@ export default function MapApplication({
       <SubAppContainer
         fullHeight
         sx={{
-          backgroundColor: grey[200],
+          backgroundColor: 'white',
           overflowY: 'auto',
         }}
       >
@@ -296,7 +321,7 @@ export default function MapApplication({
       <SubAppContainer
         fullHeight
         sx={{
-          backgroundColor: grey[200],
+          backgroundColor: 'white',
           overflowY: 'auto',
         }}
       >
@@ -346,7 +371,7 @@ export default function MapApplication({
       </PullerContainer>
       <SubAppContainer
         sx={{
-          backgroundColor: grey[200],
+          backgroundColor: 'white',
           overflowY: 'auto',
         }}
       >
@@ -396,7 +421,7 @@ export default function MapApplication({
       </PullerContainer>
       <SubAppContainer
         sx={{
-          backgroundColor: grey[200],
+          backgroundColor: 'white',
           overflowY: 'auto',
         }}
       >
