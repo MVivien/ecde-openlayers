@@ -251,7 +251,6 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     const lat = hdms.split(' ').slice(0, 4).toString().replaceAll(',', ' ');
     const pixel = map.getPixelFromCoordinate(coordinate);
     let region = '';
-    let layer = '';
     let selectedLayer = '';
 
     if (map.hasFeatureAtPixel(pixel)) {
@@ -261,7 +260,6 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
       });
 
       onClick(lat, lon, region, selectedLayer);
-
     } else {
       region = 'no region selected';
       selectedLayer = 'no layer selected';
