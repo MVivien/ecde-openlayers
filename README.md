@@ -14,7 +14,10 @@ pip install -r requirements.txt
 To launch the API server, run:
 
 ```bash
+# Development mode
 uvicorn src.app.server:app --port 5000 --reload
+# Production mode, with configured base path, in case behind a proxy
+uvicorn src.app.server:app --port=5000 --root-path=/apps/ecde-prototype-1/api
 ```
 
 ## Front-end application
