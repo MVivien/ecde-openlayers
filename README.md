@@ -50,7 +50,7 @@ In both cases, you can configure the API base URL using environment variables, f
 
 ```bash
 # Controlling the backend API while running the weapp in development mode
-VITE_API_BASE='http://localhost:8000' npm run
+VITE_API_BASE='http://localhost:8000' npm start
 # Controlling the backend API in production mode. Remember this value is read AT BULD TIME
 VITE_API_BASE='http://www.mycompany.org/api/' npm run build
 ```
