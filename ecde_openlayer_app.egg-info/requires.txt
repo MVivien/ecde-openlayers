@@ -1,6 +1,0 @@
-cdsapi
-xarray
-netcdf4
-geopandas
-flask
-flask_cors
