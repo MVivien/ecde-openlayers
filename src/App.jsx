@@ -14,6 +14,8 @@ import { EVENT_GROUP_SET_LAYERS } from './constants';
 import { registerEvent } from './map_events';
 import SvgIcon from '@mui/material/SvgIcon';
 import Tooltip from '@mui/material/Tooltip';
+
+import { API_BASE } from './config';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
@@ -111,7 +113,7 @@ function App() {
               sourceType: 'vector',
               params: `NUTS 2`,
               sourceParams: {
-                url: `http://localhost:5000/geojson/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
+                url: `${API_BASE}/geojson/05_tropical_nights/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
               },
             },
             {
@@ -120,7 +122,7 @@ function App() {
               sourceType: 'vector',
               params: `NUTS 1`,
               sourceParams: {
-                url: `http://localhost:5000/geojson/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
+                url: `${API_BASE}/geojson/05_tropical_nights/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
               },
             },
             {
@@ -129,7 +131,7 @@ function App() {
               sourceType: 'vector',
               params: `NUTS 0`,
               sourceParams: {
-                url: `http://localhost:5000/geojson/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
+                url: `${API_BASE}/geojson/05_tropical_nights/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
               },
             },
           ],

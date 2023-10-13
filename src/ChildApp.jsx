@@ -47,6 +47,16 @@ function ChildApp({ onClose, lat, lon, region, selectedLayer, temporalAggregatio
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
         />
+        <Typography variant="subtitle1" paragraph component="label" align="left">
+          Plot 3
+        </Typography>
+        <Chart
+          id="anomaly_evolution"
+          plot_name="anomaly_evolution"
+          region={region}
+          selectedLayer={selectedLayer}
+          temporalAggregation={temporalAggregation}
+        />
       </Suspense>
     </Box>
   );

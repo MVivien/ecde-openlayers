@@ -1,8 +1,0 @@
-README.md
-setup.py
-ecde_openlayer_app.egg-info/PKG-INFO
-ecde_openlayer_app.egg-info/SOURCES.txt
-ecde_openlayer_app.egg-info/dependency_links.txt
-ecde_openlayer_app.egg-info/requires.txt
-ecde_openlayer_app.egg-info/top_level.txt
-src/server.py

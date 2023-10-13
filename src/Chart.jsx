@@ -2,13 +2,15 @@ import Plotly from 'plotly.js-dist-min';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 
+import { API_BASE } from './config';
+
 function Chart({ id, plot_name, region, selectedLayer, temporalAggregation }) {
   const [plotData, setPlotData] = useState(null);
 
   useEffect(() => {
     async function loadPlot() {
       const plot = await fetch(
-        `http://localhost:5000/plots/${plot_name}?region=${region}&selectedLayer=${selectedLayer}&temporalAggregation=${temporalAggregation}`,
+        `${API_BASE}/plots/05_tropical_nights/${plot_name}?region=${region}&selectedLayer=${selectedLayer}&temporalAggregation=${temporalAggregation}`,
       );
       const json = await plot.json();
       setPlotData(json);
@@ -21,7 +23,7 @@ function Chart({ id, plot_name, region, selectedLayer, temporalAggregation }) {
       return;
     }
     Plotly.newPlot(id, plotData.data, plotData.layout);
-  }, [region, plotData]);
+  }, [id, region, plotData]);
 
   return <section className="plotly-chart" id={id} />;
 }
