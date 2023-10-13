@@ -28,8 +28,8 @@ function App() {
   const [region, setRegion] = useState('');
   const [selectedLayer, setSelectedLayer] = useState('');
   const [temporalAggregation, setTemporalAggregation] = useState('yearly');
-  const [month, setMonth] = useState('');
-  const [season, setSeason] = useState('');
+  const [month, setMonth] = useState(7);
+  const [season, setSeason] = useState(6);
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
   const [openPlotDrawer, setOpenPlotDrawer] = useState(false);
@@ -81,8 +81,8 @@ function App() {
 
   const handleTemporalAggregation = (event) => {
     setTemporalAggregation(event.target.value);
-    setMonth('');
-    setSeason('');
+    setMonth(7);
+    setSeason(6);
   };
 
   const handleMonthChange = (event) => {
@@ -369,6 +369,8 @@ function App() {
       selectedLayer={selectedLayer}
       temporalAggregation={temporalAggregation}
       rcp={rcp}
+      month={month}
+      season={season}
     />
   ) : null;
 
