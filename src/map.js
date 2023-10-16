@@ -224,16 +224,16 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     hoverContent.innerHTML = '';
     if (map.hasFeatureAtPixel(pixel)) {
       map.forEachFeatureAtPixel(pixel, function (feature) {
-        if (feature.get('NAME_LATN') && hoverContent.innerHTML == '') {
+        if (feature.get('name') && hoverContent.innerHTML == '') {
           if (feature.get('value')) {
             hoverContent.innerHTML +=
-              feature.get('NAME_LATN') +
+              feature.get('name') +
               ': ' +
               feature.get('value').toFixed(2) +
               ' tropical nights <br>';
             hoverOverlay.setPosition(coordinate);
           } else {
-            hoverContent.innerHTML += feature.get('NAME_LATN') + ': No value <br>';
+            hoverContent.innerHTML += feature.get('name') + ': No value <br>';
             hoverOverlay.setPosition(coordinate);
           }
         }
