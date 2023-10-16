@@ -1,4 +1,4 @@
-import Plotly from 'plotly.js-dist-min';
+import Plotly from 'plotly.js-basic-dist-min';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 
