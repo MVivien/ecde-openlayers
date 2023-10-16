@@ -16,6 +16,8 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Tooltip from '@mui/material/Tooltip';
 
 import { API_BASE } from './config';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 const Map = lazy(() => import('./Map.jsx'));
 
@@ -26,9 +28,31 @@ function App() {
   const [region, setRegion] = useState('');
   const [selectedLayer, setSelectedLayer] = useState('');
   const [temporalAggregation, setTemporalAggregation] = useState('yearly');
+  const [month, setMonth] = useState(7);
+  const [season, setSeason] = useState(6);
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
   const [openPlotDrawer, setOpenPlotDrawer] = useState(false);
+  const months = [
+    { label: 'January', value: 1 },
+    { label: 'February', value: 2 },
+    { label: 'March', value: 3 },
+    { label: 'April', value: 4 },
+    { label: 'May', value: 5 },
+    { label: 'June', value: 6 },
+    { label: 'July', value: 7 },
+    { label: 'August', value: 8 },
+    { label: 'September', value: 9 },
+    { label: 'October', value: 10 },
+    { label: 'November', value: 11 },
+    { label: 'December', value: 12 },
+  ];
+  const seasons = [
+    { id: 1, label: 'Winter (DJF)', value: 12 },
+    { id: 2, label: 'Spring (MAM)', value: 3 },
+    { id: 3, label: 'Summer (JJA)', value: 6 },
+    { id: 4, label: 'Autumn (SON)', value: 9 },
+  ];
 
   const handleMapClick = (lat, lon, region, selectedLayer) => {
     console.log(`Map clicked at ${lat}, ${lon}, ${region}, ${selectedLayer}`);
@@ -57,11 +81,27 @@ function App() {
 
   const handleTemporalAggregation = (event) => {
     setTemporalAggregation(event.target.value);
+    setMonth(7);
+    setSeason(6);
+  };
+
+  const handleMonthChange = (event) => {
+    setMonth(event.target.value);
+  };
+
+  const handleSeasonChange = (event) => {
+    setSeason(event.target.value);
   };
 
   useEffect(() => {
     if (rcp) {
       console.log('controler');
+      let tempAggregationVar =
+        temporalAggregation === 'monthly'
+          ? `&month=${month}`
+          : temporalAggregation === 'seasonal'
+          ? `&season=${season}`
+          : '';
       // const { name, url } = NUTS.find((item) => item.name === nut);
       const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
         detail: {
@@ -73,7 +113,7 @@ function App() {
               sourceType: 'vector',
               params: `NUTS 2`,
               sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}`,
+                url: `${API_BASE}/geojson/05_tropical_nights/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
               },
             },
             {
@@ -82,7 +122,7 @@ function App() {
               sourceType: 'vector',
               params: `NUTS 1`,
               sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}`,
+                url: `${API_BASE}/geojson/05_tropical_nights/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
               },
             },
             {
@@ -91,7 +131,7 @@ function App() {
               sourceType: 'vector',
               params: `NUTS 0`,
               sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}`,
+                url: `${API_BASE}/geojson/05_tropical_nights/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
               },
             },
           ],
@@ -99,7 +139,7 @@ function App() {
       });
       registerEvent(event);
     }
-  }, [rcp, horizon, temporalAggregation]);
+  }, [rcp, horizon, temporalAggregation, month, season]);
 
   const inputs = (
     <>
@@ -172,6 +212,88 @@ function App() {
         <ToggleButton value="monthly">Month</ToggleButton>
       </ToggleButtonGroup>
       <hr style={{ border: '0.5px solid lightgrey' }} />
+      {temporalAggregation === 'monthly' ? (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Chip label="Month" variant="label" component="label" />
+            <Tooltip title="Info about months">
+              <SvgIcon>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="#686666"
+                  style={{ width: '1.2rem', marginLeft: '1rem' }}
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </SvgIcon>
+            </Tooltip>
+          </div>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={month}
+            onChange={handleMonthChange}
+            sx={{
+              width: '10rem',
+            }}
+          >
+            {months.map((m) => {
+              return (
+                <MenuItem value={m.value} key={m.value}>
+                  {m.label}
+                </MenuItem>
+              );
+            })}
+          </Select>
+          <hr style={{ border: '0.5px solid lightgrey' }} />
+        </>
+      ) : null}
+      {temporalAggregation === 'seasonal' ? (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Chip label="Season" variant="label" component="label" />
+            <Tooltip title="Info about season">
+              <SvgIcon>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="#686666"
+                  style={{ width: '1.2rem', marginLeft: '1rem' }}
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </SvgIcon>
+            </Tooltip>
+          </div>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={season}
+            onChange={handleSeasonChange}
+            sx={{
+              width: '10rem',
+            }}
+          >
+            {seasons.map((m) => {
+              return (
+                <MenuItem value={m.value} key={m.id}>
+                  {m.label}
+                </MenuItem>
+              );
+            })}
+          </Select>
+          <hr style={{ border: '0.5px solid lightgrey' }} />
+        </>
+      ) : null}
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Chip label="Scenario" variant="label" component="label" />
         <Tooltip title="Info about scenario">
@@ -247,6 +369,8 @@ function App() {
       selectedLayer={selectedLayer}
       temporalAggregation={temporalAggregation}
       rcp={rcp}
+      month={month}
+      season={season}
     />
   ) : null;
 

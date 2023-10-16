@@ -9,7 +9,16 @@ import Loading from './Loading.jsx';
 
 const Chart = lazy(() => import('./Chart.jsx'));
 
-function ChildApp({ onClose, lat, lon, region, selectedLayer, temporalAggregation }) {
+function ChildApp({
+  onClose,
+  lat,
+  lon,
+  region,
+  selectedLayer,
+  temporalAggregation,
+  month,
+  season,
+}) {
   return (
     <Box className="child-app" sx={{ marginTop: '3rem' }}>
       <Typography
@@ -29,33 +38,38 @@ function ChildApp({ onClose, lat, lon, region, selectedLayer, temporalAggregatio
         </IconButton>
       </Typography>
       <Suspense fallback={<Loading />}>
-        <Typography variant="h4">Anomalies</Typography>
-        <Typography variant="p">Plot about anomalies</Typography>
+        <Typography variant="h4">Historical Anomalies</Typography>
+        <Typography variant="p">Plot about historical anomalies</Typography>
         <Chart
           id="historical_anomalies"
           plot_name="historical_anomalies"
           region={region}
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
+          month={month}
+          season={season}
         />
-        <Typography variant="h4">Evolution</Typography>
-        <Typography variant="p">Plot about evolution</Typography>
+        <Typography variant="h4">Actual Evolution</Typography>
+        <Typography variant="p">Plot about actual evolution</Typography>
         <Chart
           id="actual_evolution"
           plot_name="actual_evolution"
           region={region}
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
+          month={month}
+          season={season}
         />
-        <Typography variant="subtitle1" paragraph component="label" align="left">
-          Plot 3
-        </Typography>
+        <Typography variant="h4">Anomaly Evolution</Typography>
+        <Typography variant="p">Plot about anomaly evolution</Typography>
         <Chart
           id="anomaly_evolution"
           plot_name="anomaly_evolution"
           region={region}
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
+          month={month}
+          season={season}
         />
       </Suspense>
     </Box>
@@ -69,6 +83,8 @@ ChildApp.propTypes = {
   region: PropTypes.string,
   selectedLayer: PropTypes.number || PropTypes.string,
   temporalAggregation: PropTypes.string,
+  month: PropTypes.number,
+  season: PropTypes.number,
 };
 
 export default ChildApp;

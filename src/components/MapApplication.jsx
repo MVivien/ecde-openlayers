@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useDrag } from '@use-gesture/react';
 
 import { grey } from '@mui/material/colors';
-//import useMediaQuery from '@mui/material/useMediaQuery';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
@@ -174,12 +174,11 @@ export default function MapApplication({
   drawerDefaultTop = false,
 }) {
   const theme = useTheme();
-  const [large, setLarge] = useState(true);
+  const large = useMediaQuery('(min-width:1000px)');
   const [drawerLeft, setDrawerLeft, bindLeft] = useDrawer(drawerDefaultLeft, 'left');
   const [drawerBottom, setDrawerBottom, bindBottom] = useDrawer(drawerDefaultBottom, 'bottom');
   const [drawerRight, setDrawerRight, bindRight] = useDrawer(drawerDefaultRight, 'right');
   const [drawerTop, setDrawerTop, bindTop] = useDrawer(drawerDefaultTop, 'top');
-
   const drawerBleeding = 40;
 
   const inputsOnLeft =
@@ -205,9 +204,6 @@ export default function MapApplication({
 
   //open Right drawer on map click
   useEffect(() => {
-    if (window.outerWidth < 800) {
-      setLarge(false);
-    }
     if (openPlotDrawer) {
       if (large) {
         setDrawerRight(true);
@@ -215,7 +211,7 @@ export default function MapApplication({
         setDrawerBottom(true);
       }
     }
-  }, [openPlotDrawer, large]);
+  }, [openPlotDrawer, large, setDrawerRight, setDrawerBottom]);
 
   const drawerContainerStyles = large
     ? {
