@@ -4,9 +4,7 @@ import { useDrag } from '@use-gesture/react';
 
 import { grey } from '@mui/material/colors';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import { Grid, Box, SwipeableDrawer } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import AppContainer from './AppContainer';
 import SubAppContainer from './SubAppContainer';
