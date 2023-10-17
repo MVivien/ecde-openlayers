@@ -9,6 +9,10 @@ import { useTheme } from '@mui/material/styles';
 import AppContainer from './AppContainer';
 import SubAppContainer from './SubAppContainer';
 
+import IconButton from '@mui/material/IconButton';
+import NorthWestIcon from '@mui/icons-material/NorthWest';
+import SouthEastIcon from '@mui/icons-material/SouthEast';
+
 function PullerContainer({ children, drawerBleeding, position = 'left', ...rest }) {
   if (position === 'left' || position === 'right') {
     return (
@@ -177,6 +181,7 @@ export default function MapApplication({
   const [drawerBottom, setDrawerBottom, bindBottom] = useDrawer(drawerDefaultBottom, 'bottom');
   const [drawerRight, setDrawerRight, bindRight] = useDrawer(drawerDefaultRight, 'right');
   const [drawerTop, setDrawerTop, bindTop] = useDrawer(drawerDefaultTop, 'top');
+  const [openLegend, setOpenLegend] = useState(false);
   const drawerBleeding = 40;
 
   const inputsOnLeft =
@@ -427,6 +432,46 @@ export default function MapApplication({
     </SwipeableDrawer>
   ) : null;
 
+  const mapLegend = (
+    <>
+      <div
+        style={{
+          position: 'absolute',
+          right: drawerRight ? '28%' : '8%',
+          bottom: drawerBottom ? '30%' : '5%',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'end' }}>
+          <IconButton
+            sx={{
+              color: 'black',
+              background: 'white',
+              borderRadius: '9px',
+              padding: '3px',
+              '&:hover': {
+                background: 'white',
+              },
+            }}
+            onClick={() => {
+              setOpenLegend((openLegend) => !openLegend);
+            }}
+          >
+            {openLegend ? (
+              <SouthEastIcon fontSize={large ? 'medium' : 'large'} />
+            ) : (
+              <NorthWestIcon fontSize={large ? 'medium' : 'large'} />
+            )}
+          </IconButton>
+        </div>
+        {openLegend ? (
+          <div style={{ maxWidth: '45rem' }}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id dictum nulla. Ut
+            tellus elit, dapibus eget imperdiet bibendum, fringilla ac lacus.
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
   return (
     <>
       {swipeableDrawerLeft}
@@ -436,6 +481,7 @@ export default function MapApplication({
       <AppContainer>
         <Grid sx={{ flexGrow: 1 }}>{children}</Grid>
       </AppContainer>
+      {mapLegend}
     </>
   );
 }

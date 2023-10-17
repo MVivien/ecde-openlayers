@@ -307,7 +307,9 @@ function InputPanel({
         label="Time Horizon"
         onChange={handleHorizonChange}
       >
-        {mapType == 'actual' ? <ToggleButton value="1981-01-01">1981-2010</ToggleButton> : null}
+        <ToggleButton value="1981-01-01" disabled={mapType === 'change'}>
+          1981-2010
+        </ToggleButton>
         <ToggleButton value="2011-01-01">2011-2040</ToggleButton>
         <ToggleButton value="2041-01-01">2041-2070</ToggleButton>
         <ToggleButton value="2071-01-01">2071-2100</ToggleButton>
