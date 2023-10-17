@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import {
   ToggleButtonGroup,
   Select,
@@ -38,6 +39,8 @@ function InputPanel({
   season,
   setSeason,
 }) {
+  const [mapType, setMapType] = useState('actual');
+
   const months = [
     { label: 'January', value: 1 },
     { label: 'February', value: 2 },
@@ -57,6 +60,11 @@ function InputPanel({
     { id: 2, label: 'Spring (MAM)', value: 3 },
     { id: 3, label: 'Summer (JJA)', value: 6 },
     { id: 4, label: 'Autumn (SON)', value: 9 },
+  ];
+
+  const mapTypes = [
+    { id: 1, label: 'Actual values', value: 'actual' },
+    { id: 2, label: 'Change from 1981 - 2010', value: 'change' },
   ];
 
   const handleRcpChange = (event) => {
@@ -79,6 +87,13 @@ function InputPanel({
 
   const handleSeasonChange = (event) => {
     setSeason(event.target.value);
+  };
+
+  const handleMapTypeChange = (event) => {
+    setMapType(event.target.value);
+    if (event.target.value == 'change' && horizon == '1981-01-01') {
+      setHorizon('2011-01-01');
+    }
   };
 
   return (
@@ -292,10 +307,45 @@ function InputPanel({
         label="Time Horizon"
         onChange={handleHorizonChange}
       >
-        <ToggleButton value="1981-01-01">1981-2010</ToggleButton>
+        {mapType == 'actual' ? <ToggleButton value="1981-01-01">1981-2010</ToggleButton> : null}
         <ToggleButton value="2011-01-01">2011-2040</ToggleButton>
         <ToggleButton value="2041-01-01">2041-2070</ToggleButton>
         <ToggleButton value="2071-01-01">2071-2100</ToggleButton>
+      </ToggleButtonGroup>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Chip label="Map Type" variant="label" component="label" />
+        <Tooltip title="Info about map type">
+          <SvgIcon>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="#686666"
+              style={{ width: '1.2rem', marginLeft: '1rem' }}
+            >
+              <path
+                fillRule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </SvgIcon>
+        </Tooltip>
+      </div>
+      <ToggleButtonGroup
+        variant="outlined"
+        aria-label="outlined button group"
+        id="map-type"
+        value={mapType}
+        label="Map Type"
+        onChange={handleMapTypeChange}
+      >
+        {mapTypes.map((m) => {
+          return (
+            <ToggleButton value={m.value} key={m.value}>
+              {m.label}
+            </ToggleButton>
+          );
+        })}
       </ToggleButtonGroup>
     </>
   );
