@@ -80,6 +80,8 @@ def historical_anomalies(
     region: str = fastapi.Query(...),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+    month: int | None = fastapi.Query(None),
+    season: int | None = fastapi.Query(None),
 ):
     data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
@@ -91,6 +93,11 @@ def historical_anomalies(
     with fsspec.open(f"filecache::{data_url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
     sel = data.sel(nuts=region)
+    # Assumption: if season is not None, month is None
+    if season is not None:
+        month = season
+    if month is not None:
+        sel = sel.sel(time=sel["time.month"] == month)
     fig = plots.historical_anomalies(sel, units="days")
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-historical_anomalies-{selected_layer}.json"
@@ -105,6 +112,8 @@ def actual_evolution(
     region: str = fastapi.Query(...),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+    month: int | None = fastapi.Query(None),
+    season: int | None = fastapi.Query(None),
 ):
     historical_data_url = (
         f"{DATA_HOST}/{variable}/historical/{variable}-historical-"
@@ -128,6 +137,14 @@ def actual_evolution(
         projections_data = xr.open_dataarray(f.name)
     historical_sel = historical_data.sel(nuts=region)
     projections_sel = projections_data.sel(nuts=region)
+    # Assumption: if season is not None, month is None
+    if season is not None:
+        month = season
+    if month is not None:
+        historical_sel = historical_sel.sel(time=historical_sel["time.month"] == month)
+        projections_sel = projections_sel.sel(
+            time=projections_sel["time.month"] == month
+        )
     fig = plots.actual_evolution(
         historical_sel, projections_sel, ylabel="Tropical nights (days)", units="days"
     )
@@ -144,6 +161,8 @@ def anomaly_evolution(
     region: str = fastapi.Query(...),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+    month: int | None = fastapi.Query(None),
+    season: int | None = fastapi.Query(None),
 ):
     projections_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
@@ -156,6 +175,13 @@ def anomaly_evolution(
     ) as f:
         projections_data = xr.open_dataarray(f.name)
     projections_sel = projections_data.sel(nuts=region)
+    # Assumption: if season is not None, month is None
+    if season is not None:
+        month = season
+    if month is not None:
+        projections_sel = projections_sel.sel(
+            time=projections_sel["time.month"] == month
+        )
     fig = plots.anomaly_evolution(
         projections_sel, ylabel="Anomaly (days)", units="days"
     )
