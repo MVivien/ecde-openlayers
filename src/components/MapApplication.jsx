@@ -8,10 +8,7 @@ import { Grid, Box, SwipeableDrawer } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import AppContainer from './AppContainer';
 import SubAppContainer from './SubAppContainer';
-
-import IconButton from '@mui/material/IconButton';
-import NorthWestIcon from '@mui/icons-material/NorthWest';
-import SouthEastIcon from '@mui/icons-material/SouthEast';
+import MapLegend from './MapLegend';
 
 function PullerContainer({ children, drawerBleeding, position = 'left', ...rest }) {
   if (position === 'left' || position === 'right') {
@@ -181,7 +178,7 @@ export default function MapApplication({
   const [drawerBottom, setDrawerBottom, bindBottom] = useDrawer(drawerDefaultBottom, 'bottom');
   const [drawerRight, setDrawerRight, bindRight] = useDrawer(drawerDefaultRight, 'right');
   const [drawerTop, setDrawerTop, bindTop] = useDrawer(drawerDefaultTop, 'top');
-  const [openLegend, setOpenLegend] = useState(false);
+
   const drawerBleeding = 40;
 
   const inputsOnLeft =
@@ -434,41 +431,7 @@ export default function MapApplication({
 
   const mapLegend = (
     <>
-      <div
-        style={{
-          position: 'absolute',
-          right: drawerRight ? '28%' : '8%',
-          bottom: drawerBottom ? '30%' : '5%',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'end' }}>
-          <IconButton
-            sx={{
-              color: 'black',
-              background: 'white',
-              borderRadius: '9px',
-              padding: '3px',
-              '&:hover': {
-                background: 'white',
-              },
-            }}
-            onClick={() => {
-              setOpenLegend((openLegend) => !openLegend);
-            }}
-          >
-            {openLegend ? (
-              <SouthEastIcon fontSize={large ? 'medium' : 'large'} />
-            ) : (
-              <NorthWestIcon fontSize={large ? 'medium' : 'large'} />
-            )}
-          </IconButton>
-        </div>
-        {openLegend ? (
-          <div style={{ maxWidth: '45rem' }}>
-            Tropical Nights (days)
-          </div>
-        ) : null}
-      </div>
+      <MapLegend large={large} drawerRight={drawerRight} drawerBottom={drawerBottom} />
     </>
   );
   return (
