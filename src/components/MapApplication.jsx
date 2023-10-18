@@ -465,8 +465,7 @@ export default function MapApplication({
         </div>
         {openLegend ? (
           <div style={{ maxWidth: '45rem' }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id dictum nulla. Ut
-            tellus elit, dapibus eget imperdiet bibendum, fringilla ac lacus.
+            Tropical Nights (days)
           </div>
         ) : null}
       </div>
