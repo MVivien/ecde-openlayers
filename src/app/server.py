@@ -31,6 +31,8 @@ def generate_geojson(
     rcp: str = fastapi.Query(...),
     horizon: str = fastapi.Query(...),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+    month: int | None = fastapi.Query(None),
+    season: int | None = fastapi.Query(None),
 ) -> fastapi.responses.StreamingResponse:
     print(temporal_aggregation)
     if horizon == "1981-01-01":
@@ -54,6 +56,12 @@ def generate_geojson(
 
     if "avg_period" in data.dims:
         data = data.sel(scenario=rcp, avg_period=horizon)
+
+    # Assumption: if season is not None, month is None
+    if temporal_aggregation =='seasonal':
+        data = data.sel(month=season)
+    if temporal_aggregation =='monthly':
+        data = data.sel(month=month)
 
     df = data.to_dataframe().reset_index()
     df = df.rename(columns={"nuts": "NUTS_ID", data.name: "value"})

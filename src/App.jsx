@@ -113,7 +113,7 @@ function App() {
               sourceType: 'vector',
               params: `NUTS 2`,
               sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
+                url: `${API_BASE}/geojson/05_tropical_nights/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}&month=${month}&season=${season}`,
               },
             },
             {
@@ -122,7 +122,7 @@ function App() {
               sourceType: 'vector',
               params: `NUTS 1`,
               sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
+                url: `${API_BASE}/geojson/05_tropical_nights/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}&month=${month}&season=${season}`,
               },
             },
             {
@@ -131,7 +131,7 @@ function App() {
               sourceType: 'vector',
               params: `NUTS 0`,
               sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
+                url: `${API_BASE}/geojson/05_tropical_nights/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}&month=${month}&season=${season}`,
               },
             },
           ],
