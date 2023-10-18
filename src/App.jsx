@@ -26,6 +26,7 @@ function App() {
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
   const [openPlotDrawer, setOpenPlotDrawer] = useState(false);
+  const [mapType, setMapType] = useState('actual');
 
   const handleMapClick = (lat, lon, region, selectedLayer) => {
     console.log(`Map clicked at ${lat}, ${lon}, ${region}, ${selectedLayer}`);
@@ -107,6 +108,8 @@ function App() {
         setMonth={setMonth}
         season={season}
         setSeason={setSeason}
+        mapType={mapType}
+        setMapType={setMapType}
       />
     </>
   );

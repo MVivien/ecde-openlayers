@@ -38,8 +38,9 @@ function InputPanel({
   setMonth,
   season,
   setSeason,
+  mapType,
+  setMapType
 }) {
-  const [mapType, setMapType] = useState('actual');
 
   const months = [
     { label: 'January', value: 1 },
