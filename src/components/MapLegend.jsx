@@ -3,6 +3,7 @@ import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import NorthWestIcon from '@mui/icons-material/NorthWest';
 import SouthEastIcon from '@mui/icons-material/SouthEast';
+import { Box } from '@mui/system';
 
 MapLegend.propTypes = {
   large: PropTypes.bool,
@@ -29,6 +30,7 @@ function MapLegend({ large, drawerRight, drawerBottom }) {
               background: 'white',
               borderRadius: '9px',
               padding: '3px',
+              marginBottom: '5px',
               '&:hover': {
                 background: 'white',
               },
@@ -49,11 +51,22 @@ function MapLegend({ large, drawerRight, drawerBottom }) {
             style={{
               maxWidth: '45rem',
               background: 'rgba(255, 255, 255, 0.6)',
-              padding: '1rem',
               borderRadius: '4px',
             }}
           >
-            Tropical Nights (days)
+            <div style={{ display: 'flex', justifyContent: 'center' }}>Tropical Nights (days)</div>
+            <div>
+              <Box
+                component="img"
+                sx={{
+                  height: '5rem',
+                  width: '50rem',
+                  maxWidth: drawerRight ? '33rem' : '55rem',
+                }}
+                alt="Legend"
+                src="/images/tropical_nights_legend.png"
+              />
+            </div>
           </div>
         ) : null}
       </div>
