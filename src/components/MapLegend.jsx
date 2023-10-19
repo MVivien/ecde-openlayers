@@ -19,8 +19,10 @@ function MapLegend({ large, drawerRight, drawerBottom }) {
       <div
         style={{
           position: 'absolute',
-          right: drawerRight ? '28%' : '8%',
-          bottom: drawerBottom ? '30%' : '5%',
+          right: drawerRight ? '28%' : '5%',
+          bottom: drawerBottom ? '30%' : large ? '20%' : '5%',
+          width: '80%',
+          zIndex: 2,
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'end' }}>
@@ -46,7 +48,17 @@ function MapLegend({ large, drawerRight, drawerBottom }) {
             )}
           </IconButton>
         </div>
-        {openLegend ? (
+      </div>
+      {openLegend ? (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            position: 'absolute',
+            right: large ? '29%' : '23%',
+            bottom: '5%',
+          }}
+        >
           <div
             style={{
               maxWidth: '45rem',
@@ -68,8 +80,8 @@ function MapLegend({ large, drawerRight, drawerBottom }) {
               />
             </div>
           </div>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </>
   );
 }
