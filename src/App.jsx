@@ -100,8 +100,8 @@ function App() {
         temporalAggregation === 'monthly'
           ? `&month=${month}`
           : temporalAggregation === 'seasonal'
-          ? `&season=${season}`
-          : '';
+            ? `&season=${season}`
+            : '';
       // const { name, url } = NUTS.find((item) => item.name === nut);
       const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
         detail: {
@@ -113,7 +113,7 @@ function App() {
               sourceType: 'vector',
               params: `NUTS 2`,
               sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}&month=${month}&season=${season}`,
+                url: `${API_BASE}/geojson/05_tropical_nights/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
               },
             },
             {
@@ -122,7 +122,7 @@ function App() {
               sourceType: 'vector',
               params: `NUTS 1`,
               sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}&month=${month}&season=${season}`,
+                url: `${API_BASE}/geojson/05_tropical_nights/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
               },
             },
             {
@@ -131,7 +131,7 @@ function App() {
               sourceType: 'vector',
               params: `NUTS 0`,
               sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}&month=${month}&season=${season}`,
+                url: `${API_BASE}/geojson/05_tropical_nights/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
               },
             },
           ],
