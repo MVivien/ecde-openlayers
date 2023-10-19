@@ -61,7 +61,7 @@ function MapLegend({ large, drawerRight, drawerBottom }) {
                 sx={{
                   height: '5rem',
                   width: '50rem',
-                  maxWidth: drawerRight ? '33rem' : '55rem',
+                  maxWidth: '33rem',
                 }}
                 alt="Legend"
                 src="/images/tropical_nights_legend.png"
