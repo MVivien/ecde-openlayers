@@ -106,7 +106,9 @@ def historical_anomalies(
     sel = data.sel(nuts=region)
     if month_or_season is not None:
         sel = sel.sel(time=sel["time.month"] == month_or_season)
-    fig = plots.historical_anomalies(sel, units="days")
+    fig = plots.historical_anomalies(
+        sel, temporal_aggregation=temporal_aggregation, units="days"
+    )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-historical_anomalies-{selected_layer}.json"
     )
@@ -152,7 +154,11 @@ def actual_evolution(
             time=projections_sel["time.month"] == month_or_season
         )
     fig = plots.actual_evolution(
-        historical_sel, projections_sel, ylabel="Tropical nights (days)", units="days"
+        historical_sel,
+        projections_sel,
+        temporal_aggregation=temporal_aggregation,
+        ylabel="Tropical nights (days)",
+        units="days",
     )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-actual_evolution-{selected_layer}.json"
@@ -185,7 +191,10 @@ def anomaly_evolution(
             time=projections_sel["time.month"] == month_or_season
         )
     fig = plots.anomaly_evolution(
-        projections_sel, ylabel="Anomaly (days)", units="days"
+        projections_sel,
+        temporal_aggregation=temporal_aggregation,
+        ylabel="Anomaly (days)",
+        units="days",
     )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-anomaly_evolution-{selected_layer}.json"

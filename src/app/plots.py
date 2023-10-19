@@ -55,10 +55,11 @@ ANNOTATIONS = {
     "showarrow": False,
 }
 TICKFORMAT = {
-    "annual": "%Y",
+    "yearly": "%Y",
     "seasonal": "",
     "monthly": "",
 }
+HOVERTEMPLATE = f"%{{x}}, %{{y:.1f}} {{units}}<extra></extra>"
 SCENARIOS = {
     "rcp_4_5": {
         "label": "RCP4.5",
@@ -131,9 +132,22 @@ PERIOD_BUTTONS = [
 
 def historical_anomalies(
     data: xr.DataArray,
+    temporal_aggregation: str = "yearly",
+    ylabel: str = "",
+    title: str = "",
     units: str = "",
 ) -> go.Figure:
-    fig = go.Figure(layout=LAYOUT)
+    common_layout = copy.deepcopy(LAYOUT)
+    local_layout = {
+        "yaxis": {"title": {"text": ylabel}},
+        "bargap": 0.5,
+        "xaxis_tickformat": TICKFORMAT[temporal_aggregation],
+    }
+    local_layout["annotations"] = [
+        utils.recursive_update(copy.deepcopy(ANNOTATIONS), {"text": title})
+    ]
+    plot_layout = utils.recursive_update(common_layout, local_layout)
+    fig = go.Figure(layout=plot_layout)
     bar_color = [
         COLORS["red"] if value >= 0 else COLORS["blue"] for value in data.values
     ]
@@ -154,12 +168,11 @@ def historical_anomalies(
 def actual_evolution(
     historical_data: xr.DataArray,
     projections_data: xr.DataArray,
-    temporal_aggregation: str = "annual",
+    temporal_aggregation: str = "yearly",
     ylabel: str = "",
     title: str = "",
     units: str = "",
 ) -> go.Figure:
-    hovertemplate = "%{x}, %{y:" ".1f}" f" {units}"
     max_val = (
         max(
             [
@@ -198,6 +211,7 @@ def actual_evolution(
         )
     ]
     plot_layout = utils.recursive_update(common_layout, local_layout)
+    hovertemplate = f"%{{x}}, %{{y:.1f}} {units}<extra></extra>"
     fig = go.Figure(layout=plot_layout)
     scenarios = projections_data.scenario.values
     for scenario in scenarios:
@@ -264,12 +278,11 @@ def actual_evolution(
 
 def anomaly_evolution(
     projections_data: xr.DataArray,
-    temporal_aggregation: str = "annual",
+    temporal_aggregation: str = "yearly",
     ylabel: str = "",
     title: str = "",
     units: str = "",
 ) -> go.Figure:
-    hovertemplate = "%{x}, %{y:" ".1f}" f" {units}"
     max_val = (
         max(
             [
@@ -306,6 +319,7 @@ def anomaly_evolution(
         )
     ]
     plot_layout = utils.recursive_update(common_layout, local_layout)
+    hovertemplate = f"%{{x}}, %{{y:.1f}} {units}<extra></extra>"
     fig = go.Figure(layout=plot_layout)
     scenarios = projections_data.scenario.values
     for scenario in scenarios:
