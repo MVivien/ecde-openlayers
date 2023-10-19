@@ -100,8 +100,8 @@ function App() {
         temporalAggregation === 'monthly'
           ? `&month=${month}`
           : temporalAggregation === 'seasonal'
-          ? `&season=${season}`
-          : '';
+            ? `&season=${season}`
+            : '';
       // const { name, url } = NUTS.find((item) => item.name === nut);
       const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
         detail: {

@@ -24,6 +24,13 @@ VARIABLES = {
 }
 
 
+def month_or_season(
+    month: int | None = fastapi.Query(None),
+    season: int | None = fastapi.Query(None),
+):
+    return month or season
+
+
 @app.get("/geojson/{variable}/{layer}")
 def generate_geojson(
     variable: str,
@@ -31,6 +38,7 @@ def generate_geojson(
     rcp: str = fastapi.Query(...),
     horizon: str = fastapi.Query(...),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+    month_or_season: int | None = fastapi.Depends(month_or_season),
 ) -> fastapi.responses.StreamingResponse:
     print(temporal_aggregation)
     if horizon == "1981-01-01":
@@ -54,6 +62,10 @@ def generate_geojson(
 
     if "avg_period" in data.dims:
         data = data.sel(scenario=rcp, avg_period=horizon)
+
+    if month_or_season is not None:
+        data = data.sel(month=month_or_season)
+    print(data)
 
     df = data.to_dataframe().reset_index()
     df = df.rename(columns={"nuts": "NUTS_ID", data.name: "value"})
@@ -80,6 +92,7 @@ def historical_anomalies(
     region: str = fastapi.Query(...),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+    month_or_season: int | None = fastapi.Depends(month_or_season),
 ):
     data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
@@ -91,7 +104,11 @@ def historical_anomalies(
     with fsspec.open(f"filecache::{data_url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
     sel = data.sel(nuts=region)
-    fig = plots.historical_anomalies(sel, units="days")
+    if month_or_season is not None:
+        sel = sel.sel(time=sel["time.month"] == month_or_season)
+    fig = plots.historical_anomalies(
+        sel, temporal_aggregation=temporal_aggregation, units="days"
+    )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-historical_anomalies-{selected_layer}.json"
     )
@@ -105,6 +122,7 @@ def actual_evolution(
     region: str = fastapi.Query(...),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+    month_or_season: int | None = fastapi.Depends(month_or_season),
 ):
     historical_data_url = (
         f"{DATA_HOST}/{variable}/historical/{variable}-historical-"
@@ -128,8 +146,19 @@ def actual_evolution(
         projections_data = xr.open_dataarray(f.name)
     historical_sel = historical_data.sel(nuts=region)
     projections_sel = projections_data.sel(nuts=region)
+    if month_or_season is not None:
+        historical_sel = historical_sel.sel(
+            time=historical_sel["time.month"] == month_or_season
+        )
+        projections_sel = projections_sel.sel(
+            time=projections_sel["time.month"] == month_or_season
+        )
     fig = plots.actual_evolution(
-        historical_sel, projections_sel, ylabel="Tropical nights (days)", units="days"
+        historical_sel,
+        projections_sel,
+        temporal_aggregation=temporal_aggregation,
+        ylabel="Tropical nights (days)",
+        units="days",
     )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-actual_evolution-{selected_layer}.json"
@@ -144,6 +173,7 @@ def anomaly_evolution(
     region: str = fastapi.Query(...),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+    month_or_season: int | None = fastapi.Depends(month_or_season),
 ):
     projections_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
@@ -156,8 +186,15 @@ def anomaly_evolution(
     ) as f:
         projections_data = xr.open_dataarray(f.name)
     projections_sel = projections_data.sel(nuts=region)
+    if month_or_season is not None:
+        projections_sel = projections_sel.sel(
+            time=projections_sel["time.month"] == month_or_season
+        )
     fig = plots.anomaly_evolution(
-        projections_sel, ylabel="Anomaly (days)", units="days"
+        projections_sel,
+        temporal_aggregation=temporal_aggregation,
+        ylabel="Anomaly (days)",
+        units="days",
     )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-anomaly_evolution-{selected_layer}.json"
