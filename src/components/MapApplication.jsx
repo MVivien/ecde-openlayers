@@ -4,12 +4,11 @@ import { useDrag } from '@use-gesture/react';
 
 import { grey } from '@mui/material/colors';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import { Grid, Box, SwipeableDrawer } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import AppContainer from './AppContainer';
 import SubAppContainer from './SubAppContainer';
+import MapLegend from './MapLegend';
 
 function PullerContainer({ children, drawerBleeding, position = 'left', ...rest }) {
   if (position === 'left' || position === 'right') {
@@ -179,6 +178,7 @@ export default function MapApplication({
   const [drawerBottom, setDrawerBottom, bindBottom] = useDrawer(drawerDefaultBottom, 'bottom');
   const [drawerRight, setDrawerRight, bindRight] = useDrawer(drawerDefaultRight, 'right');
   const [drawerTop, setDrawerTop, bindTop] = useDrawer(drawerDefaultTop, 'top');
+
   const drawerBleeding = 40;
 
   const inputsOnLeft =
@@ -429,6 +429,11 @@ export default function MapApplication({
     </SwipeableDrawer>
   ) : null;
 
+  const mapLegend = (
+    <>
+      <MapLegend large={large} drawerRight={drawerRight} drawerBottom={drawerBottom} />
+    </>
+  );
   return (
     <>
       {swipeableDrawerLeft}
@@ -438,6 +443,7 @@ export default function MapApplication({
       <AppContainer>
         <Grid sx={{ flexGrow: 1 }}>{children}</Grid>
       </AppContainer>
+      {mapLegend}
     </>
   );
 }
