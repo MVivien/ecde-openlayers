@@ -40,7 +40,6 @@ def generate_geojson(
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
 ) -> fastapi.responses.StreamingResponse:
-    print(temporal_aggregation)
     if horizon == "1981-01-01":
         url = (
             f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
@@ -65,7 +64,6 @@ def generate_geojson(
 
     if month_or_season is not None:
         data = data.sel(month=month_or_season)
-    print(data)
 
     df = data.to_dataframe().reset_index()
     df = df.rename(columns={"nuts": "NUTS_ID", data.name: "value"})

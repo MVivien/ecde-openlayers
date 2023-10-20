@@ -161,7 +161,6 @@ def historical_anomalies(
         )
     )
     fig.update_layout(yaxis_title=f"Anomaly ({units})")
-    print(type(fig))
     return fig
 
 
