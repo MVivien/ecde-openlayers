@@ -69,6 +69,14 @@ function ChildApp({
           month={month}
           season={season}
         />
+        <Typography variant="h4">Climatology</Typography>
+        <Typography variant="p">Plot about climatology</Typography>
+        <Chart
+          id="climatology"
+          plot_name="climatology"
+          region={region}
+          selectedLayer={selectedLayer}
+        />
       </Suspense>
     </Box>
   );

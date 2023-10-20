@@ -201,6 +201,48 @@ def anomaly_evolution(
     return fastapi.responses.FileResponse(fig_json_path)
 
 
+@app.get("/plots/{variable}/climatology")
+def climatology(
+    variable: str,
+    region: str = fastapi.Query(...),
+    selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
+):
+    historical_data_url = (
+        f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
+        f"monthly-layer-nuts_{selected_layer}-latitude-"
+        f"{VARIABLES[variable]['historical_period']}-"
+        f"{VARIABLES[variable]['historical_version']}-"
+        "climatology.nc"
+    )
+    projections_data_url = (
+        f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
+        f"monthly-layer-nuts_{selected_layer}-latitude-"
+        f"{VARIABLES[variable]['projections_version']}-"
+        "climatology.nc"
+    )
+    with fsspec.open(
+        f"filecache::{historical_data_url}", filecache={"same_names": True}
+    ) as f:
+        historical_data = xr.open_dataarray(f.name)
+    with fsspec.open(
+        f"filecache::{projections_data_url}", filecache={"same_names": True}
+    ) as f:
+        projections_data = xr.open_dataarray(f.name)
+    historical_sel = historical_data.sel(nuts=region)
+    projections_sel = projections_data.sel(nuts=region)
+    fig = plots.climatology(
+        historical_sel,
+        projections_sel,
+        ylabel="Anomaly (days)",
+        units="days",
+    )
+    fig_json_path = os.path.join(
+        DIR, f"../../public/{variable}-climatology-{selected_layer}.json"
+    )
+    io.write_json(fig, fig_json_path)
+    return fastapi.responses.FileResponse(fig_json_path)
+
+
 origins = [
     "*",
 ]

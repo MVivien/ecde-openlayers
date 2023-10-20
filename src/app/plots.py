@@ -59,7 +59,6 @@ TICKFORMAT = {
     "seasonal": "",
     "monthly": "",
 }
-HOVERTEMPLATE = f"%{{x}}, %{{y:.1f}} {{units}}<extra></extra>"
 SCENARIOS = {
     "rcp_4_5": {
         "label": "RCP4.5",
@@ -370,4 +369,54 @@ def anomaly_evolution(
                 hovertemplate=hovertemplate,
             )
         )
+    return fig
+
+
+def climatology(
+    historical_data: xr.DataArray,
+    projections_data: xr.DataArray,
+    ylabel: str = "",
+    title: str = "",
+    units: str = "",
+) -> go.Figure:
+    max_val = (
+        max(
+            data.max()
+            for data in [
+                historical_data.sel(stat="mean") + historical_data.sel(stat="std"),
+                projections_data.sel(stat="mean", quantile=0.5)
+                + projections_data.sel(stat="std", quantile=0.5),
+            ]
+        )
+    ) * 1.02
+    min_val = (
+        min(
+            data.min()
+            for data in [
+                historical_data.sel(stat="mean") - historical_data.sel(stat="std"),
+                projections_data.sel(stat="mean", quantile=0.5)
+                - projections_data.sel(stat="std", quantile=0.5),
+            ]
+        )
+    ) * 0.98
+    common_layout = copy.deepcopy(LAYOUT)
+    local_layout = {
+        "legend": {"orientation": "h"},
+        "updatemenus": PERIOD_BUTTONS,
+        "showlegend": False,
+        "yaxis": {"title": {"text": ylabel}, "range": [min_val, max_val]},
+        "xaxis": {
+            "tickvals": list(range(1, 13)),
+            "ticktext": MONTHS_SHORT,
+            "tickwidth": 0.1,
+        },
+    }
+    local_layout["annotations"] = [
+        utils.recursive_update(
+            copy.deepcopy(ANNOTATIONS), {"text": title, "showarrow": False}
+        )
+    ]
+    plot_layout = utils.recursive_update(common_layout, local_layout)
+    hovertemplate = f"%{{x}}, %{{y:.1f}} {units}<extra></extra>"
+    fig = go.Figure(layout=plot_layout)
     return fig
