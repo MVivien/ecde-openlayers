@@ -233,7 +233,7 @@ def climatology(
     fig = plots.climatology(
         historical_sel,
         projections_sel,
-        ylabel="Anomaly (days)",
+        ylabel="Tropical nights (days)",
         units="days",
     )
     fig_json_path = os.path.join(
