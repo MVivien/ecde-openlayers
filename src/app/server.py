@@ -20,6 +20,8 @@ VARIABLES = {
         "historical_period": "1959-2022",
         "historical_version": "v0.2",
         "projections_version": "v0.3",
+        "name": "tropical nights",
+        "units": "days",
     },
 }
 
@@ -40,7 +42,6 @@ def generate_geojson(
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
 ) -> fastapi.responses.StreamingResponse:
-    print(temporal_aggregation)
     if horizon == "1981-01-01":
         url = (
             f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
@@ -65,7 +66,6 @@ def generate_geojson(
 
     if month_or_season is not None:
         data = data.sel(month=month_or_season)
-    print(data)
 
     df = data.to_dataframe().reset_index()
     df = df.rename(columns={"nuts": "NUTS_ID", data.name: "value"})
@@ -107,7 +107,10 @@ def historical_anomalies(
     if month_or_season is not None:
         sel = sel.sel(time=sel["time.month"] == month_or_season)
     fig = plots.historical_anomalies(
-        sel, temporal_aggregation=temporal_aggregation, units="days"
+        sel,
+        temporal_aggregation=temporal_aggregation,
+        ylabel=f"Anomaly ({VARIABLES[variable]['units']})",
+        units=VARIABLES[variable]["units"],
     )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-historical_anomalies-{selected_layer}.json"
@@ -157,8 +160,8 @@ def actual_evolution(
         historical_sel,
         projections_sel,
         temporal_aggregation=temporal_aggregation,
-        ylabel="Tropical nights (days)",
-        units="days",
+        ylabel=f"{VARIABLES[variable]['name'].capitalize()} ({VARIABLES[variable]['units']})",
+        units=VARIABLES[variable]["units"],
     )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-actual_evolution-{selected_layer}.json"
@@ -193,11 +196,53 @@ def anomaly_evolution(
     fig = plots.anomaly_evolution(
         projections_sel,
         temporal_aggregation=temporal_aggregation,
-        ylabel="Anomaly (days)",
-        units="days",
+        ylabel=f"Anomaly ({VARIABLES[variable]['units']})",
+        units=VARIABLES[variable]["units"],
     )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-anomaly_evolution-{selected_layer}.json"
+    )
+    io.write_json(fig, fig_json_path)
+    return fastapi.responses.FileResponse(fig_json_path)
+
+
+@app.get("/plots/{variable}/climatology")
+def climatology(
+    variable: str,
+    region: str = fastapi.Query(...),
+    selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
+):
+    historical_data_url = (
+        f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
+        f"monthly-layer-nuts_{selected_layer}-latitude-"
+        f"{VARIABLES[variable]['historical_period']}-"
+        f"{VARIABLES[variable]['historical_version']}-"
+        "climatology.nc"
+    )
+    projections_data_url = (
+        f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
+        f"monthly-layer-nuts_{selected_layer}-latitude-"
+        f"{VARIABLES[variable]['projections_version']}-"
+        "climatology.nc"
+    )
+    with fsspec.open(
+        f"filecache::{historical_data_url}", filecache={"same_names": True}
+    ) as f:
+        historical_data = xr.open_dataarray(f.name)
+    with fsspec.open(
+        f"filecache::{projections_data_url}", filecache={"same_names": True}
+    ) as f:
+        projections_data = xr.open_dataarray(f.name)
+    historical_sel = historical_data.sel(nuts=region)
+    projections_sel = projections_data.sel(nuts=region)
+    fig = plots.climatology(
+        historical_sel,
+        projections_sel,
+        ylabel=f"{VARIABLES[variable]['name'].capitalize()} ({VARIABLES[variable]['units']})",
+        units=VARIABLES[variable]["units"],
+    )
+    fig_json_path = os.path.join(
+        DIR, f"../../public/{variable}-climatology-{selected_layer}.json"
     )
     io.write_json(fig, fig_json_path)
     return fastapi.responses.FileResponse(fig_json_path)

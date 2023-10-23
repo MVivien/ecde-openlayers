@@ -59,7 +59,6 @@ TICKFORMAT = {
     "seasonal": "",
     "monthly": "",
 }
-HOVERTEMPLATE = f"%{{x}}, %{{y:.1f}} {{units}}<extra></extra>"
 SCENARIOS = {
     "rcp_4_5": {
         "label": "RCP4.5",
@@ -160,8 +159,6 @@ def historical_anomalies(
             hovertemplate=f"%{{x}}, %{{y:.1f}} {units}<extra></extra>",  # noqa: F541
         )
     )
-    fig.update_layout(yaxis_title=f"Anomaly ({units})")
-    print(type(fig))
     return fig
 
 
@@ -371,4 +368,135 @@ def anomaly_evolution(
                 hovertemplate=hovertemplate,
             )
         )
+    return fig
+
+
+def climatology(
+    historical_data: xr.DataArray,
+    projections_data: xr.DataArray,
+    ylabel: str = "",
+    title: str = "",
+    units: str = "",
+) -> go.Figure:
+    max_val = (
+        max(
+            data.max()
+            for data in [
+                historical_data.sel(stat="mean") + historical_data.sel(stat="std"),
+                projections_data.sel(stat="mean", quantile=0.5)
+                + projections_data.sel(stat="std", quantile=0.5),
+            ]
+        )
+    ) * 1.02
+    min_val = (
+        min(
+            data.min()
+            for data in [
+                historical_data.sel(stat="mean") - historical_data.sel(stat="std"),
+                projections_data.sel(stat="mean", quantile=0.5)
+                - projections_data.sel(stat="std", quantile=0.5),
+            ]
+        )
+    ) * 0.98
+    common_layout = copy.deepcopy(LAYOUT)
+    local_layout = {
+        "legend": {"orientation": "h"},
+        "updatemenus": PERIOD_BUTTONS,
+        "showlegend": False,
+        "yaxis": {"title": {"text": ylabel}, "range": [min_val, max_val]},
+        "xaxis": {
+            "tickvals": list(range(1, 13)),
+            "ticktext": MONTHS_SHORT,
+            "tickwidth": 0.1,
+        },
+    }
+    local_layout["annotations"] = [
+        utils.recursive_update(
+            copy.deepcopy(ANNOTATIONS), {"text": title, "showarrow": False}
+        )
+    ]
+    plot_layout = utils.recursive_update(common_layout, local_layout)
+    hovertemplate = f"%{{x}}, %{{y:.1f}} {units}<extra></extra>"
+    fig = go.Figure(layout=plot_layout)
+    fig = fig.add_trace(
+        go.Scatter(
+            x=historical_data.month,
+            y=historical_data.sel(stat="mean").values,
+            error_y={
+                "type": "data",
+                "array": historical_data.sel(stat="std").values,
+                "visible": True,
+                "color": COLORS["dark_grey"],
+            },
+            name="ERA5 climatological average (1981 - 2010)",
+            mode="lines",
+            line={"color": COLORS["dark_grey"], "shape": "spline", "smoothing": 1.3},
+            hovertemplate=hovertemplate,
+            visible=True,
+        )
+    )
+    visible = False
+    periods = projections_data.clim_period.values
+    scenarios = projections_data.scenario.values
+    for i, period in enumerate(periods):
+        if i == 2:
+            visible = True
+        for scenario in scenarios:
+            scenario_data = projections_data.sel(clim_period=period, scenario=scenario)
+            fig = fig.add_trace(
+                go.Scatter(
+                    x=scenario_data.month,
+                    y=scenario_data.sel(stat="mean", quantile=0.17).values,
+                    legendgroup="historical_data",
+                    name=f"{SCENARIOS[scenario]['label']} climatological average 17th percentile",
+                    visible=visible,
+                    mode="lines",
+                    line={
+                        "color": SCENARIOS[scenario]["linecolor"],
+                        "shape": "spline",
+                        "width": 0,
+                    },
+                    hovertemplate=hovertemplate,
+                )
+            )
+            fig = fig.add_trace(
+                go.Scatter(
+                    x=scenario_data.month,
+                    y=scenario_data.sel(stat="mean", quantile=0.83).values,
+                    legendgroup="historical_data",
+                    name=f"{SCENARIOS[scenario]['label']} climatological average 83rd percentile",
+                    visible=visible,
+                    mode="lines",
+                    line={
+                        "color": SCENARIOS[scenario]["linecolor"],
+                        "shape": "spline",
+                        "width": 0,
+                    },
+                    fill="tonexty",
+                    fillcolor=SCENARIOS[scenario]["fillcolor"],
+                    hovertemplate=hovertemplate,
+                )
+            )
+            fig = fig.add_trace(
+                go.Scatter(
+                    x=scenario_data.month,
+                    y=scenario_data.sel(stat="mean", quantile=0.5).values,
+                    error_y={
+                        "type": "data",
+                        "array": scenario_data.sel(stat="std", quantile=0.5).values,
+                        "visible": True,
+                        "color": SCENARIOS[scenario]["linecolor"],
+                    },
+                    legendgroup="historical_data",
+                    name=f"{SCENARIOS[scenario]['label']} climatological average median",
+                    visible=visible,
+                    mode="lines",
+                    line={
+                        "color": SCENARIOS[scenario]["linecolor"],
+                        "shape": "spline",
+                        "smoothing": 1.3,
+                    },
+                    hovertemplate=hovertemplate,
+                )
+            )
     return fig
