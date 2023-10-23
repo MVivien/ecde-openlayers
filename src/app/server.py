@@ -20,6 +20,8 @@ VARIABLES = {
         "historical_period": "1959-2022",
         "historical_version": "v0.2",
         "projections_version": "v0.3",
+        "name": "tropical nights",
+        "units": "days",
     },
 }
 
@@ -105,7 +107,10 @@ def historical_anomalies(
     if month_or_season is not None:
         sel = sel.sel(time=sel["time.month"] == month_or_season)
     fig = plots.historical_anomalies(
-        sel, temporal_aggregation=temporal_aggregation, units="days"
+        sel,
+        temporal_aggregation=temporal_aggregation,
+        ylabel=f"Anomaly ({VARIABLES[variable]['units']})",
+        units=VARIABLES[variable]["units"],
     )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-historical_anomalies-{selected_layer}.json"
@@ -155,8 +160,8 @@ def actual_evolution(
         historical_sel,
         projections_sel,
         temporal_aggregation=temporal_aggregation,
-        ylabel="Tropical nights (days)",
-        units="days",
+        ylabel=f"{VARIABLES[variable]['name'].capitalize()} ({VARIABLES[variable]['units']})",
+        units=VARIABLES[variable]["units"],
     )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-actual_evolution-{selected_layer}.json"
@@ -191,8 +196,8 @@ def anomaly_evolution(
     fig = plots.anomaly_evolution(
         projections_sel,
         temporal_aggregation=temporal_aggregation,
-        ylabel="Anomaly (days)",
-        units="days",
+        ylabel=f"Anomaly ({VARIABLES[variable]['units']})",
+        units=VARIABLES[variable]["units"],
     )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-anomaly_evolution-{selected_layer}.json"
@@ -233,8 +238,8 @@ def climatology(
     fig = plots.climatology(
         historical_sel,
         projections_sel,
-        ylabel="Tropical nights (days)",
-        units="days",
+        ylabel=f"{VARIABLES[variable]['name'].capitalize()} ({VARIABLES[variable]['units']})",
+        units=VARIABLES[variable]["units"],
     )
     fig_json_path = os.path.join(
         DIR, f"../../public/{variable}-climatology-{selected_layer}.json"

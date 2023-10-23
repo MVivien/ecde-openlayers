@@ -159,7 +159,6 @@ def historical_anomalies(
             hovertemplate=f"%{{x}}, %{{y:.1f}} {units}<extra></extra>",  # noqa: F541
         )
     )
-    fig.update_layout(yaxis_title=f"Anomaly ({units})")
     return fig
 
 
