@@ -146,7 +146,7 @@ def historical_anomalies(
     sel = data.sel(nuts=region)
     if month_or_season is not None:
         sel = sel.sel(time=sel["time.month"] == month_or_season)
-    variable_name = VARIABLES[variable]["name"].capitalize()
+    variable_name = VARIABLES[variable]["name"].title()
     units = VARIABLES[variable]["units"]
     fig = plots.historical_anomalies(
         sel,
@@ -207,7 +207,7 @@ def actual_evolution(
         projections_sel = projections_sel.sel(
             time=projections_sel["time.month"] == month_or_season
         )
-    variable_name = VARIABLES[variable]["name"].capitalize()
+    variable_name = VARIABLES[variable]["name"].title()
     units = VARIABLES[variable]["units"]
     fig = plots.actual_evolution(
         historical_sel,
@@ -255,7 +255,7 @@ def anomaly_evolution(
         projections_sel = projections_sel.sel(
             time=projections_sel["time.month"] == month_or_season
         )
-    variable_name = VARIABLES[variable]["name"].capitalize()
+    variable_name = VARIABLES[variable]["name"].title()
     units = VARIABLES[variable]["units"]
     fig = plots.anomaly_evolution(
         projections_sel,
@@ -308,7 +308,7 @@ def climatology(
         projections_data = xr.open_dataarray(f.name)
     historical_sel = historical_data.sel(nuts=region)
     projections_sel = projections_data.sel(nuts=region)
-    variable_name = VARIABLES[variable]["name"].capitalize()
+    variable_name = VARIABLES[variable]["name"].title()
     units = VARIABLES[variable]["units"]
     fig = plots.climatology(
         historical_sel,
