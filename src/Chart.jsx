@@ -19,7 +19,8 @@ function Chart({ id, plot_name, region, selectedLayer, temporalAggregation, mont
         `${API_BASE}/plots/05_tropical_nights/${plot_name}?region=${region}&selectedLayer=${selectedLayer}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
       );
       const json = await plot.json();
-      setPlotData(json);
+      const result = JSON.parse(json?.figure);
+      setPlotData(result);
     }
     loadPlot();
   }, [region, plot_name, selectedLayer, temporalAggregation, month, season]);
