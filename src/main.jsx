@@ -29,10 +29,10 @@ const theme = createTheme({
         fontSize: '1.8rem',
       },
     },
-    p: {
+    description: {
       '@media only screen and (min-device-width: 200px) and (max-device-width: 900px)': {
         marginBottom: '5px',
-        fontSize: '1.5rem',
+        fontSize: '0.8rem',
       },
     },
   },
