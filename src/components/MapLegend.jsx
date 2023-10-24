@@ -9,18 +9,19 @@ MapLegend.propTypes = {
   large: PropTypes.bool,
   drawerRight: PropTypes.bool,
   drawerBottom: PropTypes.bool,
+  childApp: PropTypes.bool,
+  rightWidth: PropTypes.number,
 };
 
-function MapLegend({ large, drawerRight, drawerBottom }) {
+function MapLegend({ large, drawerRight, drawerBottom, childApp, rightWidth }) {
   const [openLegend, setOpenLegend] = useState(false);
-
   return (
     <>
       <div
         style={{
           position: 'absolute',
-          right: drawerRight ? '28%' : '5%',
-          bottom: drawerBottom ? '30%' : large ? '20%' : '5%',
+          right: drawerRight && childApp && rightWidth ? `${rightWidth + 250}px` : '5%',
+          bottom: drawerBottom && childApp ? `30%` : large ? '20%' : '5%',
           width: '80%',
           zIndex: 2,
         }}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDrag } from '@use-gesture/react';
 
@@ -152,6 +152,7 @@ MapApplication.propTypes = {
   drawerDefaultBottom: PropTypes.bool,
   drawerDefaultRight: PropTypes.bool,
   drawerDefaultTop: PropTypes.bool,
+  childApp: PropTypes.bool,
 };
 
 /**
@@ -171,6 +172,7 @@ export default function MapApplication({
   drawerDefaultBottom = false,
   drawerDefaultRight = false,
   drawerDefaultTop = false,
+  childApp,
 }) {
   const theme = useTheme();
   const large = useMediaQuery('(min-width:1000px)');
@@ -178,7 +180,8 @@ export default function MapApplication({
   const [drawerBottom, setDrawerBottom, bindBottom] = useDrawer(drawerDefaultBottom, 'bottom');
   const [drawerRight, setDrawerRight, bindRight] = useDrawer(drawerDefaultRight, 'right');
   const [drawerTop, setDrawerTop, bindTop] = useDrawer(drawerDefaultTop, 'top');
-
+  const refRight = useRef(null);
+  const [rightWidth, setRightWidth] = useState(null);
   const drawerBleeding = 40;
 
   const inputsOnLeft =
@@ -211,6 +214,7 @@ export default function MapApplication({
         setDrawerBottom(true);
       }
     }
+    setRightWidth(refRight?.current?.clientWidth);
   }, [openPlotDrawer, large, setDrawerRight, setDrawerBottom]);
 
   const drawerContainerStyles = large
@@ -220,7 +224,7 @@ export default function MapApplication({
         gap: theme.spacing(2),
         padding: theme.spacing(2, 0),
         minWidth: '20dvw',
-        maxWidth: '38dvw',
+        maxWidth: '28dvw',
       }
     : {
         display: 'flex',
@@ -322,7 +326,7 @@ export default function MapApplication({
           overflowY: 'auto',
         }}
       >
-        <Box sx={drawerContainerStyles}>
+        <Box sx={drawerContainerStyles} ref={refRight}>
           {inputsOnRight ? inputs : null}
           {outputsOnRight ? outputs : null}
         </Box>
@@ -432,7 +436,13 @@ export default function MapApplication({
 
   const mapLegend = (
     <>
-      <MapLegend large={large} drawerRight={drawerRight} drawerBottom={drawerBottom} />
+      <MapLegend
+        large={large}
+        drawerRight={drawerRight}
+        drawerBottom={drawerBottom}
+        childApp={childApp}
+        rightWidth={rightWidth}
+      />
     </>
   );
   return (
