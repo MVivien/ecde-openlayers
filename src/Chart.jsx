@@ -1,11 +1,14 @@
 import Plotly from 'plotly.js-basic-dist-min';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import { Typography } from '@mui/material';
 
 import { API_BASE } from './config';
 
 function Chart({ id, plot_name, region, selectedLayer, temporalAggregation, month, season }) {
   const [plotData, setPlotData] = useState(null);
+  const [title, setTitle] = useState(null);
+  const [description, setDescription] = useState(null);
 
   useEffect(() => {
     async function loadPlot() {
@@ -20,6 +23,8 @@ function Chart({ id, plot_name, region, selectedLayer, temporalAggregation, mont
       );
       const json = await plot.json();
       const result = JSON.parse(json?.figure);
+      setTitle(json?.title);
+      setDescription(json?.description);
       setPlotData(result);
     }
     loadPlot();
@@ -32,7 +37,13 @@ function Chart({ id, plot_name, region, selectedLayer, temporalAggregation, mont
     Plotly.newPlot(id, plotData.data, plotData.layout);
   }, [id, region, plotData]);
 
-  return <section className="plotly-chart" id={id} />;
+  return (
+    <div>
+      <Typography variant="h4">{title}</Typography>
+      <Typography variant="p">{description}</Typography>
+      <section className="plotly-chart" id={id} />
+    </div>
+  );
 }
 
 Chart.propTypes = {

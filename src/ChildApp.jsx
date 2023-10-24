@@ -36,8 +36,6 @@ function ChildApp({
         </IconButton>
       </Typography>
       <Suspense fallback={<Loading />}>
-        <Typography variant="h4">Historical Anomalies</Typography>
-        <Typography variant="p">Plot about historical anomalies</Typography>
         <Chart
           id="historical_anomalies"
           plot_name="historical_anomalies"
@@ -47,8 +45,6 @@ function ChildApp({
           month={month}
           season={season}
         />
-        <Typography variant="h4">Actual Evolution</Typography>
-        <Typography variant="p">Plot about actual evolution</Typography>
         <Chart
           id="actual_evolution"
           plot_name="actual_evolution"
@@ -58,8 +54,6 @@ function ChildApp({
           month={month}
           season={season}
         />
-        <Typography variant="h4">Anomaly Evolution</Typography>
-        <Typography variant="p">Plot about anomaly evolution</Typography>
         <Chart
           id="anomaly_evolution"
           plot_name="anomaly_evolution"
@@ -69,8 +63,6 @@ function ChildApp({
           month={month}
           season={season}
         />
-        <Typography variant="h4">Climatology</Typography>
-        <Typography variant="p">Plot about climatology</Typography>
         <Chart
           id="climatology"
           plot_name="climatology"
