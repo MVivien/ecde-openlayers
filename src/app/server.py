@@ -57,19 +57,14 @@ def generate_geojson(
             f"{VARIABLES[variable]['projections_version']}-"
             "30yrs_average.nc"
         )
-
     with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
-
     if "avg_period" in data.dims:
         data = data.sel(scenario=rcp, avg_period=horizon)
-
     if month_or_season is not None:
         data = data.sel(month=month_or_season)
-
     df = data.to_dataframe().reset_index()
     df = df.rename(columns={"nuts": "NUTS_ID", data.name: "value"})
-
     level = {
         "nuts_0": "LEVL_0",
         "nuts_1": "LEVL_1",
@@ -82,7 +77,6 @@ def generate_geojson(
     gdf = gdf.to_crs("epsg:3035")
     gdf_json_path = os.path.join(DIR, f"../../public/{variable}-reduced_data.json")
     gdf.to_file(gdf_json_path, driver="GeoJSON")
-
     return fastapi.responses.FileResponse(gdf_json_path)
 
 
