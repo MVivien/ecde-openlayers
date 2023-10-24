@@ -24,6 +24,32 @@ VARIABLES = {
         "units": "days",
     },
 }
+PLOTS = {
+    "historical_anomalies": {
+        "title": "Historical variations of {temporal_aggregation} {variable_name} in {region}",
+        "description": (
+            "Interactive plot showing the deviations of the historical {temporal_aggregation} "
+            "{variable_name} from the 1981-2010 average (also called 'Anomaly') "
+            "based on the ERA5 reanalysis."
+        ),
+    },
+    "actual_evolution": {
+        "title": "Historical and projected evolution of {temporal_aggregation} {variable_name} in {region}",
+        "description": (
+            "Interactive plot showing the observed {temporal_aggregation} {variable_name} "
+            "along with the median and likely values (66% probability of occurrence) envelope "
+            "from an ensemble of climate models."
+        ),
+    },
+    "anomaly_evolution": {
+        "title": "Projected trend of {temporal_aggregation} {variable_name} in {region}",
+        "description": (
+            "Interactive plot showing the 30-year rolling average of the {temporal_aggregation} "
+            "{variable_name} deviation from the 1981-2010 average, values are the median and likely values "
+            "(66% probability of occurrence) envelope from an ensemble of climate models."
+        ),
+    },
+}
 
 
 class Plot(pydantic.BaseModel):
@@ -112,16 +138,26 @@ def historical_anomalies(
     sel = data.sel(nuts=region)
     if month_or_season is not None:
         sel = sel.sel(time=sel["time.month"] == month_or_season)
+    variable_name = VARIABLES[variable]["name"].capitalize()
+    units = VARIABLES[variable]["units"]
     fig = plots.historical_anomalies(
         sel,
         temporal_aggregation=temporal_aggregation,
-        ylabel=f"Anomaly ({VARIABLES[variable]['units']})",
-        units=VARIABLES[variable]["units"],
+        ylabel=f"Anomaly ({units})",
+        units=units,
     )
     fig_json = fig.to_json()
+    plot_title = PLOTS["historical_anomalies"]["title"].format(
+        temporal_aggregation=temporal_aggregation,
+        variable_name=variable_name,
+        region=region,
+    )
+    plot_description = PLOTS["historical_anomalies"]["description"].format(
+        temporal_aggregation=temporal_aggregation, variable_name=variable_name
+    )
     return Plot(
-        title="Historical anomalies",
-        description="",
+        title=plot_title,
+        description=plot_description,
         figure=fig_json,
     )
 
@@ -163,17 +199,27 @@ def actual_evolution(
         projections_sel = projections_sel.sel(
             time=projections_sel["time.month"] == month_or_season
         )
+    variable_name = VARIABLES[variable]["name"].capitalize()
+    units = VARIABLES[variable]["units"]
     fig = plots.actual_evolution(
         historical_sel,
         projections_sel,
         temporal_aggregation=temporal_aggregation,
-        ylabel=f"{VARIABLES[variable]['name'].capitalize()} ({VARIABLES[variable]['units']})",
-        units=VARIABLES[variable]["units"],
+        ylabel=f"{variable_name} ({units})",
+        units=units,
     )
     fig_json = fig.to_json()
+    plot_title = PLOTS["actual_evolution"]["title"].format(
+        temporal_aggregation=temporal_aggregation,
+        variable_name=variable_name,
+        region=region,
+    )
+    plot_description = PLOTS["actual_evolution"]["description"].format(
+        temporal_aggregation=temporal_aggregation, variable_name=variable_name
+    )
     return Plot(
-        title="Actual evolution",
-        description="",
+        title=plot_title,
+        description=plot_description,
         figure=fig_json,
     )
 
@@ -201,16 +247,26 @@ def anomaly_evolution(
         projections_sel = projections_sel.sel(
             time=projections_sel["time.month"] == month_or_season
         )
+    variable_name = VARIABLES[variable]["name"].capitalize()
+    units = VARIABLES[variable]["units"]
     fig = plots.anomaly_evolution(
         projections_sel,
         temporal_aggregation=temporal_aggregation,
-        ylabel=f"Anomaly ({VARIABLES[variable]['units']})",
-        units=VARIABLES[variable]["units"],
+        ylabel=f"Anomaly ({units})",
+        units=units,
     )
     fig_json = fig.to_json()
+    plot_title = PLOTS["anomaly_evolution"]["title"].format(
+        temporal_aggregation=temporal_aggregation,
+        variable_name=variable_name,
+        region=region,
+    )
+    plot_description = PLOTS["anomaly_evolution"]["description"].format(
+        temporal_aggregation=temporal_aggregation, variable_name=variable_name
+    )
     return Plot(
-        title="Anomaly evolution",
-        description="",
+        title=plot_title,
+        description=plot_description,
         figure=fig_json,
     )
 
