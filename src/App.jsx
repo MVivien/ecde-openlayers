@@ -20,6 +20,7 @@ function App() {
   const [horizon, setHorizon] = useState('2011-01-01');
   const [region, setRegion] = useState('');
   const [selectedLayer, setSelectedLayer] = useState('');
+  const [regionalAggregation, setRegionalAggregation] = useState('nuts');
   const [temporalAggregation, setTemporalAggregation] = useState('yearly');
   const [month, setMonth] = useState(7);
   const [season, setSeason] = useState(6);
@@ -102,6 +103,8 @@ function App() {
         setHorizon={setHorizon}
         region={region}
         setRegion={setRegion}
+        regionalAggregation={regionalAggregation}
+        setRegionalAggregation={setRegionalAggregation}
         temporalAggregation={temporalAggregation}
         setTemporalAggregation={setTemporalAggregation}
         month={month}
