@@ -5,7 +5,8 @@ import os
 import fastapi
 import fastapi.middleware.cors
 import fsspec
-import pydantic
+
+import plotly.io as io
 
 from . import plots
 
@@ -23,12 +24,6 @@ VARIABLES = {
         "units": "days",
     },
 }
-
-
-class Plot(pydantic.BaseModel):
-    title: str
-    description: str
-    figure: str
 
 
 def month_or_season(
@@ -98,7 +93,7 @@ def historical_anomalies(
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
-) -> Plot:
+):
     data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
         f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
@@ -117,12 +112,11 @@ def historical_anomalies(
         ylabel=f"Anomaly ({VARIABLES[variable]['units']})",
         units=VARIABLES[variable]["units"],
     )
-    fig_json = fig.to_json()
-    return Plot(
-        title="Historical anomalies",
-        description="Plot about historical anomalies",
-        figure=fig_json,
+    fig_json_path = os.path.join(
+        DIR, f"../../public/{variable}-historical_anomalies-{selected_layer}.json"
     )
+    io.write_json(fig, fig_json_path)
+    return fastapi.responses.FileResponse(fig_json_path)
 
 
 @app.get("/plots/{variable}/actual_evolution")
@@ -169,12 +163,11 @@ def actual_evolution(
         ylabel=f"{VARIABLES[variable]['name'].capitalize()} ({VARIABLES[variable]['units']})",
         units=VARIABLES[variable]["units"],
     )
-    fig_json = fig.to_json()
-    return Plot(
-        title="Actual evolution",
-        description="Plot about actual evolution",
-        figure=fig_json,
+    fig_json_path = os.path.join(
+        DIR, f"../../public/{variable}-actual_evolution-{selected_layer}.json"
     )
+    io.write_json(fig, fig_json_path)
+    return fastapi.responses.FileResponse(fig_json_path)
 
 
 @app.get("/plots/{variable}/anomaly_evolution")
@@ -206,12 +199,11 @@ def anomaly_evolution(
         ylabel=f"Anomaly ({VARIABLES[variable]['units']})",
         units=VARIABLES[variable]["units"],
     )
-    fig_json = fig.to_json()
-    return Plot(
-        title="Anomaly evolution",
-        description="Plot about anomaly evolution",
-        figure=fig_json,
+    fig_json_path = os.path.join(
+        DIR, f"../../public/{variable}-anomaly_evolution-{selected_layer}.json"
     )
+    io.write_json(fig, fig_json_path)
+    return fastapi.responses.FileResponse(fig_json_path)
 
 
 @app.get("/plots/{variable}/climatology")
@@ -249,10 +241,11 @@ def climatology(
         ylabel=f"{VARIABLES[variable]['name'].capitalize()} ({VARIABLES[variable]['units']})",
         units=VARIABLES[variable]["units"],
     )
-    fig_json = fig.to_json()
-    return Plot(
-        title="Climatology", description="Plot about climatology", figure=fig_json
+    fig_json_path = os.path.join(
+        DIR, f"../../public/{variable}-climatology-{selected_layer}.json"
     )
+    io.write_json(fig, fig_json_path)
+    return fastapi.responses.FileResponse(fig_json_path)
 
 
 origins = [
