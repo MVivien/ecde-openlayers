@@ -40,7 +40,9 @@ function Chart({ id, plot_name, region, selectedLayer, temporalAggregation, mont
   return (
     <div>
       <Typography variant="h4">{title}</Typography>
-      <Typography variant="p">{description}</Typography>
+      <Typography variant="description" style={{ maxWidth: '30%' }}>
+        {description}
+      </Typography>
       <section className="plotly-chart" id={id} />
     </div>
   );

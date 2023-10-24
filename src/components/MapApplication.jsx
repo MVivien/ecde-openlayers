@@ -220,6 +220,7 @@ export default function MapApplication({
         gap: theme.spacing(2),
         padding: theme.spacing(2, 0),
         minWidth: '20dvw',
+        maxWidth: '38dvw',
       }
     : {
         display: 'flex',
