@@ -49,6 +49,14 @@ PLOTS = {
             "(66% probability of occurrence) envelope from an ensemble of climate models."
         ),
     },
+    "climatology": {
+        "title": "Historical and projected climatology of {variable_name} in {region}",
+        "description": (
+            "Interactive plot showing 30-year averages and standard deviation of observed and projected monthly values "
+            "for three time horizons along with their likely values (66% probability of occurrence) envelope "
+            "from an ensemble of climate models."
+        ),
+    },
 }
 
 
@@ -300,16 +308,20 @@ def climatology(
         projections_data = xr.open_dataarray(f.name)
     historical_sel = historical_data.sel(nuts=region)
     projections_sel = projections_data.sel(nuts=region)
+    variable_name = VARIABLES[variable]["name"].capitalize()
+    units = VARIABLES[variable]["units"]
     fig = plots.climatology(
         historical_sel,
         projections_sel,
-        ylabel=f"{VARIABLES[variable]['name'].capitalize()} ({VARIABLES[variable]['units']})",
-        units=VARIABLES[variable]["units"],
+        ylabel=f"{variable_name} ({units})",
+        units=units,
     )
     fig_json = fig.to_json()
     return Plot(
-        title="Climatology",
-        description="",
+        title=PLOTS["climatology"]["title"].format(
+            variable_name=variable_name, region=region
+        ),
+        description=PLOTS["climatology"]["description"],
         figure=fig_json,
     )
 
