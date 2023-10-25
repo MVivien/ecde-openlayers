@@ -5,8 +5,9 @@ import os
 import fastapi
 import fastapi.middleware.cors
 import fsspec
-
 import plotly.io as io
+import pydantic
+
 
 from . import plots
 
@@ -25,12 +26,69 @@ VARIABLES = {
     },
 }
 
+REGIONAL_AGGREGATIONS = {
+    "nuts": {
+        "group_name": "NUTS Regions",
+        "layers": {
+            "nuts_0": "NUTS 0",
+            "nuts_1": "NUTS 1",
+            "nuts_2": "NUTS 2",
+        },
+    }
+}
+
+
+class LayerParams(pydantic.BaseModel):
+    name: str
+    type: str = pydantic.Field(default="vector")
+    sourceType: str = pydantic.Field(default="vector")
+    params: str | None = pydantic.Field(default=None)
+    sourceParams: dict[str, str] | None = pydantic.Field(default=None)
+
+
+class LayersGroup(pydantic.BaseModel):
+    group: str
+    layers: list[LayerParams]
+
 
 def month_or_season(
     month: int | None = fastapi.Query(None),
     season: int | None = fastapi.Query(None),
 ):
     return month or season
+
+
+@app.get("/regions/{variable}")
+def get_layers_group(
+    variable: str,
+    regional_aggregation: str = fastapi.Query(..., alias="regionalAggregation"),
+    rcp: str = fastapi.Query(...),
+    horizon: str = fastapi.Query(...),
+    temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+    month: int | None = fastapi.Query(None),
+    season: int | None = fastapi.Query(None),
+) -> LayersGroup:
+    temporal_aggregation_var = ""
+    if month is not None:
+        temporal_aggregation_var = f"&month={month}"
+    elif season is not None:
+        temporal_aggregation_var = f"&season={season}"
+    layers_group = LayersGroup(
+        group=REGIONAL_AGGREGATIONS[regional_aggregation]["group_name"],
+        layers=[
+            LayerParams(
+                name=layer_label,
+                params=layer_label,
+                sourceParams={
+                    "url": f"/geojson/{variable}/{layer_id}?rcp={rcp}&horizon={horizon}&temporalAggregation={temporal_aggregation}{temporal_aggregation_var}",
+                },
+            )
+            for layer_id, layer_label in REGIONAL_AGGREGATIONS[regional_aggregation][
+                "layers"
+            ].items()
+        ],
+    )
+    return layers_group
 
 
 @app.get("/geojson/{variable}/{layer}")
