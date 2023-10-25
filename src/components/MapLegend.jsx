@@ -56,8 +56,12 @@ function MapLegend({ large, drawerRight, drawerBottom, childApp, rightWidth }) {
             display: 'flex',
             justifyContent: 'center',
             position: 'absolute',
-            right: large ? '29%' : '23%',
-            bottom: '5%',
+            right: large
+              ? drawerRight && childApp && rightWidth
+                ? `${rightWidth + 150}px`
+                : '29%'
+              : '23%',
+            bottom: drawerBottom && childApp && !large ? '30%' : '5%',
           }}
         >
           <div
