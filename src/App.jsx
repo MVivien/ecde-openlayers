@@ -53,46 +53,22 @@ function App() {
         temporalAggregation === 'monthly'
           ? `&month=${month}`
           : temporalAggregation === 'seasonal'
-            ? `&season=${season}`
-            : '';
+          ? `&season=${season}`
+          : '';
       // const { name, url } = NUTS.find((item) => item.name === nut);
-      const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
-        detail: {
-          group: 'NUTS Regions',
-          layers: [
-            {
-              name: `NUTS 2`,
-              type: 'vector',
-              sourceType: 'vector',
-              params: `NUTS 2`,
-              sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
-              },
-            },
-            {
-              name: `NUTS 1`,
-              type: 'vector',
-              sourceType: 'vector',
-              params: `NUTS 1`,
-              sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
-              },
-            },
-            {
-              name: `NUTS 0`,
-              type: 'vector',
-              sourceType: 'vector',
-              params: `NUTS 0`,
-              sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
-              },
-            },
-          ],
-        },
-      });
-      registerEvent(event);
+      fetch(
+        `${API_BASE}/regions/05_tropical_nights?regionalAggregation=${regionalAggregation}&rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
+            detail: data,
+          });
+          registerEvent(event);
+        });
     }
-  }, [rcp, horizon, temporalAggregation, month, season]);
+  }, [rcp, horizon, temporalAggregation, regionalAggregation, month, season]);
 
   const inputs = (
     <>

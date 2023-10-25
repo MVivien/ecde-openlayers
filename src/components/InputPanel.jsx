@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+//import { useState } from 'react';
 import {
   ToggleButtonGroup,
   Select,
@@ -25,6 +25,8 @@ InputPanel.propTypes = {
   setMonth: PropTypes.func,
   season: PropTypes.number,
   setSeason: PropTypes.func,
+  mapType: PropTypes.string,
+  setMapType: PropTypes.func,
 };
 
 function InputPanel({
@@ -32,8 +34,8 @@ function InputPanel({
   setRcp,
   horizon,
   setHorizon,
-  region,
-  setRegion,
+  //region,
+  //setRegion,
   regionalAggregation,
   setRegionalAggregation,
   temporalAggregation,
@@ -43,9 +45,8 @@ function InputPanel({
   season,
   setSeason,
   mapType,
-  setMapType
+  setMapType,
 }) {
-
   const months = [
     { label: 'January', value: 1 },
     { label: 'February', value: 2 },

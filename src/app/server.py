@@ -34,7 +34,13 @@ REGIONAL_AGGREGATIONS = {
             "nuts_1": "NUTS 1",
             "nuts_2": "NUTS 2",
         },
-    }
+    },
+    "transnational": {
+        "group_name": "Transnational Regions",
+        "layers": {
+            "transnational_0": "Transnational 0",
+        },
+    },
 }
 
 
@@ -60,6 +66,7 @@ def month_or_season(
 
 @app.get("/regions/{variable}")
 def get_layers_group(
+    request: fastapi.Request,
     variable: str,
     regional_aggregation: str = fastapi.Query(..., alias="regionalAggregation"),
     rcp: str = fastapi.Query(...),
@@ -80,7 +87,10 @@ def get_layers_group(
                 name=layer_label,
                 params=layer_label,
                 sourceParams={
-                    "url": f"/geojson/{variable}/{layer_id}?rcp={rcp}&horizon={horizon}&temporalAggregation={temporal_aggregation}{temporal_aggregation_var}",
+                    "url": (
+                        f"{request.base_url}geojson/{variable}/{layer_id}"
+                        f"?rcp={rcp}&horizon={horizon}&temporalAggregation={temporal_aggregation}{temporal_aggregation_var}"
+                    ),
                 },
             )
             for layer_id, layer_label in REGIONAL_AGGREGATIONS[regional_aggregation][
