@@ -12,6 +12,7 @@ function ChildApp({
   lat,
   lon,
   region,
+  regionName,
   selectedLayer,
   temporalAggregation,
   month,
@@ -30,51 +31,47 @@ function ChildApp({
           fontWeight: 500,
         }}
       >
-        Plots at {region}
+        {regionName}
         <IconButton aria-label="delete" onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </Typography>
       <Suspense fallback={<Loading />}>
-        <Typography variant="h4">Historical Anomalies</Typography>
-        <Typography variant="p">Plot about historical anomalies</Typography>
         <Chart
           id="historical_anomalies"
           plot_name="historical_anomalies"
           region={region}
+          regionName={regionName}
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
           month={month}
           season={season}
         />
-        <Typography variant="h4">Actual Evolution</Typography>
-        <Typography variant="p">Plot about actual evolution</Typography>
         <Chart
           id="actual_evolution"
           plot_name="actual_evolution"
           region={region}
+          regionName={regionName}
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
           month={month}
           season={season}
         />
-        <Typography variant="h4">Anomaly Evolution</Typography>
-        <Typography variant="p">Plot about anomaly evolution</Typography>
         <Chart
           id="anomaly_evolution"
           plot_name="anomaly_evolution"
           region={region}
+          regionName={regionName}
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
           month={month}
           season={season}
         />
-        <Typography variant="h4">Climatology</Typography>
-        <Typography variant="p">Plot about climatology</Typography>
         <Chart
           id="climatology"
           plot_name="climatology"
           region={region}
+          regionName={regionName}
           selectedLayer={selectedLayer}
         />
       </Suspense>
