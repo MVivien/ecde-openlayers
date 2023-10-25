@@ -12,6 +12,7 @@ function ChildApp({
   lat,
   lon,
   region,
+  regionName,
   selectedLayer,
   temporalAggregation,
   month,
@@ -30,7 +31,7 @@ function ChildApp({
           fontWeight: 500,
         }}
       >
-        Plots at {region}
+        {regionName}
         <IconButton aria-label="delete" onClick={onClose}>
           <CloseIcon />
         </IconButton>
@@ -40,6 +41,7 @@ function ChildApp({
           id="historical_anomalies"
           plot_name="historical_anomalies"
           region={region}
+          regionName={regionName}
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
           month={month}
@@ -49,6 +51,7 @@ function ChildApp({
           id="actual_evolution"
           plot_name="actual_evolution"
           region={region}
+          regionName={regionName}
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
           month={month}
@@ -58,6 +61,7 @@ function ChildApp({
           id="anomaly_evolution"
           plot_name="anomaly_evolution"
           region={region}
+          regionName={regionName}
           selectedLayer={selectedLayer}
           temporalAggregation={temporalAggregation}
           month={month}
@@ -67,6 +71,7 @@ function ChildApp({
           id="climatology"
           plot_name="climatology"
           region={region}
+          regionName={regionName}
           selectedLayer={selectedLayer}
         />
       </Suspense>

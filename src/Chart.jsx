@@ -5,7 +5,7 @@ import { Typography } from '@mui/material';
 
 import { API_BASE } from './config';
 
-function Chart({ id, plot_name, region, selectedLayer, temporalAggregation, month, season }) {
+function Chart({ id, plot_name, region, regionName, selectedLayer, temporalAggregation, month, season }) {
   const [plotData, setPlotData] = useState(null);
   const [title, setTitle] = useState(null);
   const [description, setDescription] = useState(null);
@@ -19,7 +19,7 @@ function Chart({ id, plot_name, region, selectedLayer, temporalAggregation, mont
           ? `&season=${season}`
           : '';
       const plot = await fetch(
-        `${API_BASE}/plots/05_tropical_nights/${plot_name}?region=${region}&selectedLayer=${selectedLayer}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
+        `${API_BASE}/plots/05_tropical_nights/${plot_name}?region=${region}&regionName=${regionName}&selectedLayer=${selectedLayer}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
       );
       const json = await plot.json();
       const result = JSON.parse(json?.figure);
@@ -28,14 +28,14 @@ function Chart({ id, plot_name, region, selectedLayer, temporalAggregation, mont
       setPlotData(result);
     }
     loadPlot();
-  }, [region, plot_name, selectedLayer, temporalAggregation, month, season]);
+  }, [region, regionName, plot_name, selectedLayer, temporalAggregation, month, season]);
 
   useEffect(() => {
     if (!plotData) {
       return;
     }
     Plotly.newPlot(id, plotData.data, plotData.layout);
-  }, [id, region, plotData]);
+  }, [id, region, regionName, plotData]);
 
   return (
     <div>

@@ -19,6 +19,7 @@ function App() {
   const [rcp, setRcp] = useState('rcp_4_5');
   const [horizon, setHorizon] = useState('2011-01-01');
   const [region, setRegion] = useState('');
+  const [regionName, setRegionName] = useState('');
   const [selectedLayer, setSelectedLayer] = useState('');
   const [temporalAggregation, setTemporalAggregation] = useState('yearly');
   const [month, setMonth] = useState(7);
@@ -28,11 +29,12 @@ function App() {
   const [openPlotDrawer, setOpenPlotDrawer] = useState(false);
   const [mapType, setMapType] = useState('actual');
 
-  const handleMapClick = (lat, lon, region, selectedLayer) => {
+  const handleMapClick = (lat, lon, region, regionName, selectedLayer) => {
     console.log(`Map clicked at ${lat}, ${lon}, ${region}, ${selectedLayer}`);
     setLat(lat);
     setLon(lon);
     setRegion(region);
+    setRegionName(regionName);
     setSelectedLayer(selectedLayer);
     setChildApp(true);
     setOpenPlotDrawer(true);
@@ -63,7 +65,6 @@ function App() {
               name: `NUTS 2`,
               type: 'vector',
               sourceType: 'vector',
-              params: `NUTS 2`,
               sourceParams: {
                 url: `${API_BASE}/geojson/05_tropical_nights/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
               },
@@ -72,7 +73,6 @@ function App() {
               name: `NUTS 1`,
               type: 'vector',
               sourceType: 'vector',
-              params: `NUTS 1`,
               sourceParams: {
                 url: `${API_BASE}/geojson/05_tropical_nights/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
               },
@@ -81,7 +81,6 @@ function App() {
               name: `NUTS 0`,
               type: 'vector',
               sourceType: 'vector',
-              params: `NUTS 0`,
               sourceParams: {
                 url: `${API_BASE}/geojson/05_tropical_nights/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
               },
@@ -102,6 +101,8 @@ function App() {
         setHorizon={setHorizon}
         region={region}
         setRegion={setRegion}
+        regionName={regionName}
+        setRegionName={setRegionName}
         temporalAggregation={temporalAggregation}
         setTemporalAggregation={setTemporalAggregation}
         month={month}
@@ -120,6 +121,7 @@ function App() {
       lat={lat}
       lon={lon}
       region={region}
+      regionName={regionName}
       selectedLayer={selectedLayer}
       temporalAggregation={temporalAggregation}
       rcp={rcp}

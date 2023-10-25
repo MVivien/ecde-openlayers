@@ -251,17 +251,20 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     const lat = hdms.split(' ').slice(0, 4).toString().replaceAll(',', ' ');
     const pixel = map.getPixelFromCoordinate(coordinate);
     let region = '';
+    let regionName = '';
     let selectedLayer = '';
 
     if (map.hasFeatureAtPixel(pixel)) {
       map.forEachFeatureAtPixel(pixel, function (feature) {
         region = feature.get('NUTS_ID');
+        regionName = feature.get('name');
         selectedLayer = feature.get('LEVL_CODE');
       });
 
-      onClick(lat, lon, region, selectedLayer);
+      onClick(lat, lon, region, regionName, selectedLayer);
     } else {
       region = 'no region selected';
+      regionName = 'no region selected';
       selectedLayer = 'no layer selected';
     }
   }

@@ -130,6 +130,7 @@ def generate_geojson(
 def historical_anomalies(
     variable: str,
     region: str = fastapi.Query(...),
+    region_name: str = fastapi.Query(..., alias="regionName"),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
@@ -158,7 +159,7 @@ def historical_anomalies(
     plot_title = PLOTS["historical_anomalies"]["title"].format(
         temporal_aggregation=temporal_aggregation,
         variable_name=variable_name,
-        region=region,
+        region=region_name,
     )
     plot_description = PLOTS["historical_anomalies"]["description"].format(
         temporal_aggregation=temporal_aggregation, variable_name=variable_name
@@ -174,6 +175,7 @@ def historical_anomalies(
 def actual_evolution(
     variable: str,
     region: str = fastapi.Query(...),
+    region_name: str = fastapi.Query(..., alias="regionName"),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
@@ -220,7 +222,7 @@ def actual_evolution(
     plot_title = PLOTS["actual_evolution"]["title"].format(
         temporal_aggregation=temporal_aggregation,
         variable_name=variable_name,
-        region=region,
+        region=region_name,
     )
     plot_description = PLOTS["actual_evolution"]["description"].format(
         temporal_aggregation=temporal_aggregation, variable_name=variable_name
@@ -236,6 +238,7 @@ def actual_evolution(
 def anomaly_evolution(
     variable: str,
     region: str = fastapi.Query(...),
+    region_name: str = fastapi.Query(..., alias="regionName"),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
@@ -267,7 +270,7 @@ def anomaly_evolution(
     plot_title = PLOTS["anomaly_evolution"]["title"].format(
         temporal_aggregation=temporal_aggregation,
         variable_name=variable_name,
-        region=region,
+        region=region_name,
     )
     plot_description = PLOTS["anomaly_evolution"]["description"].format(
         temporal_aggregation=temporal_aggregation, variable_name=variable_name
@@ -283,6 +286,7 @@ def anomaly_evolution(
 def climatology(
     variable: str,
     region: str = fastapi.Query(...),
+    region_name: str = fastapi.Query(..., alias="regionName"),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
 ) -> Plot:
     historical_data_url = (
@@ -319,7 +323,7 @@ def climatology(
     fig_json = fig.to_json()
     return Plot(
         title=PLOTS["climatology"]["title"].format(
-            variable_name=variable_name, region=region
+            variable_name=variable_name, region=region_name
         ),
         description=PLOTS["climatology"]["description"],
         figure=fig_json,
