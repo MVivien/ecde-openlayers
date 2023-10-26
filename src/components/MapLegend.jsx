@@ -9,18 +9,21 @@ MapLegend.propTypes = {
   large: PropTypes.bool,
   drawerRight: PropTypes.bool,
   drawerBottom: PropTypes.bool,
+  childApp: PropTypes.bool,
+  rightWidth: PropTypes.number,
 };
 
-function MapLegend({ large, drawerRight, drawerBottom }) {
+function MapLegend({ large, drawerRight, drawerBottom, childApp, rightWidth }) {
   const [openLegend, setOpenLegend] = useState(false);
-
+  const isRightDrawerOpen = drawerRight && childApp;
+  const isBottomDrawerOpen = drawerBottom && childApp;
   return (
     <>
       <div
         style={{
           position: 'absolute',
-          right: drawerRight ? '28%' : '5%',
-          bottom: drawerBottom ? '30%' : large ? '20%' : '5%',
+          right: isRightDrawerOpen && rightWidth ? `${rightWidth + 250}px` : '5%',
+          bottom: isBottomDrawerOpen ? `30%` : large ? '20%' : '5%',
           width: '80%',
           zIndex: 2,
         }}
@@ -55,8 +58,12 @@ function MapLegend({ large, drawerRight, drawerBottom }) {
             display: 'flex',
             justifyContent: 'center',
             position: 'absolute',
-            right: large ? '29%' : '23%',
-            bottom: '5%',
+            right: large
+              ? isRightDrawerOpen && rightWidth
+                ? `${rightWidth + 200}px`
+                : '29%'
+              : '23%',
+            bottom: isBottomDrawerOpen && !large ? '30%' : '5%',
           }}
         >
           <div

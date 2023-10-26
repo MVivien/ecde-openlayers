@@ -1,11 +1,14 @@
 import Plotly from 'plotly.js-basic-dist-min';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import { Typography } from '@mui/material';
 
 import { API_BASE } from './config';
 
-function Chart({ id, plot_name, region, selectedLayer, temporalAggregation, month, season }) {
+function Chart({ id, plot_name, region, regionName, selectedLayer, temporalAggregation, month, season }) {
   const [plotData, setPlotData] = useState(null);
+  const [title, setTitle] = useState(null);
+  const [description, setDescription] = useState(null);
 
   useEffect(() => {
     async function loadPlot() {
@@ -16,22 +19,33 @@ function Chart({ id, plot_name, region, selectedLayer, temporalAggregation, mont
           ? `&season=${season}`
           : '';
       const plot = await fetch(
-        `${API_BASE}/plots/05_tropical_nights/${plot_name}?region=${region}&selectedLayer=${selectedLayer}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
+        `${API_BASE}/plots/05_tropical_nights/${plot_name}?region=${region}&regionName=${regionName}&selectedLayer=${selectedLayer}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
       );
       const json = await plot.json();
-      setPlotData(json);
+      const result = JSON.parse(json?.figure);
+      setTitle(json?.title);
+      setDescription(json?.description);
+      setPlotData(result);
     }
     loadPlot();
-  }, [region, plot_name, selectedLayer, temporalAggregation, month, season]);
+  }, [region, regionName, plot_name, selectedLayer, temporalAggregation, month, season]);
 
   useEffect(() => {
     if (!plotData) {
       return;
     }
     Plotly.newPlot(id, plotData.data, plotData.layout);
-  }, [id, region, plotData]);
+  }, [id, region, regionName, plotData]);
 
-  return <section className="plotly-chart" id={id} />;
+  return (
+    <div>
+      <Typography variant="h4">{title}</Typography>
+      <Typography variant="description" style={{ maxWidth: '30%' }}>
+        {description}
+      </Typography>
+      <section className="plotly-chart" id={id} />
+    </div>
+  );
 }
 
 Chart.propTypes = {

@@ -19,6 +19,7 @@ function App() {
   const [rcp, setRcp] = useState('rcp_4_5');
   const [horizon, setHorizon] = useState('2011-01-01');
   const [region, setRegion] = useState('');
+  const [regionName, setRegionName] = useState('');
   const [selectedLayer, setSelectedLayer] = useState('');
   const [regionalAggregation, setRegionalAggregation] = useState('nuts');
   const [temporalAggregation, setTemporalAggregation] = useState('yearly');
@@ -29,11 +30,12 @@ function App() {
   const [openPlotDrawer, setOpenPlotDrawer] = useState(false);
   const [mapType, setMapType] = useState('actual');
 
-  const handleMapClick = (lat, lon, region, selectedLayer) => {
+  const handleMapClick = (lat, lon, region, regionName, selectedLayer) => {
     console.log(`Map clicked at ${lat}, ${lon}, ${region}, ${selectedLayer}`);
     setLat(lat);
     setLon(lon);
     setRegion(region);
+    setRegionName(regionName);
     setSelectedLayer(selectedLayer);
     setChildApp(true);
     setOpenPlotDrawer(true);
@@ -81,6 +83,8 @@ function App() {
         setRegion={setRegion}
         regionalAggregation={regionalAggregation}
         setRegionalAggregation={setRegionalAggregation}
+        regionName={regionName}
+        setRegionName={setRegionName}
         temporalAggregation={temporalAggregation}
         setTemporalAggregation={setTemporalAggregation}
         month={month}
@@ -99,6 +103,7 @@ function App() {
       lat={lat}
       lon={lon}
       region={region}
+      regionName={regionName}
       selectedLayer={selectedLayer}
       temporalAggregation={temporalAggregation}
       rcp={rcp}
@@ -122,6 +127,7 @@ function App() {
             openPlotDrawer={openPlotDrawer}
             drawerDefaultLeft={true}
             drawerDefaultTop={true}
+            childApp={childApp}
           >
             <Map onClick={handleMapClick} />
           </MapApplication>

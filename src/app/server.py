@@ -5,9 +5,7 @@ import os
 import fastapi
 import fastapi.middleware.cors
 import fsspec
-import plotly.io as io
 import pydantic
-
 
 from . import plots
 
@@ -25,6 +23,47 @@ VARIABLES = {
         "units": "days",
     },
 }
+PLOTS = {
+    "historical_anomalies": {
+        "title": "Historical variations of {temporal_aggregation} {variable_name} in {region}",
+        "description": (
+            "Interactive plot showing the deviations of the historical {temporal_aggregation} "
+            "{variable_name} from the 1981-2010 average (also called 'Anomaly') "
+            "based on the ERA5 reanalysis."
+        ),
+    },
+    "actual_evolution": {
+        "title": "Historical and projected evolution of {temporal_aggregation} {variable_name} in {region}",
+        "description": (
+            "Interactive plot showing the observed {temporal_aggregation} {variable_name} "
+            "along with the median and likely values (66% probability of occurrence) envelope "
+            "from an ensemble of climate models."
+        ),
+    },
+    "anomaly_evolution": {
+        "title": "Projected trend of {temporal_aggregation} {variable_name} in {region}",
+        "description": (
+            "Interactive plot showing the 30-year rolling average of the {temporal_aggregation} "
+            "{variable_name} deviation from the 1981-2010 average, values are the median and likely values "
+            "(66% probability of occurrence) envelope from an ensemble of climate models."
+        ),
+    },
+    "climatology": {
+        "title": "Historical and projected climatology of {variable_name} in {region}",
+        "description": (
+            "Interactive plot showing 30-year averages and standard deviation of observed and projected monthly values "
+            "for three time horizons along with their likely values (66% probability of occurrence) envelope "
+            "from an ensemble of climate models."
+        ),
+    },
+}
+
+
+class Plot(pydantic.BaseModel):
+    title: str
+    description: str
+    figure: str
+
 
 REGIONAL_AGGREGATIONS = {
     "nuts": {
@@ -152,10 +191,11 @@ def generate_geojson(
 def historical_anomalies(
     variable: str,
     region: str = fastapi.Query(...),
+    region_name: str = fastapi.Query(..., alias="regionName"),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
-):
+) -> Plot:
     data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
         f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
@@ -168,27 +208,39 @@ def historical_anomalies(
     sel = data.sel(nuts=region)
     if month_or_season is not None:
         sel = sel.sel(time=sel["time.month"] == month_or_season)
+    variable_name = VARIABLES[variable]["name"].title()
+    units = VARIABLES[variable]["units"]
     fig = plots.historical_anomalies(
         sel,
         temporal_aggregation=temporal_aggregation,
-        ylabel=f"Anomaly ({VARIABLES[variable]['units']})",
-        units=VARIABLES[variable]["units"],
+        ylabel=f"Anomaly ({units})",
+        units=units,
     )
-    fig_json_path = os.path.join(
-        DIR, f"../../public/{variable}-historical_anomalies-{selected_layer}.json"
+    fig_json = fig.to_json()
+    plot_title = PLOTS["historical_anomalies"]["title"].format(
+        temporal_aggregation=temporal_aggregation,
+        variable_name=variable_name,
+        region=region_name,
     )
-    io.write_json(fig, fig_json_path)
-    return fastapi.responses.FileResponse(fig_json_path)
+    plot_description = PLOTS["historical_anomalies"]["description"].format(
+        temporal_aggregation=temporal_aggregation, variable_name=variable_name
+    )
+    return Plot(
+        title=plot_title,
+        description=plot_description,
+        figure=fig_json,
+    )
 
 
 @app.get("/plots/{variable}/actual_evolution")
 def actual_evolution(
     variable: str,
     region: str = fastapi.Query(...),
+    region_name: str = fastapi.Query(..., alias="regionName"),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
-):
+) -> Plot:
     historical_data_url = (
         f"{DATA_HOST}/{variable}/historical/{variable}-historical-"
         f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
@@ -218,28 +270,40 @@ def actual_evolution(
         projections_sel = projections_sel.sel(
             time=projections_sel["time.month"] == month_or_season
         )
+    variable_name = VARIABLES[variable]["name"].title()
+    units = VARIABLES[variable]["units"]
     fig = plots.actual_evolution(
         historical_sel,
         projections_sel,
         temporal_aggregation=temporal_aggregation,
-        ylabel=f"{VARIABLES[variable]['name'].capitalize()} ({VARIABLES[variable]['units']})",
-        units=VARIABLES[variable]["units"],
+        ylabel=f"{variable_name} ({units})",
+        units=units,
     )
-    fig_json_path = os.path.join(
-        DIR, f"../../public/{variable}-actual_evolution-{selected_layer}.json"
+    fig_json = fig.to_json()
+    plot_title = PLOTS["actual_evolution"]["title"].format(
+        temporal_aggregation=temporal_aggregation,
+        variable_name=variable_name,
+        region=region_name,
     )
-    io.write_json(fig, fig_json_path)
-    return fastapi.responses.FileResponse(fig_json_path)
+    plot_description = PLOTS["actual_evolution"]["description"].format(
+        temporal_aggregation=temporal_aggregation, variable_name=variable_name
+    )
+    return Plot(
+        title=plot_title,
+        description=plot_description,
+        figure=fig_json,
+    )
 
 
 @app.get("/plots/{variable}/anomaly_evolution")
 def anomaly_evolution(
     variable: str,
     region: str = fastapi.Query(...),
+    region_name: str = fastapi.Query(..., alias="regionName"),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
-):
+) -> Plot:
     projections_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
         f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
@@ -255,25 +319,37 @@ def anomaly_evolution(
         projections_sel = projections_sel.sel(
             time=projections_sel["time.month"] == month_or_season
         )
+    variable_name = VARIABLES[variable]["name"].title()
+    units = VARIABLES[variable]["units"]
     fig = plots.anomaly_evolution(
         projections_sel,
         temporal_aggregation=temporal_aggregation,
-        ylabel=f"Anomaly ({VARIABLES[variable]['units']})",
-        units=VARIABLES[variable]["units"],
+        ylabel=f"Anomaly ({units})",
+        units=units,
     )
-    fig_json_path = os.path.join(
-        DIR, f"../../public/{variable}-anomaly_evolution-{selected_layer}.json"
+    fig_json = fig.to_json()
+    plot_title = PLOTS["anomaly_evolution"]["title"].format(
+        temporal_aggregation=temporal_aggregation,
+        variable_name=variable_name,
+        region=region_name,
     )
-    io.write_json(fig, fig_json_path)
-    return fastapi.responses.FileResponse(fig_json_path)
+    plot_description = PLOTS["anomaly_evolution"]["description"].format(
+        temporal_aggregation=temporal_aggregation, variable_name=variable_name
+    )
+    return Plot(
+        title=plot_title,
+        description=plot_description,
+        figure=fig_json,
+    )
 
 
 @app.get("/plots/{variable}/climatology")
 def climatology(
     variable: str,
     region: str = fastapi.Query(...),
+    region_name: str = fastapi.Query(..., alias="regionName"),
     selected_layer: str = fastapi.Query(..., alias="selectedLayer"),
-):
+) -> Plot:
     historical_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
         f"monthly-layer-nuts_{selected_layer}-latitude-"
@@ -297,17 +373,22 @@ def climatology(
         projections_data = xr.open_dataarray(f.name)
     historical_sel = historical_data.sel(nuts=region)
     projections_sel = projections_data.sel(nuts=region)
+    variable_name = VARIABLES[variable]["name"].title()
+    units = VARIABLES[variable]["units"]
     fig = plots.climatology(
         historical_sel,
         projections_sel,
-        ylabel=f"{VARIABLES[variable]['name'].capitalize()} ({VARIABLES[variable]['units']})",
-        units=VARIABLES[variable]["units"],
+        ylabel=f"{variable_name} ({units})",
+        units=units,
     )
-    fig_json_path = os.path.join(
-        DIR, f"../../public/{variable}-climatology-{selected_layer}.json"
+    fig_json = fig.to_json()
+    return Plot(
+        title=PLOTS["climatology"]["title"].format(
+            variable_name=variable_name, region=region_name
+        ),
+        description=PLOTS["climatology"]["description"],
+        figure=fig_json,
     )
-    io.write_json(fig, fig_json_path)
-    return fastapi.responses.FileResponse(fig_json_path)
 
 
 origins = [
