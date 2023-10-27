@@ -315,6 +315,7 @@ function InputPanel({
         <ToggleButton value="2041-01-01">2041-2070</ToggleButton>
         <ToggleButton value="2071-01-01">2071-2100</ToggleButton>
       </ToggleButtonGroup>
+      <hr style={{ border: '0.5px solid lightgrey' }} />
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Chip label="Map Type" variant="label" component="label" />
         <Tooltip title="Info about map type">
