@@ -19,7 +19,7 @@ function ChildApp({
   season,
 }) {
   return (
-    <Box className="child-app" sx={{ marginTop: '3rem' }}>
+    <Box className="child-app">
       <Typography
         variant="subtitle1"
         gutterBottom
