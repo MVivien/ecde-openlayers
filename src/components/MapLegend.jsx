@@ -83,7 +83,7 @@ function MapLegend({ large, drawerRight, drawerBottom, childApp, rightWidth }) {
                   maxWidth: '33rem',
                 }}
                 alt="Legend"
-                src="/images/tropical_nights_legend.png"
+                src="images/tropical_nights_legend.png"
               />
             </div>
           </div>
