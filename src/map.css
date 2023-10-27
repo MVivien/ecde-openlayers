@@ -87,17 +87,20 @@
 button.ol-zoom-in,
 button.ol-zoom-out {
   position: fixed;
-  bottom: 14%;
-  right: 5%;
   width: 1.8rem;
   height: 1.8rem;
 }
 
-button.ol-zoom-out {
-  position: fixed;
-  bottom: 9.5%;
+button.ol-zoom-in {
+  bottom: 16%;
   right: 5%;
 }
+
+button.ol-zoom-out {
+  bottom: 11.8%;
+  right: 5%;
+}
+
 @media only screen and (min-device-width: 200px) and (max-device-width: 900px) {
   .ol-unselectable.ol-control.layer-switcher {
     position: absolute;

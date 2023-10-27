@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDrag } from '@use-gesture/react';
 
@@ -180,8 +180,6 @@ export default function MapApplication({
   const [drawerBottom, setDrawerBottom, bindBottom] = useDrawer(drawerDefaultBottom, 'bottom');
   const [drawerRight, setDrawerRight, bindRight] = useDrawer(drawerDefaultRight, 'right');
   const [drawerTop, setDrawerTop, bindTop] = useDrawer(drawerDefaultTop, 'top');
-  const refRight = useRef(null);
-  const [rightWidth, setRightWidth] = useState(null);
   const drawerBleeding = 40;
 
   const inputsOnLeft =
@@ -214,7 +212,6 @@ export default function MapApplication({
         setDrawerBottom(true);
       }
     }
-    setRightWidth(refRight?.current?.clientWidth);
   }, [openPlotDrawer, large, setDrawerRight, setDrawerBottom]);
 
   const drawerContainerStyles = large
@@ -326,7 +323,7 @@ export default function MapApplication({
           overflowY: 'auto',
         }}
       >
-        <Box sx={drawerContainerStyles} ref={refRight}>
+        <Box sx={drawerContainerStyles}>
           {inputsOnRight ? inputs : null}
           {outputsOnRight ? outputs : null}
         </Box>
@@ -441,7 +438,6 @@ export default function MapApplication({
         drawerRight={drawerRight}
         drawerBottom={drawerBottom}
         childApp={childApp}
-        rightWidth={rightWidth}
       />
     </>
   );
