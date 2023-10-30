@@ -58,13 +58,6 @@ PLOTS = {
     },
 }
 
-
-class Plot(pydantic.BaseModel):
-    title: str
-    description: str
-    figure: str
-
-
 REGIONAL_AGGREGATIONS = {
     "nuts": {
         "group_name": "NUTS Regions",
@@ -77,10 +70,24 @@ REGIONAL_AGGREGATIONS = {
     "transnational": {
         "group_name": "Transnational Regions",
         "layers": {
-            "transnational_0": "Transnational 0",
+            "eea_trans_adriatic_ionic": "Interreg VI-B Adriatic-Ionian",
+            "eea_trans_central_europe": "Interreg VI-B Central Europe",
+        },
+    },
+    "europe": {
+        "group_name": "Europe Zones",
+        "layers": {
+            "eea_eea_32": "EEA-32",
+            "eea_eu_27": "EU-27",
         },
     },
 }
+
+
+class Plot(pydantic.BaseModel):
+    title: str
+    description: str
+    figure: str
 
 
 class LayerParams(pydantic.BaseModel):
@@ -172,14 +179,7 @@ def generate_geojson(
         data = data.sel(month=month_or_season)
     df = data.to_dataframe().reset_index()
     df = df.rename(columns={"nuts": "NUTS_ID", data.name: "value"})
-    level = {
-        "nuts_0": "LEVL_0",
-        "nuts_1": "LEVL_1",
-        "nuts_2": "LEVL_2",
-    }[layer]
-    geodataframe = gpd.read_file(
-        os.path.join(DIR, f"../../public/NUTS_RG_60M_2021_4326_{level}.geojson")
-    )
+    geodataframe = gpd.read_file(os.path.join(DIR, f"../../public/{layer}.geojson"))
     gdf = geodataframe.merge(df, on="NUTS_ID")
     gdf = gdf.to_crs("epsg:3035")
     gdf_json_path = os.path.join(DIR, f"../../public/{variable}-reduced_data.json")
