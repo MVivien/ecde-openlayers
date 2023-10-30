@@ -70,7 +70,7 @@ REGIONAL_AGGREGATIONS = {
     "transnational": {
         "group_name": "Transnational Regions",
         "layers": {
-            "eea_trans_adriatic_ionic": "Interreg VI-B Adriatic-Ionian",
+            "eea_trans_adriatic_ionian": "Interreg VI-B Adriatic-Ionian",
             "eea_trans_central_europe": "Interreg VI-B Central Europe",
         },
     },
@@ -177,14 +177,27 @@ def generate_geojson(
         data = data.sel(scenario=rcp, avg_period=horizon)
     if month_or_season is not None:
         data = data.sel(month=month_or_season)
-    df = data.to_dataframe().reset_index()
-    df = df.rename(columns={"nuts": "NUTS_ID", data.name: "value"})
-    geodataframe = gpd.read_file(os.path.join(DIR, f"../../public/{layer}.geojson"))
-    gdf = geodataframe.merge(df, on="NUTS_ID")
-    gdf = gdf.to_crs("epsg:3035")
-    gdf_json_path = os.path.join(DIR, f"../../public/{variable}-reduced_data.json")
-    gdf.to_file(gdf_json_path, driver="GeoJSON")
-    return fastapi.responses.FileResponse(gdf_json_path)
+    data_df = data.to_dataframe().reset_index().rename(columns={data.name: "value"})
+    layer_file_path = os.path.join(DIR, f"../../public/{layer}.geojson")
+    layer_data = gpd.read_file(layer_file_path)
+    if layer[:4] == "nuts":
+        data_df = data_df.rename(columns={"nuts": "NUTS_ID"})
+        data_on_layer = layer_data.merge(data_df, on="NUTS_ID")
+    elif layer[:3] == "eea":
+        if layer[4:9] == "trans":
+            layer_data["OBJECTID"] = layer_data["OBJECTID"].astype(str)
+            data_df = data_df.rename(columns={"transnational_regions": "OBJECTID"})
+            data_on_layer = layer_data.merge(data_df, on="OBJECTID")
+        else:
+            layer_data["id"] = layer_data["id"].astype(str)
+            data_df = data_df.rename(columns={layer[4:]: "id"})
+            data_on_layer = layer_data.merge(data_df, on="id")
+    data_on_layer = data_on_layer.to_crs("epsg:3035")
+    data_on_layer_file_path = os.path.join(
+        DIR, f"../../public/{variable}-reduced_data.json"
+    )
+    data_on_layer.to_file(data_on_layer_file_path, driver="GeoJSON")
+    return fastapi.responses.FileResponse(data_on_layer_file_path)
 
 
 @app.get("/plots/{variable}/historical_anomalies")
