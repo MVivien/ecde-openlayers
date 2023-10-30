@@ -256,9 +256,9 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
 
     if (map.hasFeatureAtPixel(pixel)) {
       map.forEachFeatureAtPixel(pixel, function (feature) {
-        region = feature.get('NUTS_ID');
+        region = feature.get('region_id');
         regionName = feature.get('name');
-        selectedLayer = feature.get('LEVL_CODE');
+        selectedLayer = feature.get('layer');
       });
 
       onClick(lat, lon, region, regionName, selectedLayer);
