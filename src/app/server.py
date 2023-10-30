@@ -211,14 +211,17 @@ def historical_anomalies(
 ) -> Plot:
     data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{temporal_aggregation}-layer-{selected_layer}-latitude-"
         f"{VARIABLES[variable]['historical_period']}-"
         f"{VARIABLES[variable]['historical_version']}-"
         "anomalies.nc"
     )
     with fsspec.open(f"filecache::{data_url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
-    sel = data.sel(nuts=region)
+    if "nuts" in selected_layer:
+        sel = data.sel(nuts=region)
+    else:
+        sel = data
     if month_or_season is not None:
         sel = sel.sel(time=sel["time.month"] == month_or_season)
     variable_name = VARIABLES[variable]["name"].title()
@@ -256,13 +259,13 @@ def actual_evolution(
 ) -> Plot:
     historical_data_url = (
         f"{DATA_HOST}/{variable}/historical/{variable}-historical-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{temporal_aggregation}-layer-{selected_layer}-latitude-"
         f"{VARIABLES[variable]['historical_period']}-"
         f"{VARIABLES[variable]['historical_version']}.nc"
     )
     projections_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{temporal_aggregation}-layer-{selected_layer}-latitude-"
         f"{VARIABLES[variable]['projections_version']}-"
         "quantiles.nc"
     )
@@ -274,8 +277,12 @@ def actual_evolution(
         f"filecache::{projections_data_url}", filecache={"same_names": True}
     ) as f:
         projections_data = xr.open_dataarray(f.name)
-    historical_sel = historical_data.sel(nuts=region)
-    projections_sel = projections_data.sel(nuts=region)
+    if "nuts" in selected_layer:
+        historical_sel = historical_data.sel(nuts=region)
+        projections_sel = projections_data.sel(nuts=region)
+    else:
+        historical_sel = historical_data
+        projections_sel = projections_data
     if month_or_season is not None:
         historical_sel = historical_sel.sel(
             time=historical_sel["time.month"] == month_or_season
@@ -319,7 +326,7 @@ def anomaly_evolution(
 ) -> Plot:
     projections_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{temporal_aggregation}-layer-{selected_layer}-latitude-"
         f"{VARIABLES[variable]['projections_version']}-"
         "anomalies_quantiles.nc"
     )
@@ -327,7 +334,10 @@ def anomaly_evolution(
         f"filecache::{projections_data_url}", filecache={"same_names": True}
     ) as f:
         projections_data = xr.open_dataarray(f.name)
-    projections_sel = projections_data.sel(nuts=region)
+    if "nuts" in selected_layer:
+        projections_sel = projections_data.sel(nuts=region)
+    else:
+        projections_sel = projections_data
     if month_or_season is not None:
         projections_sel = projections_sel.sel(
             time=projections_sel["time.month"] == month_or_season
@@ -365,14 +375,14 @@ def climatology(
 ) -> Plot:
     historical_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
-        f"monthly-layer-nuts_{selected_layer}-latitude-"
+        f"monthly-layer-{selected_layer}-latitude-"
         f"{VARIABLES[variable]['historical_period']}-"
         f"{VARIABLES[variable]['historical_version']}-"
         "climatology.nc"
     )
     projections_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
-        f"monthly-layer-nuts_{selected_layer}-latitude-"
+        f"monthly-layer-{selected_layer}-latitude-"
         f"{VARIABLES[variable]['projections_version']}-"
         "climatology.nc"
     )
@@ -384,8 +394,12 @@ def climatology(
         f"filecache::{projections_data_url}", filecache={"same_names": True}
     ) as f:
         projections_data = xr.open_dataarray(f.name)
-    historical_sel = historical_data.sel(nuts=region)
-    projections_sel = projections_data.sel(nuts=region)
+    if "nuts" in selected_layer:
+        historical_sel = historical_data.sel(nuts=region)
+        projections_sel = projections_data.sel(nuts=region)
+    else:
+        historical_sel = historical_data
+        projections_sel = projections_data
     variable_name = VARIABLES[variable]["name"].title()
     units = VARIABLES[variable]["units"]
     fig = plots.climatology(
