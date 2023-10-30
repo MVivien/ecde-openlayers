@@ -110,6 +110,22 @@ def month_or_season(
     return month or season
 
 
+def select_region(
+    data: xr.DataArray, layer: str, region: str | None = None
+) -> xr.DataArray:
+    if layer[:4] == "nuts":
+        data_selection = data.sel(nuts=region)
+    elif layer[:3] == "eea":
+        if layer[4:9] == "trans":
+            data_selection = data.isel(transnational_regions=0)
+        else:
+            layer_sub_id = layer[4:]
+            data_selection = data.isel({layer_sub_id: 0})
+    else:
+        raise ValueError(f"Unknown layer {layer}")
+    return data_selection
+
+
 @app.get("/regions/{variable}")
 def get_layers_group(
     request: fastapi.Request,
@@ -218,16 +234,13 @@ def historical_anomalies(
     )
     with fsspec.open(f"filecache::{data_url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
-    if "nuts" in selected_layer:
-        sel = data.sel(nuts=region)
-    else:
-        sel = data
+    data_sel = select_region(data, selected_layer, region)
     if month_or_season is not None:
-        sel = sel.sel(time=sel["time.month"] == month_or_season)
+        data_sel = data_sel.sel(time=data_sel["time.month"] == month_or_season)
     variable_name = VARIABLES[variable]["name"].title()
     units = VARIABLES[variable]["units"]
     fig = plots.historical_anomalies(
-        sel,
+        data_sel,
         temporal_aggregation=temporal_aggregation,
         ylabel=f"Anomaly ({units})",
         units=units,
@@ -277,12 +290,8 @@ def actual_evolution(
         f"filecache::{projections_data_url}", filecache={"same_names": True}
     ) as f:
         projections_data = xr.open_dataarray(f.name)
-    if "nuts" in selected_layer:
-        historical_sel = historical_data.sel(nuts=region)
-        projections_sel = projections_data.sel(nuts=region)
-    else:
-        historical_sel = historical_data
-        projections_sel = projections_data
+    historical_sel = select_region(historical_data, selected_layer, region)
+    projections_sel = select_region(projections_data, selected_layer, region)
     if month_or_season is not None:
         historical_sel = historical_sel.sel(
             time=historical_sel["time.month"] == month_or_season
@@ -334,10 +343,7 @@ def anomaly_evolution(
         f"filecache::{projections_data_url}", filecache={"same_names": True}
     ) as f:
         projections_data = xr.open_dataarray(f.name)
-    if "nuts" in selected_layer:
-        projections_sel = projections_data.sel(nuts=region)
-    else:
-        projections_sel = projections_data
+    projections_sel = select_region(projections_data, selected_layer, region)
     if month_or_season is not None:
         projections_sel = projections_sel.sel(
             time=projections_sel["time.month"] == month_or_season
@@ -394,12 +400,8 @@ def climatology(
         f"filecache::{projections_data_url}", filecache={"same_names": True}
     ) as f:
         projections_data = xr.open_dataarray(f.name)
-    if "nuts" in selected_layer:
-        historical_sel = historical_data.sel(nuts=region)
-        projections_sel = projections_data.sel(nuts=region)
-    else:
-        historical_sel = historical_data
-        projections_sel = projections_data
+    historical_sel = select_region(historical_data, selected_layer, region)
+    projections_sel = select_region(projections_data, selected_layer, region)
     variable_name = VARIABLES[variable]["name"].title()
     units = VARIABLES[variable]["units"]
     fig = plots.climatology(

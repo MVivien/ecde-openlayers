@@ -147,6 +147,7 @@ def historical_anomalies(
     ]
     plot_layout = utils.recursive_update(common_layout, local_layout)
     fig = go.Figure(layout=plot_layout)
+    print(data.values)
     bar_color = [
         COLORS["red"] if value >= 0 else COLORS["blue"] for value in data.values
     ]
