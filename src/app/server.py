@@ -175,68 +175,69 @@ def generate_geojson(
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
 ) -> fastapi.responses.FileResponse:
-    if horizon == "1981-01-01":
-        url = (
-            f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
-            f"{temporal_aggregation}-layer-{layer}-latitude-"
-            f"{VARIABLES[variable]['historical_period']}-"
-            f"{VARIABLES[variable]['historical_version']}-"
-            "30yrs_average.nc"
-        )
-    else:
-        url = (
-            f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
-            f"{temporal_aggregation}-layer-{layer}-latitude-"
-            f"{VARIABLES[variable]['projections_version']}-"
-            "30yrs_average.nc"
-        )
-    with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
-        data = xr.open_dataarray(f.name)
-    if "avg_period" in data.dims:
-        data = data.sel(scenario=rcp, avg_period=horizon)
-    if month_or_season is not None:
-        data = data.sel(month=month_or_season)
-    data_df = data.to_dataframe().reset_index().rename(columns={data.name: "value"})
-    layer_file_path = os.path.join(DIR, f"../../public/{layer}.geojson")
-    layer_data = gpd.read_file(layer_file_path)
-    if layer[:4] == "nuts":
-        data_df = data_df.rename(columns={"nuts": "NUTS_ID"})
-        data_on_layer = layer_data.merge(data_df, on="NUTS_ID")
-        # Append non-NUTS data
-        non_nuts_layer_file_path = os.path.join(DIR, "../../public/non_nuts.geojson")
-        non_nuts_layer_data = gpd.read_file(non_nuts_layer_file_path)
-        non_nuts_data_url = url.replace(layer, "non_nuts")
-        with fsspec.open(
-            f"filecache::{non_nuts_data_url}", filecache={"same_names": True}
-        ) as f:
-            non_nuts_data = xr.open_dataarray(f.name)
-        if "avg_period" in non_nuts_data.dims:
-            non_nuts_data = non_nuts_data.sel(scenario=rcp, avg_period=horizon)
-        if month_or_season is not None:
-            non_nuts_data = non_nuts_data.sel(month=month_or_season)
-        non_nuts_data_df = (
-            non_nuts_data.to_dataframe()
-            .reset_index()
-            .rename(columns={"countries": "region_id", data.name: "value"})
-        )
-        non_nuts_data_on_layer = non_nuts_layer_data.merge(
-            non_nuts_data_df, on="region_id"
-        )
-        data_on_layer = pd.concat([data_on_layer, non_nuts_data_on_layer])
-    elif layer[:3] == "eea":
-        if layer[4:9] == "trans":
-            layer_data["OBJECTID"] = layer_data["OBJECTID"].astype(str)
-            data_df = data_df.rename(columns={"transnational_regions": "OBJECTID"})
-            data_on_layer = layer_data.merge(data_df, on="OBJECTID")
+    data_on_layer_file_path = os.path.join(DIR, f"../../public/{variable}-{layer}.json")
+    if not os.path.exists(data_on_layer_file_path):
+        if horizon == "1981-01-01":
+            url = (
+                f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
+                f"{temporal_aggregation}-layer-{layer}-latitude-"
+                f"{VARIABLES[variable]['historical_period']}-"
+                f"{VARIABLES[variable]['historical_version']}-"
+                "30yrs_average.nc"
+            )
         else:
-            layer_data["id"] = layer_data["id"].astype(str)
-            data_df = data_df.rename(columns={layer[4:]: "id"})
-            data_on_layer = layer_data.merge(data_df, on="id")
-    data_on_layer = data_on_layer.to_crs("epsg:3035")
-    data_on_layer_file_path = os.path.join(
-        DIR, f"../../public/{variable}-reduced_data.json"
-    )
-    data_on_layer.to_file(data_on_layer_file_path, driver="GeoJSON")
+            url = (
+                f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
+                f"{temporal_aggregation}-layer-{layer}-latitude-"
+                f"{VARIABLES[variable]['projections_version']}-"
+                "30yrs_average.nc"
+            )
+        with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
+            data = xr.open_dataarray(f.name)
+        if "avg_period" in data.dims:
+            data = data.sel(scenario=rcp, avg_period=horizon)
+        if month_or_season is not None:
+            data = data.sel(month=month_or_season)
+        data_df = data.to_dataframe().reset_index().rename(columns={data.name: "value"})
+        layer_file_path = os.path.join(DIR, f"../../public/{layer}.geojson")
+        layer_data = gpd.read_file(layer_file_path)
+        if layer[:4] == "nuts":
+            data_df = data_df.rename(columns={"nuts": "NUTS_ID"})
+            data_on_layer = layer_data.merge(data_df, on="NUTS_ID")
+            # Append non-NUTS data
+            non_nuts_layer_file_path = os.path.join(
+                DIR, "../../public/non_nuts.geojson"
+            )
+            non_nuts_layer_data = gpd.read_file(non_nuts_layer_file_path)
+            non_nuts_data_url = url.replace(layer, "non_nuts")
+            with fsspec.open(
+                f"filecache::{non_nuts_data_url}", filecache={"same_names": True}
+            ) as f:
+                non_nuts_data = xr.open_dataarray(f.name)
+            if "avg_period" in non_nuts_data.dims:
+                non_nuts_data = non_nuts_data.sel(scenario=rcp, avg_period=horizon)
+            if month_or_season is not None:
+                non_nuts_data = non_nuts_data.sel(month=month_or_season)
+            non_nuts_data_df = (
+                non_nuts_data.to_dataframe()
+                .reset_index()
+                .rename(columns={"countries": "region_id", data.name: "value"})
+            )
+            non_nuts_data_on_layer = non_nuts_layer_data.merge(
+                non_nuts_data_df, on="region_id"
+            )
+            data_on_layer = pd.concat([data_on_layer, non_nuts_data_on_layer])
+        elif layer[:3] == "eea":
+            if layer[4:9] == "trans":
+                layer_data["OBJECTID"] = layer_data["OBJECTID"].astype(str)
+                data_df = data_df.rename(columns={"transnational_regions": "OBJECTID"})
+                data_on_layer = layer_data.merge(data_df, on="OBJECTID")
+            else:
+                layer_data["id"] = layer_data["id"].astype(str)
+                data_df = data_df.rename(columns={layer[4:]: "id"})
+                data_on_layer = layer_data.merge(data_df, on="id")
+        data_on_layer = data_on_layer.to_crs("epsg:3035")
+        data_on_layer.to_file(data_on_layer_file_path, driver="GeoJSON")
     return fastapi.responses.FileResponse(data_on_layer_file_path)
 
 
