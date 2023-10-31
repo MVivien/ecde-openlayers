@@ -212,6 +212,7 @@ def generate_geojson(
         layer_file_path = os.path.join(DIR, f"../../public/{layer}.geojson")
         layer_data = gpd.read_file(layer_file_path)
         if layer[:4] == "nuts":
+            layer_data = layer_data.drop(layer_data[layer_data.CNTR_CODE == "UK"].index)
             data_df = data_df.rename(columns={"nuts": "NUTS_ID"})
             data_on_layer = layer_data.merge(data_df, on="NUTS_ID")
             # Append non-NUTS data
