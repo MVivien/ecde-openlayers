@@ -114,7 +114,6 @@ def month_or_season(
 def select_region(
     data: xr.DataArray, layer: str, region: str | None = None
 ) -> xr.DataArray:
-    print(data, region)
     if layer[:4] == "nuts":
         data_selection = data.sel(nuts=region)
     elif layer[:8] == "non_nuts":
