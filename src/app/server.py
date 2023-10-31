@@ -71,13 +71,23 @@ REGIONAL_AGGREGATIONS = {
     "transnational": {
         "group_name": "Transnational Regions",
         "layers": {
-            "eea_trans_adriatic_ionian": "Adriatic-Ionian",
+            "eea_trans_south_west_europe": "South West Europe (SUDOE)",
+            "eea_trans_northern_periphery_and_arctic": "Northern Periphery and Arctic",
+            "eea_trans_north_west_europe": "North West Europe",
+            "eea_trans_north_sea": "North Sea",
+            "eea_trans_mediterranean": "Mediterranean (EURO MED)",
+            "eea_trans_danube": "Danube",
             "eea_trans_central_europe": "Central Europe",
+            "eea_trans_baltic_sea_region": "Baltic Sea Region",
+            "eea_trans_atlantic_area": "Atlantic Area",
+            "eea_trans_alpine_space": "Alpine Space",
+            "eea_trans_adriatic_ionian": "Adriatic-Ionian",
         },
     },
     "europe": {
         "group_name": "Europe Zones",
         "layers": {
+            "eea_eea_38": "EEA-38",
             "eea_eea_32": "EEA-32",
             "eea_eu_27": "EU-27",
         },
