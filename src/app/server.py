@@ -1,4 +1,5 @@
 import geopandas as gpd
+import pandas as pd
 import xarray as xr
 import os
 
@@ -113,8 +114,11 @@ def month_or_season(
 def select_region(
     data: xr.DataArray, layer: str, region: str | None = None
 ) -> xr.DataArray:
+    print(data, region)
     if layer[:4] == "nuts":
         data_selection = data.sel(nuts=region)
+    elif layer[:8] == "non_nuts":
+        data_selection = data.sel(countries=region)
     elif layer[:3] == "eea":
         if layer[4:9] == "trans":
             data_selection = data.isel(transnational_regions=0)
@@ -171,7 +175,7 @@ def generate_geojson(
     horizon: str = fastapi.Query(...),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
-) -> fastapi.responses.StreamingResponse:
+) -> fastapi.responses.FileResponse:
     if horizon == "1981-01-01":
         url = (
             f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
@@ -199,6 +203,27 @@ def generate_geojson(
     if layer[:4] == "nuts":
         data_df = data_df.rename(columns={"nuts": "NUTS_ID"})
         data_on_layer = layer_data.merge(data_df, on="NUTS_ID")
+        # Append non-NUTS data
+        non_nuts_layer_file_path = os.path.join(DIR, "../../public/non_nuts.geojson")
+        non_nuts_layer_data = gpd.read_file(non_nuts_layer_file_path)
+        non_nuts_data_url = url.replace(layer, "non_nuts")
+        with fsspec.open(
+            f"filecache::{non_nuts_data_url}", filecache={"same_names": True}
+        ) as f:
+            non_nuts_data = xr.open_dataarray(f.name)
+        if "avg_period" in non_nuts_data.dims:
+            non_nuts_data = non_nuts_data.sel(scenario=rcp, avg_period=horizon)
+        if month_or_season is not None:
+            non_nuts_data = non_nuts_data.sel(month=month_or_season)
+        non_nuts_data_df = (
+            non_nuts_data.to_dataframe()
+            .reset_index()
+            .rename(columns={"countries": "region_id", data.name: "value"})
+        )
+        non_nuts_data_on_layer = non_nuts_layer_data.merge(
+            non_nuts_data_df, on="region_id"
+        )
+        data_on_layer = pd.concat([data_on_layer, non_nuts_data_on_layer])
     elif layer[:3] == "eea":
         if layer[4:9] == "trans":
             layer_data["OBJECTID"] = layer_data["OBJECTID"].astype(str)
