@@ -63,16 +63,16 @@ REGIONAL_AGGREGATIONS = {
     "nuts": {
         "group_name": "NUTS Regions",
         "layers": {
-            "nuts_0": "NUTS 0",
-            "nuts_1": "NUTS 1",
             "nuts_2": "NUTS 2",
+            "nuts_1": "NUTS 1",
+            "nuts_0": "NUTS 0",
         },
     },
     "transnational": {
         "group_name": "Transnational Regions",
         "layers": {
-            "eea_trans_adriatic_ionian": "Interreg VI-B Adriatic-Ionian",
-            "eea_trans_central_europe": "Interreg VI-B Central Europe",
+            "eea_trans_adriatic_ionian": "Adriatic-Ionian",
+            "eea_trans_central_europe": "Central Europe",
         },
     },
     "europe": {
