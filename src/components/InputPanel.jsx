@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+//import { useState } from 'react';
 import {
   ToggleButtonGroup,
   Select,
@@ -17,12 +17,16 @@ InputPanel.propTypes = {
   setHorizon: PropTypes.func,
   region: PropTypes.string,
   setRegion: PropTypes.func,
+  regionalAggregation: PropTypes.string,
+  setRegionalAggregation: PropTypes.func,
   temporalAggregation: PropTypes.string,
   setTemporalAggregation: PropTypes.func,
   month: PropTypes.number,
   setMonth: PropTypes.func,
   season: PropTypes.number,
   setSeason: PropTypes.func,
+  mapType: PropTypes.string,
+  setMapType: PropTypes.func,
 };
 
 function InputPanel({
@@ -30,8 +34,10 @@ function InputPanel({
   setRcp,
   horizon,
   setHorizon,
-  region,
-  setRegion,
+  //region,
+  //setRegion,
+  regionalAggregation,
+  setRegionalAggregation,
   temporalAggregation,
   setTemporalAggregation,
   month,
@@ -39,9 +45,8 @@ function InputPanel({
   season,
   setSeason,
   mapType,
-  setMapType
+  setMapType,
 }) {
-
   const months = [
     { label: 'January', value: 1 },
     { label: 'February', value: 2 },
@@ -74,6 +79,10 @@ function InputPanel({
 
   const handleHorizonChange = (event) => {
     setHorizon(event.target.value);
+  };
+
+  const handleRegionalAggregation = (event) => {
+    setRegionalAggregation(event.target.value);
   };
 
   const handleTemporalAggregation = (event) => {
@@ -132,7 +141,12 @@ function InputPanel({
           </SvgIcon>
         </Tooltip>
       </div>
-      <ToggleButtonGroup variant="outlined" aria-label="outlined button group">
+      <ToggleButtonGroup
+        variant="outlined"
+        aria-label="outlined button group"
+        value={regionalAggregation}
+        onChange={handleRegionalAggregation}
+      >
         <ToggleButton value="nuts">NUTS</ToggleButton>
         <ToggleButton value="transnational">Transnational regions</ToggleButton>
         <ToggleButton value="europe">Europe Zones</ToggleButton>

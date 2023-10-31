@@ -21,6 +21,7 @@ function App() {
   const [region, setRegion] = useState('');
   const [regionName, setRegionName] = useState('');
   const [selectedLayer, setSelectedLayer] = useState('');
+  const [regionalAggregation, setRegionalAggregation] = useState('nuts');
   const [temporalAggregation, setTemporalAggregation] = useState('yearly');
   const [month, setMonth] = useState(7);
   const [season, setSeason] = useState(6);
@@ -57,40 +58,19 @@ function App() {
           ? `&season=${season}`
           : '';
       // const { name, url } = NUTS.find((item) => item.name === nut);
-      const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
-        detail: {
-          group: 'NUTS Regions',
-          layers: [
-            {
-              name: `NUTS 2`,
-              type: 'vector',
-              sourceType: 'vector',
-              sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_2?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
-              },
-            },
-            {
-              name: `NUTS 1`,
-              type: 'vector',
-              sourceType: 'vector',
-              sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_1?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
-              },
-            },
-            {
-              name: `NUTS 0`,
-              type: 'vector',
-              sourceType: 'vector',
-              sourceParams: {
-                url: `${API_BASE}/geojson/05_tropical_nights/nuts_0?rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
-              },
-            },
-          ],
-        },
-      });
-      registerEvent(event);
+      fetch(
+        `${API_BASE}/regions/05_tropical_nights?regionalAggregation=${regionalAggregation}&rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          const event = new CustomEvent(EVENT_GROUP_SET_LAYERS, {
+            detail: data,
+          });
+          registerEvent(event);
+        });
     }
-  }, [rcp, horizon, temporalAggregation, month, season]);
+  }, [rcp, horizon, temporalAggregation, regionalAggregation, month, season]);
 
   const inputs = (
     <>
@@ -101,6 +81,8 @@ function App() {
         setHorizon={setHorizon}
         region={region}
         setRegion={setRegion}
+        regionalAggregation={regionalAggregation}
+        setRegionalAggregation={setRegionalAggregation}
         regionName={regionName}
         setRegionName={setRegionName}
         temporalAggregation={temporalAggregation}

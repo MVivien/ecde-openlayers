@@ -1,11 +1,11 @@
 import geopandas as gpd
+import pandas as pd
 import xarray as xr
 import os
 
 import fastapi
 import fastapi.middleware.cors
 import fsspec
-import plotly.io as io
 import pydantic
 
 from . import plots
@@ -59,6 +59,41 @@ PLOTS = {
     },
 }
 
+REGIONAL_AGGREGATIONS = {
+    "nuts": {
+        "group_name": "NUTS Regions",
+        "layers": {
+            "nuts_2": "NUTS 2",
+            "nuts_1": "NUTS 1",
+            "nuts_0": "NUTS 0",
+        },
+    },
+    "transnational": {
+        "group_name": "Transnational Regions",
+        "layers": {
+            "eea_trans_south_west_europe": "South West Europe (SUDOE)",
+            "eea_trans_northern_periphery_and_arctic": "Northern Periphery and Arctic",
+            "eea_trans_north_west_europe": "North West Europe",
+            "eea_trans_north_sea": "North Sea",
+            "eea_trans_mediterranean": "Mediterranean (EURO MED)",
+            "eea_trans_danube": "Danube",
+            "eea_trans_central_europe": "Central Europe",
+            "eea_trans_baltic_sea_region": "Baltic Sea Region",
+            "eea_trans_atlantic_area": "Atlantic Area",
+            "eea_trans_alpine_space": "Alpine Space",
+            "eea_trans_adriatic_ionian": "Adriatic-Ionian",
+        },
+    },
+    "europe": {
+        "group_name": "Europe Zones",
+        "layers": {
+            "eea_eea_38": "EEA-38",
+            "eea_eea_32": "EEA-32",
+            "eea_eu_27": "EU-27",
+        },
+    },
+}
+
 
 class Plot(pydantic.BaseModel):
     title: str
@@ -66,11 +101,79 @@ class Plot(pydantic.BaseModel):
     figure: str
 
 
+class LayerParams(pydantic.BaseModel):
+    name: str
+    type: str = pydantic.Field(default="vector")
+    sourceType: str = pydantic.Field(default="vector")
+    params: str | None = pydantic.Field(default=None)
+    sourceParams: dict[str, str] | None = pydantic.Field(default=None)
+
+
+class LayersGroup(pydantic.BaseModel):
+    group: str
+    layers: list[LayerParams]
+
+
 def month_or_season(
     month: int | None = fastapi.Query(None),
     season: int | None = fastapi.Query(None),
 ):
     return month or season
+
+
+def select_region(
+    data: xr.DataArray, layer: str, region: str | None = None
+) -> xr.DataArray:
+    if layer[:4] == "nuts":
+        data_selection = data.sel(nuts=region)
+    elif layer[:8] == "non_nuts":
+        data_selection = data.sel(countries=region)
+    elif layer[:3] == "eea":
+        if layer[4:9] == "trans":
+            data_selection = data.isel(transnational_regions=0)
+        else:
+            layer_sub_id = layer[4:]
+            data_selection = data.isel({layer_sub_id: 0})
+    else:
+        raise ValueError(f"Unknown layer {layer}")
+    return data_selection
+
+
+@app.get("/regions/{variable}")
+def get_layers_group(
+    request: fastapi.Request,
+    variable: str,
+    regional_aggregation: str = fastapi.Query(..., alias="regionalAggregation"),
+    rcp: str = fastapi.Query(...),
+    horizon: str = fastapi.Query(...),
+    temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
+    month: int | None = fastapi.Query(None),
+    season: int | None = fastapi.Query(None),
+) -> LayersGroup:
+    temporal_aggregation_var = ""
+    if month is not None:
+        temporal_aggregation_var = f"&month={month}"
+    elif season is not None:
+        temporal_aggregation_var = f"&season={season}"
+    layers_group = LayersGroup(
+        group=REGIONAL_AGGREGATIONS[regional_aggregation]["group_name"],
+        layers=[
+            LayerParams(
+                name=layer_label,
+                params=layer_label,
+                sourceParams={
+                    "url": (
+                        f"{request.base_url}geojson/{variable}/{layer_id}"
+                        f"?rcp={rcp}&horizon={horizon}&temporalAggregation={temporal_aggregation}{temporal_aggregation_var}"
+                    ),
+                },
+            )
+            for layer_id, layer_label in REGIONAL_AGGREGATIONS[regional_aggregation][
+                "layers"
+            ].items()
+        ],
+    )
+    return layers_group
 
 
 @app.get("/geojson/{variable}/{layer}")
@@ -81,49 +184,72 @@ def generate_geojson(
     horizon: str = fastapi.Query(...),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
-) -> fastapi.responses.StreamingResponse:
-    if horizon == "1981-01-01":
-        url = (
-            f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
-            f"{temporal_aggregation}-layer-{layer}-latitude-"
-            f"{VARIABLES[variable]['historical_period']}-"
-            f"{VARIABLES[variable]['historical_version']}-"
-            "30yrs_average.nc"
-        )
-    else:
-        url = (
-            f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
-            f"{temporal_aggregation}-layer-{layer}-latitude-"
-            f"{VARIABLES[variable]['projections_version']}-"
-            "30yrs_average.nc"
-        )
-
-    with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
-        data = xr.open_dataarray(f.name)
-
-    if "avg_period" in data.dims:
-        data = data.sel(scenario=rcp, avg_period=horizon)
-
-    if month_or_season is not None:
-        data = data.sel(month=month_or_season)
-
-    df = data.to_dataframe().reset_index()
-    df = df.rename(columns={"nuts": "NUTS_ID", data.name: "value"})
-
-    level = {
-        "nuts_0": "LEVL_0",
-        "nuts_1": "LEVL_1",
-        "nuts_2": "LEVL_2",
-    }[layer]
-    geodataframe = gpd.read_file(
-        os.path.join(DIR, f"../../public/NUTS_RG_60M_2021_4326_{level}.geojson")
-    )
-    gdf = geodataframe.merge(df, on="NUTS_ID")
-    gdf = gdf.to_crs("epsg:3035")
-    gdf_json_path = os.path.join(DIR, f"../../public/{variable}-reduced_data.json")
-    gdf.to_file(gdf_json_path, driver="GeoJSON")
-
-    return fastapi.responses.FileResponse(gdf_json_path)
+) -> fastapi.responses.FileResponse:
+    data_on_layer_file_path = os.path.join(DIR, f"../../public/{variable}-{layer}.json")
+    if not os.path.exists(data_on_layer_file_path):
+        if horizon == "1981-01-01":
+            url = (
+                f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
+                f"{temporal_aggregation}-layer-{layer}-latitude-"
+                f"{VARIABLES[variable]['historical_period']}-"
+                f"{VARIABLES[variable]['historical_version']}-"
+                "30yrs_average.nc"
+            )
+        else:
+            url = (
+                f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
+                f"{temporal_aggregation}-layer-{layer}-latitude-"
+                f"{VARIABLES[variable]['projections_version']}-"
+                "30yrs_average.nc"
+            )
+        with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
+            data = xr.open_dataarray(f.name)
+        if "avg_period" in data.dims:
+            data = data.sel(scenario=rcp, avg_period=horizon)
+        if month_or_season is not None:
+            data = data.sel(month=month_or_season)
+        data_df = data.to_dataframe().reset_index().rename(columns={data.name: "value"})
+        layer_file_path = os.path.join(DIR, f"../../public/{layer}.geojson")
+        layer_data = gpd.read_file(layer_file_path)
+        if layer[:4] == "nuts":
+            layer_data = layer_data.drop(layer_data[layer_data.CNTR_CODE == "UK"].index)
+            data_df = data_df.rename(columns={"nuts": "NUTS_ID"})
+            data_on_layer = layer_data.merge(data_df, on="NUTS_ID")
+            # Append non-NUTS data
+            non_nuts_layer_file_path = os.path.join(
+                DIR, "../../public/non_nuts.geojson"
+            )
+            non_nuts_layer_data = gpd.read_file(non_nuts_layer_file_path)
+            non_nuts_data_url = url.replace(layer, "non_nuts")
+            with fsspec.open(
+                f"filecache::{non_nuts_data_url}", filecache={"same_names": True}
+            ) as f:
+                non_nuts_data = xr.open_dataarray(f.name)
+            if "avg_period" in non_nuts_data.dims:
+                non_nuts_data = non_nuts_data.sel(scenario=rcp, avg_period=horizon)
+            if month_or_season is not None:
+                non_nuts_data = non_nuts_data.sel(month=month_or_season)
+            non_nuts_data_df = (
+                non_nuts_data.to_dataframe()
+                .reset_index()
+                .rename(columns={"countries": "region_id", data.name: "value"})
+            )
+            non_nuts_data_on_layer = non_nuts_layer_data.merge(
+                non_nuts_data_df, on="region_id"
+            )
+            data_on_layer = pd.concat([data_on_layer, non_nuts_data_on_layer])
+        elif layer[:3] == "eea":
+            if layer[4:9] == "trans":
+                layer_data["OBJECTID"] = layer_data["OBJECTID"].astype(str)
+                data_df = data_df.rename(columns={"transnational_regions": "OBJECTID"})
+                data_on_layer = layer_data.merge(data_df, on="OBJECTID")
+            else:
+                layer_data["id"] = layer_data["id"].astype(str)
+                data_df = data_df.rename(columns={layer[4:]: "id"})
+                data_on_layer = layer_data.merge(data_df, on="id")
+        data_on_layer = data_on_layer.to_crs("epsg:3035")
+        data_on_layer.to_file(data_on_layer_file_path, driver="GeoJSON")
+    return fastapi.responses.FileResponse(data_on_layer_file_path)
 
 
 @app.get("/plots/{variable}/historical_anomalies")
@@ -137,20 +263,20 @@ def historical_anomalies(
 ) -> Plot:
     data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{temporal_aggregation}-layer-{selected_layer}-latitude-"
         f"{VARIABLES[variable]['historical_period']}-"
         f"{VARIABLES[variable]['historical_version']}-"
         "anomalies.nc"
     )
     with fsspec.open(f"filecache::{data_url}", filecache={"same_names": True}) as f:
         data = xr.open_dataarray(f.name)
-    sel = data.sel(nuts=region)
+    data_sel = select_region(data, selected_layer, region)
     if month_or_season is not None:
-        sel = sel.sel(time=sel["time.month"] == month_or_season)
+        data_sel = data_sel.sel(time=data_sel["time.month"] == month_or_season)
     variable_name = VARIABLES[variable]["name"].title()
     units = VARIABLES[variable]["units"]
     fig = plots.historical_anomalies(
-        sel,
+        data_sel,
         temporal_aggregation=temporal_aggregation,
         ylabel=f"Anomaly ({units})",
         units=units,
@@ -182,13 +308,13 @@ def actual_evolution(
 ) -> Plot:
     historical_data_url = (
         f"{DATA_HOST}/{variable}/historical/{variable}-historical-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{temporal_aggregation}-layer-{selected_layer}-latitude-"
         f"{VARIABLES[variable]['historical_period']}-"
         f"{VARIABLES[variable]['historical_version']}.nc"
     )
     projections_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{temporal_aggregation}-layer-{selected_layer}-latitude-"
         f"{VARIABLES[variable]['projections_version']}-"
         "quantiles.nc"
     )
@@ -200,8 +326,8 @@ def actual_evolution(
         f"filecache::{projections_data_url}", filecache={"same_names": True}
     ) as f:
         projections_data = xr.open_dataarray(f.name)
-    historical_sel = historical_data.sel(nuts=region)
-    projections_sel = projections_data.sel(nuts=region)
+    historical_sel = select_region(historical_data, selected_layer, region)
+    projections_sel = select_region(projections_data, selected_layer, region)
     if month_or_season is not None:
         historical_sel = historical_sel.sel(
             time=historical_sel["time.month"] == month_or_season
@@ -245,7 +371,7 @@ def anomaly_evolution(
 ) -> Plot:
     projections_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
-        f"{temporal_aggregation}-layer-nuts_{selected_layer}-latitude-"
+        f"{temporal_aggregation}-layer-{selected_layer}-latitude-"
         f"{VARIABLES[variable]['projections_version']}-"
         "anomalies_quantiles.nc"
     )
@@ -253,7 +379,7 @@ def anomaly_evolution(
         f"filecache::{projections_data_url}", filecache={"same_names": True}
     ) as f:
         projections_data = xr.open_dataarray(f.name)
-    projections_sel = projections_data.sel(nuts=region)
+    projections_sel = select_region(projections_data, selected_layer, region)
     if month_or_season is not None:
         projections_sel = projections_sel.sel(
             time=projections_sel["time.month"] == month_or_season
@@ -291,14 +417,14 @@ def climatology(
 ) -> Plot:
     historical_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
-        f"monthly-layer-nuts_{selected_layer}-latitude-"
+        f"monthly-layer-{selected_layer}-latitude-"
         f"{VARIABLES[variable]['historical_period']}-"
         f"{VARIABLES[variable]['historical_version']}-"
         "climatology.nc"
     )
     projections_data_url = (
         f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
-        f"monthly-layer-nuts_{selected_layer}-latitude-"
+        f"monthly-layer-{selected_layer}-latitude-"
         f"{VARIABLES[variable]['projections_version']}-"
         "climatology.nc"
     )
@@ -310,8 +436,8 @@ def climatology(
         f"filecache::{projections_data_url}", filecache={"same_names": True}
     ) as f:
         projections_data = xr.open_dataarray(f.name)
-    historical_sel = historical_data.sel(nuts=region)
-    projections_sel = projections_data.sel(nuts=region)
+    historical_sel = select_region(historical_data, selected_layer, region)
+    projections_sel = select_region(projections_data, selected_layer, region)
     variable_name = VARIABLES[variable]["name"].title()
     units = VARIABLES[variable]["units"]
     fig = plots.climatology(
