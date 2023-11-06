@@ -104,7 +104,7 @@ button.ol-zoom-out {
 @media only screen and (min-device-width: 200px) and (max-device-width: 900px) {
   .ol-unselectable.ol-control.layer-switcher {
     position: absolute;
-    top: 40rem;
+    top: 17rem;
     right: 1rem;
   }
 }
@@ -116,7 +116,7 @@ button.ol-zoom-out {
   }
 
   .MuiContainer-root {
-    max-height: 560px;
+    max-height: 225px;
   }
 }
 
