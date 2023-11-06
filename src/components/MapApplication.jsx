@@ -9,6 +9,7 @@ import { useTheme } from '@mui/material/styles';
 import AppContainer from './AppContainer';
 import SubAppContainer from './SubAppContainer';
 import MapLegend from './MapLegend';
+import AttributionElement from './AttributionElement';
 
 function PullerContainer({ children, drawerBleeding, position = 'left', ...rest }) {
   if (position === 'left' || position === 'right') {
@@ -47,8 +48,8 @@ function PullerContainer({ children, drawerBleeding, position = 'left', ...rest 
         sx={{
           backgroundColor: grey[200],
           position: 'absolute',
-          ...(position === 'bottom' && { top: -drawerBleeding }),
-          ...(position === 'top' && { bottom: -drawerBleeding }),
+          ...(position === 'bottom' && { top: -drawerBleeding + 20 }),
+          ...(position === 'top' && { bottom: -drawerBleeding + 20 }),
           ...(position === 'bottom' && { borderTopLeftRadius: 8, borderTopRightRadius: 8 }),
           ...(position === 'top' && { borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }),
           visibility: 'visible',
@@ -56,7 +57,7 @@ function PullerContainer({ children, drawerBleeding, position = 'left', ...rest 
           left: 0,
           zIndex: 1,
           touchAction: 'none',
-          height: drawerBleeding,
+          height: drawerBleeding - 20,
           '&:hover': {
             cursor: 'pointer',
             backgroundColor: grey[100],
@@ -226,7 +227,7 @@ export default function MapApplication({
     : {
         display: 'flex',
         flexDirection: 'column',
-        gap: theme.spacing(2),
+        gap: theme.spacing(1),
         padding: theme.spacing(2, 0),
         width: '100%',
       };
@@ -441,6 +442,13 @@ export default function MapApplication({
       />
     </>
   );
+
+  const attributions = (
+    <>
+      <AttributionElement />
+    </>
+  );
+
   return (
     <>
       {swipeableDrawerLeft}
@@ -450,6 +458,7 @@ export default function MapApplication({
       <AppContainer>
         <Grid sx={{ flexGrow: 1 }}>{children}</Grid>
       </AppContainer>
+      {attributions}
       {mapLegend}
     </>
   );
