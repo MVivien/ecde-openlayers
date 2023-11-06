@@ -187,7 +187,13 @@ def generate_geojson(
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
     month_or_season: int | None = fastapi.Depends(month_or_season),
 ) -> fastapi.responses.FileResponse:
-    data_on_layer_file_path = os.path.join(DIR, f"../../public/{variable}-{layer}.json")
+    month_or_season_suffix = (
+        f"-{month_or_season}" if month_or_season is not None else ""
+    )
+    data_on_layer_file_path = os.path.join(
+        DIR,
+        f"../../public/{variable}-{layer}-{rcp}-{horizon}-{temporal_aggregation}{month_or_season_suffix}.json",
+    )
     if not os.path.exists(data_on_layer_file_path):
         plot = "30yrs_average"
         if map_type == "change":
