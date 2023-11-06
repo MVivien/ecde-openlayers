@@ -192,7 +192,7 @@ def generate_geojson(
     )
     data_on_layer_file_path = os.path.join(
         DIR,
-        f"../../public/{variable}-{layer}-{rcp}-{horizon}-{temporal_aggregation}{month_or_season_suffix}.json",
+        f"../../public/{variable}-{layer}-{map_type}-{rcp}-{horizon}-{temporal_aggregation}{month_or_season_suffix}.json",
     )
     if not os.path.exists(data_on_layer_file_path):
         plot = "30yrs_average"

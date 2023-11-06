@@ -70,7 +70,7 @@ function App() {
           registerEvent(event);
         });
     }
-  }, [rcp, horizon, temporalAggregation, regionalAggregation, month, season]);
+  }, [mapType, rcp, horizon, temporalAggregation, regionalAggregation, month, season]);
 
   const inputs = (
     <>
