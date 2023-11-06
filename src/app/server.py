@@ -144,6 +144,7 @@ def get_layers_group(
     request: fastapi.Request,
     variable: str,
     regional_aggregation: str = fastapi.Query(..., alias="regionalAggregation"),
+    map_type: str = fastapi.Query("actual", alias="mapType"),
     rcp: str = fastapi.Query(...),
     horizon: str = fastapi.Query(...),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
@@ -163,8 +164,8 @@ def get_layers_group(
                 params=layer_label,
                 sourceParams={
                     "url": (
-                        f"{request.base_url}geojson/{variable}/{layer_id}"
-                        f"?rcp={rcp}&horizon={horizon}&temporalAggregation={temporal_aggregation}{temporal_aggregation_var}"
+                        f"{request.base_url}geojson/{variable}/{layer_id}?mapType={map_type}"
+                        f"&rcp={rcp}&horizon={horizon}&temporalAggregation={temporal_aggregation}{temporal_aggregation_var}"
                     ),
                 },
             )
@@ -180,6 +181,7 @@ def get_layers_group(
 def generate_geojson(
     variable: str,
     layer: str,
+    map_type: str = fastapi.Query("actual", alias="mapType"),
     rcp: str = fastapi.Query(...),
     horizon: str = fastapi.Query(...),
     temporal_aggregation: str = fastapi.Query(..., alias="temporalAggregation"),
@@ -187,20 +189,23 @@ def generate_geojson(
 ) -> fastapi.responses.FileResponse:
     data_on_layer_file_path = os.path.join(DIR, f"../../public/{variable}-{layer}.json")
     if not os.path.exists(data_on_layer_file_path):
+        plot = "30yrs_average"
+        if map_type == "change":
+            plot = f"{plot}_change"
         if horizon == "1981-01-01":
             url = (
                 f"{DATA_HOST}/{variable}/plots/{variable}-historical-"
                 f"{temporal_aggregation}-layer-{layer}-latitude-"
                 f"{VARIABLES[variable]['historical_period']}-"
                 f"{VARIABLES[variable]['historical_version']}-"
-                "30yrs_average.nc"
+                f"{plot}.nc"
             )
         else:
             url = (
                 f"{DATA_HOST}/{variable}/plots/{variable}-projections-"
                 f"{temporal_aggregation}-layer-{layer}-latitude-"
                 f"{VARIABLES[variable]['projections_version']}-"
-                "30yrs_average.nc"
+                f"{plot}.nc"
             )
         with fsspec.open(f"filecache::{url}", filecache={"same_names": True}) as f:
             data = xr.open_dataarray(f.name)
