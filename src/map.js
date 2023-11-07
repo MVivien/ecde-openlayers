@@ -208,7 +208,7 @@ function initMap(mapCointainer, { hoverContainer, hoverContent, onClick }) {
     view: new View({
       projection: europeProjection,
       center: fromLonLat([40, 28]),
-      zoom: 5,
+      zoom: 4.5,
       maxZoom: 6,
       minZoom: 3,
     }),

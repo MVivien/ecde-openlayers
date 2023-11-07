@@ -101,6 +101,13 @@ button.ol-zoom-out {
   right: 5%;
 }
 
+
+@media only screen and (min-device-width: 1000px) and (max-device-width: 1600px) {
+  button.ol-zoom-out {
+    bottom: 12.8%;
+  }
+}
+
 @media only screen and (min-device-width: 200px) and (max-device-width: 900px) {
   .ol-unselectable.ol-control.layer-switcher {
     position: absolute;
