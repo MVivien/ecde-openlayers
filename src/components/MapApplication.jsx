@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDrag } from '@use-gesture/react';
 
@@ -129,6 +129,11 @@ function useDrawer(open = false, position = 'left') {
   return [drawer, setDrawer, bind];
 }
 
+function moveElementWithDrawer(element) {
+  if (element?.current?.id === 'right_drawer') element.current.id = 'right_drawer_closed';
+  else element.current.id = 'right_drawer';
+}
+
 PullerContainer.propTypes = {
   children: PropTypes.any,
   drawerBleeding: PropTypes.any,
@@ -183,6 +188,8 @@ export default function MapApplication({
   const [drawerTop, setDrawerTop, bindTop] = useDrawer(drawerDefaultTop, 'top');
   const drawerBleeding = 40;
 
+  const rightDrawer = useRef(null);
+
   const inputsOnLeft =
     ((inputsMd === 'left' && large) || (inputsXs === 'left' && !large)) && Boolean(inputs);
   const outputsOnLeft =
@@ -207,6 +214,7 @@ export default function MapApplication({
   //open Right drawer on map click
   useEffect(() => {
     if (openPlotDrawer) {
+      if (rightDrawer?.current?.id) rightDrawer.current.id = 'right_drawer';
       if (large) {
         setDrawerRight(true);
       } else {
@@ -284,7 +292,9 @@ export default function MapApplication({
 
   const swipeableDrawerRight = somethingOnRight ? (
     <SwipeableDrawer
+      id="right_drawer"
       open={drawerRight}
+      ref={rightDrawer}
       variant="persistent"
       anchor="right"
       onClose={() => {
@@ -312,6 +322,7 @@ export default function MapApplication({
         tabIndex="0"
         onClick={() => {
           setDrawerRight((oldState) => !oldState);
+          moveElementWithDrawer(rightDrawer);
         }}
         {...bindRight()}
       >

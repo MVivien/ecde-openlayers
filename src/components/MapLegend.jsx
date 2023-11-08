@@ -21,8 +21,8 @@ function MapLegend({ large, drawerRight, drawerBottom, childApp }) {
       <div
         style={{
           position: 'absolute',
-          right: isRightDrawerOpen ? '36.3%' : '5%',
-          bottom: isBottomDrawerOpen ? `32%` : '5%',
+          right: large ? (isRightDrawerOpen ? '37%' : '5%') : '5%',
+          bottom: large ? (isBottomDrawerOpen ? `32%` : '5%') : '5%',
           width: '80%',
           zIndex: 2,
         }}

@@ -155,3 +155,15 @@ input[type='radio'] {
 .layer-switcher .group button {
   margin-top: 0.3rem;
 }
+
+section:has(#right_drawer) .ol-unselectable.ol-control.layer-switcher{
+  margin-right: 37%;
+}
+
+section:has(#right_drawer) button.ol-zoom-in{
+  right:37%;
+}
+
+section:has(#right_drawer) button.ol-zoom-out{
+  right:37%;
+}

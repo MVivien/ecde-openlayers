@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/icons-material/Info';
-import { Tooltip, Button } from '@mui/material';
+import { Tooltip } from '@mui/material';
 
 AttributionElement.propTypes = {
   large: PropTypes.bool,

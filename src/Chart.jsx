@@ -5,7 +5,16 @@ import { Typography } from '@mui/material';
 
 import { API_BASE } from './config';
 
-function Chart({ id, plot_name, region, regionName, selectedLayer, temporalAggregation, month, season }) {
+function Chart({
+  id,
+  plot_name,
+  region,
+  regionName,
+  selectedLayer,
+  temporalAggregation,
+  month,
+  season,
+}) {
   const [plotData, setPlotData] = useState(null);
   const [title, setTitle] = useState(null);
   const [description, setDescription] = useState(null);
