@@ -59,7 +59,7 @@ function App() {
           : '';
       // const { name, url } = NUTS.find((item) => item.name === nut);
       fetch(
-        `${API_BASE}/regions/05_tropical_nights?regionalAggregation=${regionalAggregation}&rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
+        `${API_BASE}/regions/05_tropical_nights?regionalAggregation=${regionalAggregation}&mapType=${mapType}&rcp=${rcp}&horizon=${horizon}&temporalAggregation=${temporalAggregation}${tempAggregationVar}`,
       )
         .then((response) => response.json())
         .then((data) => {
@@ -70,7 +70,7 @@ function App() {
           registerEvent(event);
         });
     }
-  }, [rcp, horizon, temporalAggregation, regionalAggregation, month, season]);
+  }, [mapType, rcp, horizon, temporalAggregation, regionalAggregation, month, season]);
 
   const inputs = (
     <>
