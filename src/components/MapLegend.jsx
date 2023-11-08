@@ -22,7 +22,7 @@ function MapLegend({ large, drawerRight, drawerBottom, childApp }) {
         style={{
           position: 'absolute',
           right: large ? (isRightDrawerOpen ? '37%' : '5%') : '5%',
-          bottom: large ? (isBottomDrawerOpen ? `32%` : '5%') : '5%',
+          bottom: !large ? (isBottomDrawerOpen ? `28%` : '5%') : '5%',
           width: '80%',
           zIndex: 2,
         }}
@@ -58,7 +58,7 @@ function MapLegend({ large, drawerRight, drawerBottom, childApp }) {
             justifyContent: 'center',
             position: 'absolute',
             right: large ? (isRightDrawerOpen ? '36%' : '30%') : '17%',
-            bottom: isBottomDrawerOpen && !large ? '32%' : '5%',
+            bottom: isBottomDrawerOpen && !large ? '28%' : '5%',
           }}
         >
           <div
