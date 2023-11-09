@@ -7,12 +7,14 @@ import fastapi
 import fastapi.middleware.cors
 import fsspec
 import pydantic
+import tempfile
 
 from . import plots
 
 app = fastapi.FastAPI()
 DIR = os.path.join(os.path.dirname(__file__))
 DATA_HOST = "http://ecde-data.copernicus-climate.eu"
+TEMPDIR = tempfile.TemporaryDirectory()
 
 # FIXME: this is a temporary solution; an external configuration file should be used
 VARIABLES = {
@@ -191,8 +193,8 @@ def generate_geojson(
         f"-{month_or_season}" if month_or_season is not None else ""
     )
     data_on_layer_file_path = os.path.join(
-        DIR,
-        f"../../public/{variable}-{temporal_aggregation}{month_or_season_suffix}-{rcp}-{layer}-{horizon}-{map_type}.json",
+        TEMPDIR.name,
+        f"{variable}-{temporal_aggregation}{month_or_season_suffix}-{rcp}-{layer}-{horizon}-{map_type}.json",
     )
     if not os.path.exists(data_on_layer_file_path):
         plot = "30yrs_average"
