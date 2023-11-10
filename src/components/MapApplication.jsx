@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDrag } from '@use-gesture/react';
 
@@ -9,6 +9,7 @@ import { useTheme } from '@mui/material/styles';
 import AppContainer from './AppContainer';
 import SubAppContainer from './SubAppContainer';
 import MapLegend from './MapLegend';
+import AttributionElement from './AttributionElement';
 
 function PullerContainer({ children, drawerBleeding, position = 'left', ...rest }) {
   if (position === 'left' || position === 'right') {
@@ -47,8 +48,8 @@ function PullerContainer({ children, drawerBleeding, position = 'left', ...rest 
         sx={{
           backgroundColor: grey[200],
           position: 'absolute',
-          ...(position === 'bottom' && { top: -drawerBleeding }),
-          ...(position === 'top' && { bottom: -drawerBleeding }),
+          ...(position === 'bottom' && { top: -drawerBleeding + 20 }),
+          ...(position === 'top' && { bottom: -drawerBleeding + 20 }),
           ...(position === 'bottom' && { borderTopLeftRadius: 8, borderTopRightRadius: 8 }),
           ...(position === 'top' && { borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }),
           visibility: 'visible',
@@ -56,7 +57,7 @@ function PullerContainer({ children, drawerBleeding, position = 'left', ...rest 
           left: 0,
           zIndex: 1,
           touchAction: 'none',
-          height: drawerBleeding,
+          height: drawerBleeding - 20,
           '&:hover': {
             cursor: 'pointer',
             backgroundColor: grey[100],
@@ -128,6 +129,11 @@ function useDrawer(open = false, position = 'left') {
   return [drawer, setDrawer, bind];
 }
 
+function moveElementWithDrawer(element) {
+  if (element?.current?.id === 'right_drawer') element.current.id = 'right_drawer_closed';
+  else element.current.id = 'right_drawer';
+}
+
 PullerContainer.propTypes = {
   children: PropTypes.any,
   drawerBleeding: PropTypes.any,
@@ -182,6 +188,8 @@ export default function MapApplication({
   const [drawerTop, setDrawerTop, bindTop] = useDrawer(drawerDefaultTop, 'top');
   const drawerBleeding = 40;
 
+  const rightDrawer = useRef(null);
+
   const inputsOnLeft =
     ((inputsMd === 'left' && large) || (inputsXs === 'left' && !large)) && Boolean(inputs);
   const outputsOnLeft =
@@ -206,6 +214,7 @@ export default function MapApplication({
   //open Right drawer on map click
   useEffect(() => {
     if (openPlotDrawer) {
+      if (rightDrawer?.current?.id) rightDrawer.current.id = 'right_drawer';
       if (large) {
         setDrawerRight(true);
       } else {
@@ -226,7 +235,7 @@ export default function MapApplication({
     : {
         display: 'flex',
         flexDirection: 'column',
-        gap: theme.spacing(2),
+        gap: theme.spacing(1),
         padding: theme.spacing(2, 0),
         width: '100%',
       };
@@ -283,7 +292,9 @@ export default function MapApplication({
 
   const swipeableDrawerRight = somethingOnRight ? (
     <SwipeableDrawer
+      id="right_drawer"
       open={drawerRight}
+      ref={rightDrawer}
       variant="persistent"
       anchor="right"
       onClose={() => {
@@ -311,6 +322,7 @@ export default function MapApplication({
         tabIndex="0"
         onClick={() => {
           setDrawerRight((oldState) => !oldState);
+          moveElementWithDrawer(rightDrawer);
         }}
         {...bindRight()}
       >
@@ -441,6 +453,13 @@ export default function MapApplication({
       />
     </>
   );
+
+  const attributions = (
+    <>
+      <AttributionElement />
+    </>
+  );
+
   return (
     <>
       {swipeableDrawerLeft}
@@ -450,6 +469,7 @@ export default function MapApplication({
       <AppContainer>
         <Grid sx={{ flexGrow: 1 }}>{children}</Grid>
       </AppContainer>
+      {attributions}
       {mapLegend}
     </>
   );

@@ -101,22 +101,36 @@ button.ol-zoom-out {
   right: 5%;
 }
 
-@media only screen and (min-device-width: 200px) and (max-device-width: 900px) {
-  .ol-unselectable.ol-control.layer-switcher {
-    position: absolute;
-    top: 40rem;
-    right: 1rem;
+
+@media only screen and (min-device-width: 1000px) and (max-device-width: 1600px) {
+  button.ol-zoom-out {
+    bottom: 12.8%;
   }
 }
 
 @media only screen and (min-device-width: 200px) and (max-device-width: 900px) {
+  .ol-unselectable.ol-control.layer-switcher {
+    position: absolute;
+    top: 17rem;
+    right: 1rem;
+    font-size: small;
+  }
+
   button.ol-zoom-in,
   button.ol-zoom-out {
     visibility: hidden;
   }
 
   .MuiContainer-root {
-    max-height: 560px;
+    max-height: 225px;
+  }
+
+  .ol-attribution.ol-unselectable.ol-control.ol-uncollapsible {
+    display: none;
+  }
+
+  div#attribution_icon{
+    display: flex !important;
   }
 }
 
@@ -140,4 +154,16 @@ input[type='radio'] {
 
 .layer-switcher .group button {
   margin-top: 0.3rem;
+}
+
+section:has(#right_drawer) .ol-unselectable.ol-control.layer-switcher{
+  margin-right: 37%;
+}
+
+section:has(#right_drawer) button.ol-zoom-in{
+  right:37%;
+}
+
+section:has(#right_drawer) button.ol-zoom-out{
+  right:37%;
 }

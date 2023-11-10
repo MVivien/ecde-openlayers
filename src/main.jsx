@@ -26,7 +26,7 @@ const theme = createTheme({
       fontWeight: 500,
       '@media only screen and (min-device-width: 200px) and (max-device-width: 900px)': {
         marginTop: '5px',
-        fontSize: '1.8rem',
+        fontSize: '0.8rem',
       },
     },
     description: {
@@ -41,11 +41,12 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           fontSize: '1rem',
-          width: '30%',
+          width: '40%',
           borderRadius: '5px',
           fontFamily: "'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif",
           '@media only screen and (min-device-width: 200px) and (max-device-width: 900px)': {
-            fontSize: '1.8rem',
+            fontSize: '0.8rem',
+            height: '16px',
           },
         },
       },
@@ -55,7 +56,8 @@ const theme = createTheme({
         root: {
           fontFamily: "'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif",
           '@media only screen and (min-device-width: 200px) and (max-device-width: 900px)': {
-            fontSize: '1.8rem',
+            fontSize: '0.6rem',
+            height: '2rem',
           },
         },
       },

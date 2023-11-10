@@ -108,7 +108,7 @@ function InputPanel({
 
   return (
     <>
-      <h4 style={{ fontWeight: 300 }}>
+      <h4 style={{ fontWeight: 300, fontSize: '0.6rem' }}>
         Powered By
         <a
           href="/"

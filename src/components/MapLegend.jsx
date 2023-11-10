@@ -21,8 +21,8 @@ function MapLegend({ large, drawerRight, drawerBottom, childApp }) {
       <div
         style={{
           position: 'absolute',
-          right: isRightDrawerOpen ? '36.3%' : '5%',
-          bottom: isBottomDrawerOpen ? `30%` : '5%',
+          right: large ? (isRightDrawerOpen ? '37%' : '5%') : '5%',
+          bottom: !large ? (isBottomDrawerOpen ? `28%` : '5%') : '5%',
           width: '80%',
           zIndex: 2,
         }}
@@ -57,8 +57,8 @@ function MapLegend({ large, drawerRight, drawerBottom, childApp }) {
             display: 'flex',
             justifyContent: 'center',
             position: 'absolute',
-            right: large ? (isRightDrawerOpen ? '36%' : '30%') : '23%',
-            bottom: isBottomDrawerOpen && !large ? '30%' : '5%',
+            right: large ? (isRightDrawerOpen ? '36%' : '30%') : '17%',
+            bottom: isBottomDrawerOpen && !large ? '28%' : '5%',
           }}
         >
           <div
@@ -75,7 +75,7 @@ function MapLegend({ large, drawerRight, drawerBottom, childApp }) {
                 sx={{
                   height: '5rem',
                   width: '50rem',
-                  maxWidth: '33rem',
+                  maxWidth: large ? '33rem' : '17rem',
                 }}
                 alt="Legend"
                 src="images/tropical_nights_legend.png"
